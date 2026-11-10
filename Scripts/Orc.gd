@@ -1,0 +1,51 @@
+extends MonsterBase
+
+func _ready() -> void:
+	monster_name = "Orc Guerreiro"
+	speed = 2.8
+	base_attack_range = 1.4
+	mesh_base_y = -1.28
+	health_bar_height = 1.8
+	super._ready()
+	
+	# Inicializa o playback da StateMachine de ataques do AnimationTree herdado do base
+	if anim_tree:
+		attacks_playback = anim_tree.get("parameters/AttacksCombo/playback")
+
+# Aplica efeitos visuais de raridade (ex: cores da aura no Material Override)
+func apply_rarity_effects() -> void:
+	var epic_aura = get_node_or_null("EpicAura")
+	var rare_aura = get_node_or_null("RareAura")
+	if not epic_aura and not rare_aura:
+		return
+
+	match rarity:
+		"Épico":
+			epic_aura.visible = true
+			rare_aura.visible = false
+		"Raro":
+			rare_aura.visible = true
+			epic_aura.visible = false
+		_:
+			epic_aura.visible = false
+			rare_aura.visible = false
+
+# Executa o ataque do Orc (Sorteia entre os 5 ataques do combo)
+func execute_attack(target: CharacterBody3D, range_dist: float) -> void:
+	perform_cleave_attack(range_dist)
+	
+	var combo_step = randi_range(1, 5)
+	var anim_name = "Armature|Ataque %d" % combo_step
+	
+	# Chamada direta local (sem RPC)
+	play_orc_attack(anim_name)
+
+func play_orc_attack(anim_name: String) -> void:
+	if attacks_playback:
+		attacks_playback.start(anim_name)
+		
+	if anim_tree:
+		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		
+	if attack_audio and attack_audio.stream:
+		attack_audio.play()

@@ -1,0 +1,27 @@
+[gd_resource type="Shader" format=3 uid="uid://bo53vjof2qc74"]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_add, depth_draw_opaque, cull_disabled, unshaded;
+
+// Cor da aura (Dourado padrão)
+uniform vec4 aura_color : source_color = vec4(1.0, 0.65, 0.05, 1.0);
+uniform float inner_radius : hint_range(0.0, 0.5) = 0.32;
+uniform float outer_radius : hint_range(0.0, 0.5) = 0.46;
+uniform float pulse_speed : hint_range(0.0, 10.0) = 3.0;
+
+void fragment() {
+    // Centraliza as coordenadas UV no meio da malha (-0.5 a 0.5)
+    vec2 centered_uv = UV - vec2(0.5);
+    float dist = length(centered_uv);
+
+    // Desenha um anel circular com bordas suaves
+    float ring = smoothstep(inner_radius - 0.03, inner_radius, dist) * 
+                 (1.0 - smoothstep(outer_radius - 0.03, outer_radius, dist));
+
+    // Pulso suave de brilho com o tempo
+    float pulse = 0.8 + 0.2 * sin(TIME * pulse_speed);
+
+    ALBEDO = aura_color.rgb;
+    ALPHA = ring * aura_color.a * pulse;
+}"

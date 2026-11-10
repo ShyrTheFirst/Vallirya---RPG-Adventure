@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cc10x5xjdr02n"]
+
+[ext_resource type="Script" uid="uid://8hgiwg4fv7s5" path="res://Scripts/floating_damage.gd" id="1_uap5x"]
+
+[node name="FloatingDamage" type="Label3D" unique_id=557302294]
+billboard = 1
+no_depth_test = true
+modulate = Color(1, 1, 0, 1)
+text = "00"
+font_size = 36
+script = ExtResource("1_uap5x")

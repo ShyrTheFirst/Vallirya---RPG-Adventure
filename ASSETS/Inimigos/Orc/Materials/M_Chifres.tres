@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bm4mww4c02hqs"]
+
+[ext_resource type="Texture2D" uid="uid://c543si6hpbt6u" path="res://ASSETS/Inimigos/Orc/OrcCharacter IK_4.png" id="1_ct6bb"]
+[ext_resource type="Texture2D" uid="uid://biq1rtrav63lq" path="res://ASSETS/Inimigos/Orc/OrcCharacter IK_5.png" id="2_kk1uk"]
+
+[resource]
+resource_name = "M_Chifres"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_ct6bb")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.0
+normal_enabled = true
+normal_scale = 0.0
+normal_texture = ExtResource("2_kk1uk")

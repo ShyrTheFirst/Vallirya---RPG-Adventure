@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://v18sy0j6h36f"]
+
+[ext_resource type="Resource" uid="uid://bjintplg23o2t" path="res://Resources/Items/IronSword.tres" id="1_mvxsc"]
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/QuestData.gd" id="1_t7sjp"]
+
+[resource]
+script = ExtResource("1_t7sjp")
+quest_id = "Quest_01"
+title = "Começando a jornada"
+description = "Voce finalmente chegou. Voce precisa começar a sua jornada como aventureiro agora, pegue essa espada, equipe-a no seu inventario para poder derrotar seus primeiros inimigos!"
+quest_type = 2
+target_id = "npc_valkor"
+required_amount = 1
+reward_item = ExtResource("1_mvxsc")
+metadata/_custom_type_script = "uid://co3cscegp8qam"

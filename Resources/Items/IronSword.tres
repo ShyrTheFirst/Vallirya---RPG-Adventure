@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bjintplg23o2t"]
+
+[ext_resource type="PackedScene" uid="uid://5ie6631nleno" path="res://ASSETS/Armas/Espada/Espada.fbx" id="1_qox1j"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="2_onech"]
+
+[resource]
+script = ExtResource("2_onech")
+id = "Iron_sword"
+name = "Espada de Ferro"
+item_type = 0
+weapon_type = 1
+description = "Uma espada simples de metal."
+mesh_scene = ExtResource("1_qox1j")
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, 0, -0.2)
+is_stackable = false
+max_stack = 1
+bonus_attack = 15
+metadata/_custom_type_script = "uid://eaep86qi61ki"

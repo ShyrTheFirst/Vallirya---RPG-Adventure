@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bw7gqosmihlqc"]
+
+[ext_resource type="Texture2D" uid="uid://bbd1vfrpuyv3m" path="res://ASSETS/Inimigos/Orc/OrcCharacter IK_8.png" id="1_vpyr1"]
+[ext_resource type="Texture2D" uid="uid://bh46qt3b3hukk" path="res://ASSETS/Inimigos/Orc/OrcCharacter IK_9.png" id="2_wev6o"]
+
+[resource]
+resource_name = "M_Dentes"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_vpyr1")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.0
+normal_enabled = true
+normal_scale = 0.0
+normal_texture = ExtResource("2_wev6o")

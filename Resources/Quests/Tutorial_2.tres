@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://ciib15vt037p"]
+
+[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/Barra_Latao.tres" id="1_b1ypo"]
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/QuestData.gd" id="1_qcgl7"]
+
+[resource]
+script = ExtResource("1_qcgl7")
+quest_id = "quest_02"
+title = "Forjando seu caminho"
+description = "Agora que voce sabe como usar sua espada, vamos caçar os primeiros monstros. Mate 10 orcs e volte aqui para me avisar para dar os proximos passos!"
+target_id = "Orc Guerreiro"
+required_amount = 10
+reward_item = ExtResource("1_b1ypo")
+reward_item_amount = 10
+metadata/_custom_type_script = "uid://co3cscegp8qam"

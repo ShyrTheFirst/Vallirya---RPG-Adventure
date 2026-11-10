@@ -1,0 +1,490 @@
+[gd_scene format=4 uid="uid://cxw8jiumrvcvj"]
+
+[ext_resource type="Script" uid="uid://ba14p6futmyy" path="res://Scripts/MainMenu.gd" id="1_cmrfp"]
+[ext_resource type="Texture2D" uid="uid://bjtmyqgmx5thh" path="res://ASSETS/Terrenos/MapaInicial_0.png" id="2_8um5k"]
+[ext_resource type="Texture2D" uid="uid://c2o5vylhh4rr7" path="res://ASSETS/Terrenos/MapaInicial_1.png" id="3_xim88"]
+[ext_resource type="PackedScene" uid="uid://d3d11ececr7ln" path="res://Scenes/Props/arbusto.tscn" id="4_cmrfp"]
+[ext_resource type="Texture2D" uid="uid://cqkabltxcg8xp" path="res://icon.svg" id="4_koqhg"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="5_cmrfp"]
+[ext_resource type="PackedScene" uid="uid://c0ou5bu062w32" path="res://Scenes/Props/arvore_a_com_folhas.tscn" id="5_loo7a"]
+[ext_resource type="PackedScene" uid="uid://bk65r40ntolc1" path="res://Scenes/Props/arvore_c.tscn" id="6_if7li"]
+[ext_resource type="PackedScene" uid="uid://map2og30fvuu" path="res://Scenes/Props/arvore_c_normal.tscn" id="7_rrcx7"]
+
+[sub_resource type="Shader" id="Shader_vhl67"]
+code = "
+// NOTE: Shader automatically converted from Godot Engine 4.2.1.stable's ProceduralSkyMaterial.
+
+shader_type sky;
+render_mode use_debanding;
+
+uniform vec4 sky_top_color : source_color = vec4(0.385, 0.454, 0.55, 1.0);
+uniform vec4 sky_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
+uniform float sky_curve : hint_range(0, 1) = 0.15;
+uniform float sky_energy = 1.0; // In Lux.
+uniform sampler2D sky_cover : filter_linear, source_color, hint_default_black;
+uniform vec4 sky_cover_modulate : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 ground_bottom_color : source_color = vec4(0.2, 0.169, 0.133, 1.0);
+uniform vec4 ground_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
+uniform float ground_curve : hint_range(0, 1) = 0.02;
+uniform float ground_energy = 1.0;
+uniform float sun_angle_max = 30.0;
+uniform float sun_curve : hint_range(0, 1) = 0.15;
+
+uniform sampler2D cloudtexture;
+uniform sampler2D cloudtexture2;
+uniform vec2 cloud_direction;
+uniform vec2 cloud_direction2;
+uniform vec2 cloud_scale;
+uniform float cloud_distance;
+
+void sky() {
+	float v_angle = acos(clamp(EYEDIR.y, -1.0, 1.0));
+	float c = (1.0 - v_angle / (PI * 0.5));
+	vec3 sky = mix(sky_horizon_color.rgb, sky_top_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / sky_curve), 0.0, 1.0));
+	sky *= sky_energy;
+
+	if (LIGHT0_ENABLED) {
+		float sun_angle = acos(dot(LIGHT0_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT0_SIZE) {
+			sky = LIGHT0_COLOR * LIGHT0_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT0_SIZE) / (sun_angle_max - LIGHT0_SIZE);
+			sky = mix(LIGHT0_COLOR * LIGHT0_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	if (LIGHT1_ENABLED) {
+		float sun_angle = acos(dot(LIGHT1_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT1_SIZE) {
+			sky = LIGHT1_COLOR * LIGHT1_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT1_SIZE) / (sun_angle_max - LIGHT1_SIZE);
+			sky = mix(LIGHT1_COLOR * LIGHT1_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	if (LIGHT2_ENABLED) {
+		float sun_angle = acos(dot(LIGHT2_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT2_SIZE) {
+			sky = LIGHT2_COLOR * LIGHT2_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT2_SIZE) / (sun_angle_max - LIGHT2_SIZE);
+			sky = mix(LIGHT2_COLOR * LIGHT2_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	if (LIGHT3_ENABLED) {
+		float sun_angle = acos(dot(LIGHT3_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT3_SIZE) {
+			sky = LIGHT3_COLOR * LIGHT3_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT3_SIZE) / (sun_angle_max - LIGHT3_SIZE);
+			sky = mix(LIGHT3_COLOR * LIGHT3_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	vec4 sky_cover_texture = texture(sky_cover, SKY_COORDS);
+	sky += (sky_cover_texture.rgb * sky_cover_modulate.rgb) * sky_cover_texture.a * sky_cover_modulate.a * sky_energy;
+
+	c = (v_angle - (PI * 0.5)) / (PI * 0.5);
+	vec3 ground = mix(ground_horizon_color.rgb, ground_bottom_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / ground_curve), 0.0, 1.0));
+	ground *= ground_energy;
+	vec2 sky_uv = EYEDIR.xz / EYEDIR.y;
+	vec3 clouds = texture(cloudtexture, sky_uv * cloud_scale + TIME * cloud_direction * 0.001).rgb - texture(cloudtexture2, sky_uv * cloud_scale + TIME * cloud_direction2 * 0.001).rgb;
+	clouds = clamp(clouds , 0.0, 1.0);
+	sky += clouds;
+
+	COLOR = mix(ground, sky, step(0.0, EYEDIR.y));
+}
+"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1ehe0"]
+offset = Vector3(1, 1, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kbuji"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_1ehe0")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ce3w2"]
+seed = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xcq2r"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_ce3w2")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n45e2"]
+shader = SubResource("Shader_vhl67")
+shader_parameter/sky_top_color = Color(0.168627, 0.709804, 0.933333, 1)
+shader_parameter/sky_horizon_color = Color(0.168627, 0.992157, 1, 1)
+shader_parameter/sky_curve = 0.15
+shader_parameter/sky_energy = 1.0
+shader_parameter/sky_cover_modulate = Color(1, 1, 1, 1)
+shader_parameter/ground_bottom_color = Color(0.168627, 0.709804, 0.933333, 1)
+shader_parameter/ground_horizon_color = Color(0.168627, 0.992157, 1, 1)
+shader_parameter/ground_curve = 0.02
+shader_parameter/ground_energy = 1.0
+shader_parameter/sun_angle_max = 1.5708
+shader_parameter/sun_curve = 0.15
+shader_parameter/cloudtexture = SubResource("NoiseTexture2D_kbuji")
+shader_parameter/cloudtexture2 = SubResource("NoiseTexture2D_xcq2r")
+shader_parameter/cloud_direction = Vector2(20, 20)
+shader_parameter/cloud_direction2 = Vector2(10, 10)
+shader_parameter/cloud_scale = Vector2(0.15, 0.15)
+shader_parameter/cloud_distance = 10.0
+
+[sub_resource type="Sky" id="Sky_30t2u"]
+sky_material = SubResource("ShaderMaterial_n45e2")
+
+[sub_resource type="Environment" id="Environment_opfnp"]
+background_mode = 2
+sky = SubResource("Sky_30t2u")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqsmw"]
+resource_name = "M_Ilha01_A"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_8um5k")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.0
+normal_enabled = true
+normal_scale = 0.0
+normal_texture = ExtResource("3_xim88")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ichmt"]
+_surfaces = [{
+"aabb": AABB(-0.21283431, -0.26262742, -0.061810765, 1.4177443, 1.3384626, 0.061810765),
+"format": 34359742465,
+"index_count": 144,
+"index_data": PackedByteArray("DgAPABAAEAAPABEADgALAA8AEQAPAAsAEQASABAAAgAQABIADgAQAAIAEwASABEAEgAFAAIAEwAFABIAAgAFABMACwANABEAEwARAA0ADQALAAEAAQADAA0AEwANAAMAAAABAAsAAwABAAAAAAAEAAMAEwADAAQAFAAEAAAAEwAEABQAFQAAAAsAAAAVABQACgAVAAsADgAKAAsADAAUABUAFQAKAAwAEwAUAAwAFgAMAAoACgAOABYAEwAMABYAFgAOABcAFwAOAAIAFwAYABYAEwAWABgABgAXAAIAGAAXAAYABgACABkAEwAZAAIABgAJABgAEwAYAAkABgAZAAgACAAZABMACQAGAAgAEwAHAAgACAAHAAkAEwAJAAcA"),
+"lods": [0.09386857, PackedByteArray("CgALAAIACgAAAAsABgAKAAIAAAABAAsACQAKAAYACQAGAAgABgACAAgACQAMAAoAAAAKAAwACAAHAAkABwAIAAIABwAMAAkADAAEAAAABwAEAAwAAAAEAAMABwADAAQAAwABAAAAAgAFAAcAAQADAA0ABwANAAMABwAFAA0ADQAFAAIADQALAAEAAgALAA0A"), 0.25385904, PackedByteArray("AAABAAIAAwABAAAAAgABAAMAAAAEAAMAAwAFAAIABgAAAAIABwAFAAMABwADAAQAAgAFAAcABgACAAgABwAIAAIACQAAAAYACQAEAAAACQAGAAgABwAEAAkACAAHAAkA")],
+"name": "M_Ilha01_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 26,
+"vertex_data": PackedByteArray("Vm18P0OUaD8AAAAABLCMP8ogKz8AAAAAaCgGPi2pJr4AAAAAfTqaPybjNj9JLX29LjeJPx8efz9JLX29uC6JPRp3hr5JLX294TrbvQ4mDD8AAAAAFNdGvqR5Lz1JLX29G7q6vWbqxj0AAAAAPfFZvkR5Ej9JLX29aAgCP4G8cj8AAAAAU+t7P9gvUz4AAAAAPZECPz2HhT9JLX29xeqIP1EyLz5JLX29KlqVPuBTWD8AAAAATkJRPw/QSj0AAAAAYcjxPtZwGL4AAAAA17BfPxQCV7xJLX29CqXvPk03fL5JLX29ZiCavY8kqr1JLX29v7RcP/e0iT9JLX29PbhOP63YeT8AAAAALQCDPvMDbD9JLX296b/nPTjnPD8AAAAApGc8PcjHSz9JLX29CtcjPArXI7wAAAAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ce3w2"]
+resource_name = "Plane_001"
+_surfaces = [{
+"aabb": AABB(-0.21283431, -0.26262742, -0.061810765, 1.4177443, 1.3384626, 0.061810765),
+"attribute_data": PackedByteArray("f0JUP8kmcT+vXjc//+duP+FWHT/yRM4++49tP3S57T4ZDEI/AFnAPlqwhD6DG30/5Xi5PTn/dD8aKVc+HPunPj6Erz6ucKI+cQTrPscNYj8YyzU/5Xd6P69eNz//524/f0JUP8kmcT86wFc/gxt9P/J9dT/2u9o+OsBXP4MbfT9/QlQ/ySZxP/uPbT90ue0+GMs1P+V3ej9gMhc/7sK1PuFWHT/yRM4+r143P//nbj/9V0I/1mWlPhkMQj8AWcA+4VYdP/JEzj5gMhc/7sK1PvJ9dT/2u9o++49tP3S57T4ZDEI/AFnAPv1XQj/WZaU+pQpyP1NGRj+w2hE/w0BLP4LhGj3mxfw+44z1PhTsAz/AwXo/pbVKP6UKcj9TRkY/cLIJP6KPUD+w2hE/w0BLP5sKdD8MYSw/2hQMP1wmMz/aFAw/eAAIPyOdcz+W0RU/22QyPyTkxz7XXWQ/PvdjPyrCPz5csng/HR85PFD5Gj8oHzk8NhxOP4hk1T5oksE+zED6Pr6aIj9fP/k+3lc9P9PxLz+2Q64+22QyPyTkxz7brmo/3JttP9ddZD8+92M/265qP9ybbT/XXWQ/PvdjP1/pAj/eOjQ/2hQMP1wmMz+DG30/gUUsP8DBej+ltUo/pQpyP1NGRj+bCnQ/DGEsP1/pAj/eOjQ/X+kCP2KDAT/aFAw/eAAIP9oUDD9cJjM/gxt9P4FFLD+bCnQ/DGEsPyOdcz+W0RU/15p8P/XAET/T8S8/tkOuPttkMj8k5Mc+15p8P/XAET8jnXM/ltEVP1/pAj9igwE/2hQMP3gACD9wsgk/oo9QP7DaET/DQEs/"),
+"format": 34359742487,
+"index_count": 144,
+"index_data": PackedByteArray("JgAnACgAJgAoAAIAJgAfACcAKQAmAAIAJgAeAB8AAwApAAIAAwACACoAAwAqAAQAHgArAB8AKwAAAB8AAAABAB8ALAAtACAALAAuAC0ALAAGAC4ALAAgAAcALAAHAAgALAAIAC8ALAAvACEALAAhADAALAAwADEALAAxAAkALAAJAAUAMgAWABcAFwAzADIACgALAAwADAANAAoANAAPABAAEAA1ADQAIgA2ADcANwAjACIAOAA5ACUAJQAkADgAOgA7ADwAPAA9ADoAPgA/AEAAQABBAD4AQgBDAEQARABFAEIARgBHABgAGAAZAEYASABJABEAEQAOAEgASgATABQAFABLAEoAGgAbABwAHAAdABoATABNABUAFQASAEwA"),
+"lods": [0.09386857, PackedByteArray("HgAfAAIAHgAAAB8AAAABAB8AAwAeAAIAAwACAAQABQAGACAABQAgAAcABQAHAAgABQAIACEABQAhAAkACgALAAwADAANAAoAIgAPABAAEAAjACIADgAiACMADgAjABEAJAATABQAFAAlACQAJAAlABUAFQASACQAFgAXABgAGAAZABYAGgAbABwAHAAdABoA"), 0.25385904, PackedByteArray("AAABAAIAAwAAAAIAAwACAAQABQAGAAcABQAHAAgABQAIAAkACgALAAwADAANAAoADgAPABAADgAQABEAEgATABQAFAAVABIAFgAXABgAGAAZABYAGgAbABwAHAAdABoA")],
+"material": SubResource("StandardMaterial3D_cqsmw"),
+"name": "M_Ilha01_A",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 78,
+"vertex_data": PackedByteArray("Vm18P0OUaD8AAAAABLCMP8ogKz8AAAAAaCgGPi2pJr4AAAAA4TrbvQ4mDD8AAAAAG7q6vWbqxj0AAAAAFNdGvqR5Lz1JLX29uC6JPRp3hr5JLX29fTqaPybjNj9JLX29LjeJPx8efz9JLX29PfFZvkR5Ej9JLX29fTqaPybjNj9JLX29BLCMP8ogKz8AAAAAVm18P0OUaD8AAAAALjeJPx8efz9JLX29PfFZvkR5Ej9JLX29LjeJPx8efz9JLX29Vm18P0OUaD8AAAAA4TrbvQ4mDD8AAAAAfTqaPybjNj9JLX29uC6JPRp3hr5JLX29aCgGPi2pJr4AAAAABLCMP8ogKz8AAAAAFNdGvqR5Lz1JLX29G7q6vWbqxj0AAAAAaCgGPi2pJr4AAAAAuC6JPRp3hr5JLX29PfFZvkR5Ej9JLX294TrbvQ4mDD8AAAAAG7q6vWbqxj0AAAAAFNdGvqR5Lz1JLX29aAgCP4G8cj8AAAAAU+t7P9gvUz4AAAAAxeqIP1EyLz5JLX29PZECPz2HhT9JLX29PZECPz2HhT9JLX29aAgCP4G8cj8AAAAAxeqIP1EyLz5JLX29U+t7P9gvUz4AAAAAKlqVPuBTWD8AAAAATkJRPw/QSj0AAAAAYcjxPtZwGL4AAAAA6b/nPTjnPD8AAAAACtcjPArXI7wAAAAAPbhOP63YeT8AAAAAZiCavY8kqr1JLX2917BfPxQCV7xJLX29CqXvPk03fL5JLX29v7RcP/e0iT9JLX29LQCDPvMDbD9JLX29pGc8PcjHSz9JLX29ZiCavY8kqr1JLX29CtcjPArXI7wAAAAAv7RcP/e0iT9JLX29PbhOP63YeT8AAAAAv7RcP/e0iT9JLX29PbhOP63YeT8AAAAA17BfPxQCV7xJLX29TkJRPw/QSj0AAAAALQCDPvMDbD9JLX29PZECPz2HhT9JLX29aAgCP4G8cj8AAAAAKlqVPuBTWD8AAAAA17BfPxQCV7xJLX29CqXvPk03fL5JLX29YcjxPtZwGL4AAAAATkJRPw/QSj0AAAAALQCDPvMDbD9JLX29KlqVPuBTWD8AAAAA6b/nPTjnPD8AAAAApGc8PcjHSz9JLX29ZiCavY8kqr1JLX29CtcjPArXI7wAAAAApGc8PcjHSz9JLX296b/nPTjnPD8AAAAACqXvPk03fL5JLX29YcjxPtZwGL4AAAAAxeqIP1EyLz5JLX29U+t7P9gvUz4AAAAA/3//f4FRv+j/f/9/gVG/6P9//3+BUb/o/3//f4FRv+j/f/9/gVG/6P////9IUaPo/////0hRo+j/////SFGj6P////9IUaPo/////0hRo+g7pBGRmVJC5zukEZGZUkLnO6QRkZlSQuc7pBGRmVJC529iLaIVOqLyh453po1CD++HjnemjUIP729iLaIVOqLyHa6EdJVaZtz9gQlPL1uV2/2BCU8vW5XbHa6EdJVaZtwsY8ZkUFTt5CxjxmRQVO3k12BQZ1pTO+bXYFBnWlM75ihRWH5uRmztKFFYfm5GbO0oUVh+bkZs7ShRWH5uRmzt/3//f4FRv+j/f/9/gVG/6P////9IUaPo/////0hRo+h6e7uwiTsE8np7u7CJOwTylJ9qXktdttiUn2peS1222P9//3+BUb/o/3//f4FRv+j/f/9/gVG/6P9//3+BUb/o/3//f4FRv+j/f/9/gVG/6P////9IUaPo/////0hRo+j/////SFGj6P////9IUaPo/////0hRo+j/////SFGj6CxjxmRQVO3kLGPGZFBU7uSHjnemjUIP74eOd6aNQg/venu7sIk7BPJ6e7uwiTsE8pSfal5LXbbYlJ9qXktdttiha7Gq2zgm86FrsarbOCbzoWuxqts4JvOha7Gq3Dgm86KX3laCXWvYopfeVoJda9iil95Wgl1r2KKX3laCXWvY8GcYqOA4JPPwZxio4Dgk8/BnGKjgOCTz8GcYqOA4JPPXYFBnWlM75tdgUGdaUzvmb2ItohU6ovJvYi2iFTqi8v2BCU8vW5Xb/YEJTy9bldsdroR0lVpm3B2uhHSVWmbc")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ichmt")
+
+[node name="MainMenu" type="Node3D" unique_id=1992861513]
+script = ExtResource("1_cmrfp")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1891855796]
+environment = SubResource("Environment_opfnp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1141169219]
+transform = Transform3D(-0.12495204, -0.96566254, 0.22777787, 0.02982991, 0.22581689, 0.97371304, -0.9917143, 0.12846202, 0.0005893452, 0, 43.3524, 0)
+shadow_enabled = true
+
+[node name="DioramaVisual" type="Node3D" parent="." unique_id=33817397]
+
+[node name="Camera3D" type="Camera3D" parent="DioramaVisual" unique_id=1111682350]
+transform = Transform3D(1, 0, 0, 0, 0.9590949, -0.283085, 0, 0.283085, 0.9590949, 0, 1.1166704, 0.27284908)
+
+[node name="Ilha_01_A" type="MeshInstance3D" parent="DioramaVisual" unique_id=895277849]
+transform = Transform3D(148.50471, 0, 0, 0, -1.7703142e-05, 148.5047, 0, -148.5047, -1.7703142e-05, -89.415924, 0, 69.80197)
+mesh = SubResource("ArrayMesh_ce3w2")
+
+[node name="Props" type="Node3D" parent="DioramaVisual" unique_id=1086249450]
+
+[node name="Arbusto" parent="DioramaVisual/Props" unique_id=36560846 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.016501)
+
+[node name="Arbusto2" parent="DioramaVisual/Props" unique_id=570679558 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0962868, 0, -4.605167)
+
+[node name="Arbusto3" parent="DioramaVisual/Props" unique_id=214298858 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.40858376, 0, 0.91272086, 0, 1, 0, -0.91272086, 0, 0.40858376, -0.9175644, 0, -4.605167)
+
+[node name="Arbusto4" parent="DioramaVisual/Props" unique_id=261378969 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.7616909, 0, 0.6479405, 0, 1, 0, -0.6479405, 0, 0.7616909, -2.001592, 0, -4.605167)
+
+[node name="Arbusto5" parent="DioramaVisual/Props" unique_id=974403666 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.9863106, 0, 0.16489804, 0, 1, 0, -0.16489804, 0, 0.9863106, -2.001592, 0, -3.3148167)
+
+[node name="Arbusto6" parent="DioramaVisual/Props" unique_id=2001623043 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.7234216, 0, 0.69040674, 0, 1, 0, -0.69040674, 0, 0.7234216, -1.2139456, 0, -3.3148167)
+
+[node name="Arbusto7" parent="DioramaVisual/Props" unique_id=1660459740 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.4279865, 0, 0.9037853, 0, 1, 0, -0.9037853, 0, 0.4279865, -2.7277288, 0, -2.6560163)
+
+[node name="Arbusto8" parent="DioramaVisual/Props" unique_id=2122588114 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.7596146, 0, 0.6503737, 0, 1, 0, -0.6503737, 0, 0.7596146, -3.742812, 0, -2.6560163)
+
+[node name="Arbusto9" parent="DioramaVisual/Props" unique_id=1334149075 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.5937245, 0, 0.8046686, 0, 1, 0, -0.8046686, 0, 0.5937245, 0.6265094, 0, -4.0639844)
+
+[node name="Arbusto10" parent="DioramaVisual/Props" unique_id=829968740 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(0.29483706, 0, 0.95554763, 0, 1, 0, -0.95554763, 0, 0.29483706, 1.6544342, 0, -5.5206723)
+
+[node name="Arbusto11" parent="DioramaVisual/Props" unique_id=1478923828 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(-0.16051552, 0, 0.9870334, 0, 1, 0, -0.9870334, 0, -0.16051552, 3.371273, 0, -4.540658)
+
+[node name="Arbusto12" parent="DioramaVisual/Props" unique_id=310126659 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(-0.42354727, 0, 0.90587413, 0, 1, 0, -0.90587413, 0, -0.42354727, 3.798246, 0, -3.681841)
+
+[node name="Arbusto13" parent="DioramaVisual/Props" unique_id=667150763 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(-0.83623046, 0, 0.54837835, 0, 1, 0, -0.54837835, 0, -0.83623046, 3.9182825, 0, -2.7453918)
+
+[node name="Arbusto14" parent="DioramaVisual/Props" unique_id=1473087126 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(-0.97444975, 0, 0.22460592, 0, 1, 0, -0.22460592, 0, -0.97444975, 4.5829353, 0, -2.5288382)
+
+[node name="Arbusto15" parent="DioramaVisual/Props" unique_id=1499270125 instance=ExtResource("4_cmrfp")]
+transform = Transform3D(-0.97047657, 0, -0.24119575, 0, 1, 0, 0.24119575, 0, -0.97047657, 5.418915, 0, -2.7327485)
+
+[node name="Arvore_A_Com_Folhas" parent="DioramaVisual/Props" unique_id=1540399185 instance=ExtResource("5_loo7a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2503242, -5.375124)
+
+[node name="Arvore_A_Com_Folhas2" parent="DioramaVisual/Props" unique_id=1072114869 instance=ExtResource("5_loo7a")]
+transform = Transform3D(0.90224576, 0, 0.43122217, 0, 1, 0, -0.43122217, 0, 0.90224576, -7.585551, 1.2503242, -5.113112)
+
+[node name="Arvore_A_Com_Folhas3" parent="DioramaVisual/Props" unique_id=1960858201 instance=ExtResource("5_loo7a")]
+transform = Transform3D(-0.18301024, 0, 0.98311114, 0, 1, 0, -0.98311114, 0, -0.18301024, 8.044068, 1.2503242, -7.2177544)
+
+[node name="Arvore_A_Com_Folhas4" parent="DioramaVisual/Props" unique_id=751094873 instance=ExtResource("5_loo7a")]
+transform = Transform3D(-0.7701559, 0, 0.63785595, 0, 1, 0, -0.63785595, 0, -0.7701559, 5.2857676, 1.2503242, -3.9540176)
+
+[node name="Arvore_A_Com_Folhas5" parent="DioramaVisual/Props" unique_id=2082722252 instance=ExtResource("5_loo7a")]
+transform = Transform3D(0.51033396, 0, 0.8599765, 0, 1, 0, -0.8599765, 0, 0.51033396, -3.0907688, 1.2503242, -3.6367083)
+
+[node name="Arvore_C" parent="DioramaVisual/Props" unique_id=49332719 instance=ExtResource("6_if7li")]
+transform = Transform3D(0.2849976, 0, -0.9585282, 0, 1, 0, 0.9585282, 0, 0.2849976, 4.3995047, 0, -10.269842)
+
+[node name="Arvore_C2" parent="DioramaVisual/Props" unique_id=946362472 instance=ExtResource("6_if7li")]
+transform = Transform3D(-0.59220904, 0, -0.80578434, 0, 1, 0, 0.80578434, 0, -0.59220904, -3.232504, 0.4308455, -8.872864)
+
+[node name="Arvore_C3" parent="DioramaVisual/Props" unique_id=573173623 instance=ExtResource("6_if7li")]
+transform = Transform3D(-0.59220904, 0, -0.80578434, 0, 1, 0, 0.80578434, 0, -0.59220904, 1.560327, 0.7141359, -12.564602)
+
+[node name="Arvore_C4" parent="DioramaVisual/Props" unique_id=186476895 instance=ExtResource("6_if7li")]
+transform = Transform3D(-0.24251574, 0, -0.9701475, 0, 1, 0, 0.9701475, 0, -0.24251574, -3.2733586, 0.7141359, -12.564602)
+
+[node name="Arvore_C5" parent="DioramaVisual/Props" unique_id=492384584 instance=ExtResource("6_if7li")]
+transform = Transform3D(0.21236323, 0, -0.9771908, 0, 1, 0, 0.9771908, 0, 0.21236323, -6.4920425, 0.7141359, -10.992964)
+
+[node name="Arvore_C6" parent="DioramaVisual/Props" unique_id=1574902658 instance=ExtResource("6_if7li")]
+transform = Transform3D(0.21236323, 0, -0.9771908, 0, 1, 0, 0.9771908, 0, 0.21236323, 7.3268957, 0.7141359, -10.992964)
+
+[node name="Arvore_C_Normal" parent="DioramaVisual/Props" unique_id=732268570 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7534466, 0.3586619, -10)
+
+[node name="Arvore_C_Normal2" parent="DioramaVisual/Props" unique_id=1902029623 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.6910416, 0, 0.72281504, 0, 1, 0, -0.72281504, 0, 0.6910416, 5.413478, 0.3586619, -10.242767)
+
+[node name="Arvore_C_Normal3" parent="DioramaVisual/Props" unique_id=1488888702 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.9868194, 0, -0.16182607, 0, 1, 0, 0.16182607, 0, 0.9868194, 0.3287897, 0.3586619, -10.242767)
+
+[node name="Arvore_C_Normal4" parent="DioramaVisual/Props" unique_id=1332176575 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.6335551, 0, 0.7736976, 0, 1, 0, -0.7736976, 0, 0.6335551, -4.3393984, 0.3586619, -10.242767)
+
+[node name="Arvore_C_Normal5" parent="DioramaVisual/Props" unique_id=1918108048 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.99887383, 0, 0.047444373, 0, 1, 0, -0.047444373, 0, 0.99887383, -5.367094, 0.3586619, -7.6940722)
+
+[node name="Arvore_C_Normal6" parent="DioramaVisual/Props" unique_id=1211209445 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.9525585, 0, 0.30435532, 0, 1, 0, -0.30435532, 0, 0.9525585, -5.367094, 0.3586619, -11.539875)
+
+[node name="Arvore_C_Normal7" parent="DioramaVisual/Props" unique_id=1130664379 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.95044905, 0, -0.31088006, 0, 1, 0, 0.31088006, 0, 0.95044905, -3.9943905, 0.3586619, -13.52891)
+
+[node name="Arvore_C_Normal8" parent="DioramaVisual/Props" unique_id=2105603166 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.9930465, 0, 0.117722124, 0, 1, 0, -0.117722124, 0, 0.9930465, -2.5837443, 0.3586619, -13.52891)
+
+[node name="Arvore_C_Normal9" parent="DioramaVisual/Props" unique_id=1411060642 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.99779356, 0, -0.06639273, 0, 1, 0, 0.06639273, 0, 0.99779356, 0.8812332, 0.3586619, -13.52891)
+
+[node name="Arvore_C_Normal10" parent="DioramaVisual/Props" unique_id=708750338 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.9676642, 0, -0.25224188, 0, 1, 0, 0.25224188, 0, 0.9676642, 2.4959307, 0.3586619, -13.52891)
+
+[node name="Arvore_C_Normal36" parent="DioramaVisual/Props" unique_id=1215435691 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.981742, 0, -0.19021708, 0, 1, 0, 0.19021708, 0, 0.981742, 3.2214775, 0.3586619, -14.907543)
+
+[node name="Arvore_C_Normal37" parent="DioramaVisual/Props" unique_id=1611114103 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.59714746, 0, 0.8021316, 0, 1, 0, -0.8021316, 0, 0.59714746, 3.325469, 0.3586619, -14.907543)
+
+[node name="Arvore_C_Normal38" parent="DioramaVisual/Props" unique_id=793131209 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.59714746, 0, 0.8021316, 0, 1, 0, -0.8021316, 0, 0.59714746, -0.99917555, 0.3586619, -14.907543)
+
+[node name="Arvore_C_Normal39" parent="DioramaVisual/Props" unique_id=1638847145 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.59714746, 0, 0.8021316, 0, 1, 0, -0.8021316, 0, 0.59714746, -3.1928124, 0.3586619, -14.907543)
+
+[node name="Arvore_C_Normal40" parent="DioramaVisual/Props" unique_id=847362952 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.59714746, 0, 0.8021316, 0, 1, 0, -0.8021316, 0, 0.59714746, -4.530746, 0.3586619, -14.907543)
+
+[node name="Arvore_C_Normal41" parent="DioramaVisual/Props" unique_id=633729754 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.59714746, 0, 0.8021316, 0, 1, 0, -0.8021316, 0, 0.59714746, -3.725008, 0.3586619, -14.446318)
+
+[node name="Arvore_C_Normal42" parent="DioramaVisual/Props" unique_id=409870008 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.59714746, 0, 0.8021316, 0, 1, 0, -0.8021316, 0, 0.59714746, -5.7108192, 0.3586619, -14.446318)
+
+[node name="Arvore_C_Normal11" parent="DioramaVisual/Props" unique_id=1590001794 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.5061308, 0, 0.86245674, 0, 1, 0, -0.86245674, 0, 0.5061308, 3.3764267, 0.3586619, -13.52891)
+
+[node name="Arvore_C_Normal12" parent="DioramaVisual/Props" unique_id=571235310 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.89477503, 0, 0.44651738, 0, 1, 0, -0.44651738, 0, 0.89477503, 4.0619707, 0.3586619, -12.857231)
+
+[node name="Arvore_C_Normal13" parent="DioramaVisual/Props" unique_id=201410909 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.9843563, 0, -0.17619008, 0, 1, 0, 0.17619008, 0, 0.9843563, 5.463319, 0.3586619, -12.857231)
+
+[node name="Arvore_C_Normal14" parent="DioramaVisual/Props" unique_id=30665678 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.32382023, 0, 0.9461188, 0, 1, 0, -0.9461188, 0, 0.32382023, 7.2627087, 0.3586619, -13.755238)
+
+[node name="Arvore_C_Normal15" parent="DioramaVisual/Props" unique_id=2011850092 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.32382023, 0, 0.9461188, 0, 1, 0, -0.9461188, 0, 0.32382023, 5.9347525, 0.3586619, -13.755238)
+
+[node name="Arvore_C_Normal16" parent="DioramaVisual/Props" unique_id=1434172327 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.32382023, 0, 0.9461188, 0, 1, 0, -0.9461188, 0, 0.32382023, 4.6901426, 0.3586619, -13.755238)
+
+[node name="Arvore_C_Normal17" parent="DioramaVisual/Props" unique_id=1220284891 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.32382023, 0, 0.9461188, 0, 1, 0, -0.9461188, 0, 0.32382023, 1.0129552, 0.3586619, -13.755238)
+
+[node name="Arvore_C_Normal18" parent="DioramaVisual/Props" unique_id=466188400 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.58114815, 0, 0.81379795, 0, 1, 0, -0.81379795, 0, -0.58114815, -9.799881, 0.3586619, -12.869627)
+
+[node name="Arvore_C_Normal19" parent="DioramaVisual/Props" unique_id=1043746136 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.42744958, 0, 0.9040393, 0, 1, 0, -0.9040393, 0, -0.42744958, -7.8907385, 0.3586619, -12.869627)
+
+[node name="Arvore_C_Normal20" parent="DioramaVisual/Props" unique_id=1654546454 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.7061986, 0, -0.7080139, 0, 1, 0, 0.7080139, 0, -0.7061986, -9.322041, 0.3586619, -11.356759)
+
+[node name="Arvore_C_Normal21" parent="DioramaVisual/Props" unique_id=1445626313 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.49744987, 0, 0.8674928, 0, 1, 0, -0.8674928, 0, -0.49744987, 8.310919, 0.3586619, -9.603069)
+
+[node name="Arvore_C_Normal22" parent="DioramaVisual/Props" unique_id=90435619 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.9999802, 0, -0.006298661, 0, 1, 0, 0.006298661, 0, -0.9999802, 8.310919, 0.3586619, -10.914406)
+
+[node name="Arvore_C_Normal23" parent="DioramaVisual/Props" unique_id=2051645678 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.83720386, 0, 0.546891, 0, 1, 0, -0.546891, 0, -0.83720386, 8.310919, 0.3586619, -10.248607)
+
+[node name="Arvore_C_Normal24" parent="DioramaVisual/Props" unique_id=1723362390 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.83720386, 0, 0.546891, 0, 1, 0, -0.546891, 0, -0.83720386, 6.8903484, 0.3586619, -10.248607)
+
+[node name="Arvore_C_Normal25" parent="DioramaVisual/Props" unique_id=618947541 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.83720386, 0, 0.546891, 0, 1, 0, -0.546891, 0, -0.83720386, 6.77052, 0.3586619, -12.022709)
+
+[node name="Arvore_C_Normal26" parent="DioramaVisual/Props" unique_id=1965782920 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(0.11682969, 0, -0.993152, 0, 1, 0, 0.993152, 0, 0.11682969, 6.4291067, 0.3586619, -12.022709)
+
+[node name="Arvore_C_Normal27" parent="DioramaVisual/Props" unique_id=268347776 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.65327394, 0, -0.75712174, 0, 1, 0, 0.75712174, 0, -0.65327394, -0.75489426, 0.3586619, -12.022709)
+
+[node name="Arvore_C_Normal28" parent="DioramaVisual/Props" unique_id=1489380717 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.90650517, 0, -0.42219493, 0, 1, 0, 0.42219493, 0, -0.90650517, -0.14134884, 0.3586619, -13.238838)
+
+[node name="Arvore_C_Normal29" parent="DioramaVisual/Props" unique_id=2004285296 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.743292, 0, 0.66896725, 0, 1, 0, -0.66896725, 0, -0.743292, -2.6591127, 0.3586619, -13.238838)
+
+[node name="Arvore_C_Normal30" parent="DioramaVisual/Props" unique_id=116922709 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.8811045, 0, 0.4729218, 0, 1, 0, -0.4729218, 0, -0.8811045, -1.8462403, 0.3586619, -12.281092)
+
+[node name="Arvore_C_Normal31" parent="DioramaVisual/Props" unique_id=1117440444 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.8811045, 0, 0.4729218, 0, 1, 0, -0.4729218, 0, -0.8811045, -1.5618813, 0.3586619, -13.80735)
+
+[node name="Arvore_C_Normal32" parent="DioramaVisual/Props" unique_id=1291261183 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.9973345, 0, 0.07296449, 0, 1, 0, -0.07296449, 0, -0.9973345, -2.348619, 0.3586619, -13.80735)
+
+[node name="Arvore_C_Normal33" parent="DioramaVisual/Props" unique_id=1273936622 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.9571987, 0, 0.2894315, 0, 1, 0, -0.2894315, 0, -0.9571987, 0.072275996, 0.3586619, -13.805851)
+
+[node name="Arvore_C_Normal34" parent="DioramaVisual/Props" unique_id=532451565 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.9850884, 0, 0.17204869, 0, 1, 0, -0.17204869, 0, -0.9850884, 0.703534, 0.3586619, -13.805851)
+
+[node name="Arvore_C_Normal35" parent="DioramaVisual/Props" unique_id=1237163644 instance=ExtResource("7_rrcx7")]
+transform = Transform3D(-0.9850884, 0, 0.17204869, 0, 1, 0, -0.17204869, 0, -0.9850884, 1.6761988, 0.3586619, -13.805851)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=676898569]
+
+[node name="GameLogo" type="TextureRect" parent="CanvasLayer" unique_id=424921425]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+texture = ExtResource("4_koqhg")
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer" unique_id=682987972]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_cmrfp")
+
+[node name="OfflinePanel" type="PanelContainer" parent="CanvasLayer/CenterContainer" unique_id=741863383]
+custom_minimum_size = Vector2(380, 160)
+layout_mode = 2
+theme = ExtResource("5_cmrfp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/CenterContainer/OfflinePanel" unique_id=893854447]
+layout_mode = 2
+theme = ExtResource("5_cmrfp")
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=1508249061]
+layout_mode = 2
+theme = ExtResource("5_cmrfp")
+text = "SELECIONAR PERSONAGEM"
+horizontal_alignment = 1
+
+[node name="LineEditUsername" type="LineEdit" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=1917066790]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("5_cmrfp")
+placeholder_text = "Nome do personagem"
+alignment = 1
+
+[node name="BtnNewCharacter" type="Button" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=110427644]
+layout_mode = 2
+theme = ExtResource("5_cmrfp")
+text = "Adicionar Novo Personagem"
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=853109082]
+layout_mode = 2
+
+[node name="CharacterScrollContainer" type="ScrollContainer" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=271695075]
+custom_minimum_size = Vector2(350, 200)
+custom_maximum_size = Vector2(-1, 200)
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("5_cmrfp")
+
+[node name="CharacterListContainer" type="VBoxContainer" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer/CharacterScrollContainer" unique_id=1523857560]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("5_cmrfp")
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=376545391]
+layout_mode = 2

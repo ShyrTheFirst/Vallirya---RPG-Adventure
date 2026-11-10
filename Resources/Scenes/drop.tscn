@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://donv0g3fvawp6"]
+
+[ext_resource type="Script" uid="uid://dl5amtqf2v3nn" path="res://Scripts/WorldItem.gd" id="1_ji1af"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_8kmmi"]
+radius = 0.2734667
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
+radius = 0.52538484
+
+[node name="Drop" type="RigidBody3D" unique_id=1278382499]
+script = ExtResource("1_ji1af")
+
+[node name="Forma" type="CollisionShape3D" parent="." unique_id=2114165397]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41210938, 0)
+shape = SubResource("SphereShape3D_8kmmi")
+
+[node name="ItemPlace" type="Node3D" parent="." unique_id=973478826]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1857554370]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1923073275]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46400005, 0)
+shape = SubResource("SphereShape3D_g4v7s")

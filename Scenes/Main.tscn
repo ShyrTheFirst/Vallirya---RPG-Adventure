@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://dcsj6cw1bdx5c"]
+
+[ext_resource type="Script" uid="uid://b2wf3i8qrswg4" path="res://Scripts/main.gd" id="1_idj7w"]
+[ext_resource type="PackedScene" uid="uid://bohw58o3vxrms" path="res://Scenes/Player.tscn" id="1_r150o"]
+[ext_resource type="Script" uid="uid://ds20oivgyuosh" path="res://Scripts/MenuJogo.gd" id="3_rgh2o"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_pbw6q"]
+
+[node name="Main" type="Node3D" unique_id=780729372]
+script = ExtResource("1_idj7w")
+
+[node name="Player" parent="." unique_id=1422835273 instance=ExtResource("1_r150o")]
+
+[node name="LevelContainer" type="Node3D" parent="." unique_id=160777478]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=935365433]
+process_mode = 3
+
+[node name="MenuJogo" type="Control" parent="UI" unique_id=1151008962]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_rgh2o")
+
+[node name="Panel" type="Panel" parent="UI/MenuJogo" unique_id=1069670937]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MenuJogo/Panel" unique_id=1944940098]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -82.0
+offset_top = -56.5
+offset_right = 82.0
+offset_bottom = 56.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="HSeparator4" type="HSeparator" parent="UI/MenuJogo/Panel/VBoxContainer" unique_id=1099379236]
+layout_mode = 2
+
+[node name="HSeparator4" type="HSeparator" parent="UI/MenuJogo/Panel/VBoxContainer/HSeparator4" unique_id=557238179]
+layout_mode = 0
+
+[node name="BtnSave" type="Button" parent="UI/MenuJogo/Panel/VBoxContainer" unique_id=1780332304]
+layout_mode = 2
+text = "SALVAR JOGO"
+
+[node name="HSeparator2" type="HSeparator" parent="UI/MenuJogo/Panel/VBoxContainer" unique_id=1968910412]
+layout_mode = 2
+
+[node name="BtnQuit" type="Button" parent="UI/MenuJogo/Panel/VBoxContainer" unique_id=1787288038]
+layout_mode = 2
+text = "SAIR DO JOGO"
+
+[node name="HSeparator3" type="HSeparator" parent="UI/MenuJogo/Panel/VBoxContainer" unique_id=1811630664]
+layout_mode = 2
+
+[connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnSave" to="UI/MenuJogo" method="_on_btn_save_pressed"]
+[connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnQuit" to="UI/MenuJogo" method="_on_btn_quit_pressed"]

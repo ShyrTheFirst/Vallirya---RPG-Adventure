@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bvnwy4unsnbsy"]
+
+[ext_resource type="PackedScene" uid="uid://cick4726qfcmk" path="res://Resources/MESH/Barra_Ouro.tscn" id="1_tr57j"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="2_ns1n4"]
+
+[resource]
+script = ExtResource("2_ns1n4")
+id = "Barra_Ouro"
+name = "Barra de Ouro"
+description = "Barra feita com liga de ouro"
+mesh_scene = ExtResource("1_tr57j")
+sell_price = 10000
+inventory_rotation = Vector3(-45, 45, -90)
+inventory_scale = Vector3(100, 100, 100)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

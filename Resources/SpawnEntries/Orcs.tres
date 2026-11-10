@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3 uid="uid://dyahr2odless2"]
+
+[ext_resource type="PackedScene" uid="uid://cb0p5xxl464qf" path="res://Scenes/Orc.tscn" id="1_k3mkr"]
+[ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/SpawnEntry.gd" id="1_mmwpy"]
+
+[resource]
+script = ExtResource("1_mmwpy")
+scene = ExtResource("1_k3mkr")
+count = 100
+metadata/_custom_type_script = "uid://cbe7834febh5o"

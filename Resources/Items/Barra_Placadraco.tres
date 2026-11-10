@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b67ay0hrf0ay4"]
+
+[ext_resource type="PackedScene" uid="uid://cew2jyoogu8gp" path="res://Resources/MESH/Barra_Placadraco.tscn" id="1_i764v"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_rgm02"]
+
+[resource]
+script = ExtResource("1_rgm02")
+id = "Barra_Placadraco"
+name = "Barra de Placadraco"
+description = "Barra feita com liga de metais draconicos"
+mesh_scene = ExtResource("1_i764v")
+sell_price = 99999
+inventory_rotation = Vector3(-45, 45, -90)
+inventory_scale = Vector3(100, 100, 100)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

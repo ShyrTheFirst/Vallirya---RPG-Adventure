@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b4nbv2uxgvujt"]
+
+[ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="1_o8qao"]
+[ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="2_1nqxh"]
+
+[resource]
+resource_name = "M_Corpo"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_o8qao")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.0
+normal_enabled = true
+normal_scale = 0.0
+normal_texture = ExtResource("2_1nqxh")
