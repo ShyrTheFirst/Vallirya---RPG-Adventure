@@ -232,14 +232,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle_quest_window()
 
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		if ui_dialogue_panel and ui_dialogue_panel.visible:
-			close_dialogue_window()
-			get_viewport().set_input_as_handled()
-			return
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+	if event is InputEventKey and event.pressed and event.keycode == KEY_T:
+		if ui_dialogue_panel and ui_dialogue_panel.visible:
+			close_dialogue_window()
+			get_viewport().set_input_as_handled()
+			return
 
 	if event is InputEventMouseButton and event.pressed and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 		var viewport = get_viewport()
@@ -886,7 +888,7 @@ func setup_local_hud() -> void:
 	d_vbox.add_child(d_hbox)
 
 	ui_dialogue_close_btn = Button.new()
-	ui_dialogue_close_btn.text = "Fechar [ESC]"
+	ui_dialogue_close_btn.text = "Fechar [T]"
 	ui_dialogue_close_btn.custom_minimum_size = Vector2(100, 30)
 	ui_dialogue_close_btn.pressed.connect(close_dialogue_window)
 	d_hbox.add_child(ui_dialogue_close_btn)
@@ -1459,6 +1461,8 @@ func toggle_quest_window() -> void:
 	ui_quest_panel.visible = is_visible
 	
 	if is_visible:
+		# POPULA O DIÁRIO COM AS MISSÕES ATIVAS ASSIM QUE ELE ABRE!
+		populate_quest_log_ui()
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
 		if (not ui_attr_panel or not ui_attr_panel.visible) and (not ui_inventory_panel or not ui_inventory_panel.visible):
@@ -1531,8 +1535,20 @@ func load_player_save(username: String) -> void:
 		if w_item and w_item.mesh_scene:
 			current_weapon_mesh_path = w_item.mesh_scene.resource_path
 
-	active_quests = json_data.get("active_quests", {})
+	client_active_quests = json_data.get("client_active_quests", [])
 	completed_quests = json_data.get("completed_quests", [])
+	
+	active_quests.clear()
+	for q in client_active_quests:
+		var qid = q.get("id", "")
+		if qid != "":
+			active_quests[qid] = {
+				"title": q.get("title", ""),
+				"description": q.get("description", ""),
+				"current": q.get("current", 0),
+				"required": q.get("required", 1),
+				"completed": q.get("completed", false)
+			}
 
 	recalculate_derived_stats()
 	hp = max_hp
@@ -1540,6 +1556,11 @@ func load_player_save(username: String) -> void:
 	
 	update_hud_display()
 	update_inventory_display()
+	update_quest_tracker_ui()
+	populate_quest_log_ui()
+
+	if has_node("/root/QuestManager"):
+		QuestManager.load_quest_board_data_from_json(json_data)
 	
 	# Garante a atualização visual correta de cada slot de equipamento ao iniciar o jogo
 	for slot_key in ["helm", "armor", "boots", "weapon"]:
@@ -1550,9 +1571,6 @@ func load_player_save(username: String) -> void:
 				update_hand_visual(item.mesh_scene)
 		else:
 			update_equipment_slot_visual(slot_key, null)
-
-	if has_node("/root/QuestManager"):
-		QuestManager.sync_player_quests(self)
 
 func save_player_account() -> void:
 	if player_name.is_empty():
@@ -1608,9 +1626,11 @@ func save_player_account() -> void:
 			"y": global_position.y,
 			"z": global_position.z
 		},
-		"active_quests": active_quests,
+		"client_active_quests": client_active_quests,
 		"completed_quests": completed_quests
 	}
+	if has_node("/root/QuestManager"):
+		QuestManager.save_quest_board_data(player_name, account_data)
 
 	var write_file = FileAccess.open(file_path, FileAccess.WRITE)
 	if write_file:
@@ -1633,34 +1653,38 @@ func update_quest_tracker_ui() -> void:
 
 	for q in client_active_quests:
 		var q_title: String = q.get("title", "Missão")
+		var target_name: String = q.get("target_enemy", "Inimigo")
 		var cur: int = int(q.get("current", 0))
 		var req: int = int(q.get("required", 1))
 		var is_done: bool = bool(q.get("completed", false))
 
 		var quest_entry_box = VBoxContainer.new()
 		quest_entry_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		quest_entry_box.add_theme_constant_override("separation", 1)
 
 		var lbl_title = Label.new()
 		lbl_title.text = "• %s" % q_title
-		lbl_title.add_theme_font_size_override("font_size", 12)
-		lbl_title.modulate = Color(0.95, 0.95, 0.95)
+		lbl_title.add_theme_font_size_override("font_size", 11)
+		lbl_title.modulate = Color(1.0, 0.85, 0.3) if q.get("is_main_story", false) else Color(0.95, 0.95, 0.95)
 		quest_entry_box.add_child(lbl_title)
 
 		var lbl_progress = Label.new()
-		lbl_progress.add_theme_font_size_override("font_size", 11)
+		lbl_progress.add_theme_font_size_override("font_size", 10)
 
 		if is_done:
 			lbl_progress.text = "   Pronta para entregar!"
 			lbl_progress.modulate = Color(0.3, 1.0, 0.4)
 		else:
-			lbl_progress.text = "   Progresso: %d / %d" % [cur, req]
-			lbl_progress.modulate = Color(0.75, 0.75, 0.75)
+			# Mostra claramente o objetivo (ex: Matar Orc: 0/10)
+			lbl_progress.text = "   %s: %d / %d" % [target_name, cur, req]
+			lbl_progress.modulate = Color(0.8, 0.8, 0.8)
 
 		quest_entry_box.add_child(lbl_progress)
 		ui_quest_list_vbox.add_child(quest_entry_box)
 
 func populate_quest_log_ui() -> void:
 	if not ui_quest_list_container:
+		print("[ERRO] ui_quest_list_container não encontrado!")
 		return
 
 	for child in ui_quest_list_container.get_children():
@@ -1676,26 +1700,45 @@ func populate_quest_log_ui() -> void:
 
 	for q in client_active_quests:
 		var box = VBoxContainer.new()
+		box.add_theme_constant_override("separation", 4)
+		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		
+		# Título da Missão
 		var title_lbl = Label.new()
-		title_lbl.text = "• %s" % q.get("title", "Missão")
-		title_lbl.modulate = Color(1.0, 0.85, 0.3)
+		var prefix = "⭐ [Principal] " if q.get("is_main_story", false) else "📜 [Caçada] "
+		title_lbl.text = "%s%s" % [prefix, q.get("title", "Missão")]
+		title_lbl.modulate = Color(1.0, 0.85, 0.3) if q.get("is_main_story", false) else Color(0.9, 0.9, 0.9)
 		title_lbl.add_theme_font_size_override("font_size", 13)
 		box.add_child(title_lbl)
 
+		# Descrição detalhada
+		var desc_lbl = Label.new()
+		desc_lbl.text = q.get("description", "Complete o objetivo indicado.")
+		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc_lbl.custom_minimum_size = Vector2(280, 0)
+		desc_lbl.add_theme_font_size_override("font_size", 11)
+		desc_lbl.modulate = Color(0.8, 0.8, 0.8)
+		box.add_child(desc_lbl)
+
+		var target_name = q.get("target_enemy", "Alvo")
 		var cur = int(q.get("current", 0))
 		var req = int(q.get("required", 1))
 		var is_done = bool(q.get("completed", false))
 
+		# Status do progresso
 		var prog_lbl = Label.new()
 		if is_done:
-			prog_lbl.text = "   Status: Pronto para entregar ao NPC!"
+			prog_lbl.text = "   Status: Concluído! Pronto para entregar."
 			prog_lbl.modulate = Color(0.3, 1.0, 0.4)
 		else:
-			prog_lbl.text = "   Progresso: %d / %d" % [cur, req]
-			prog_lbl.modulate = Color(0.8, 0.8, 0.8)
+			prog_lbl.text = "   Progresso (%s): %d / %d" % [target_name, cur, req]
+			prog_lbl.modulate = Color(1.0, 0.6, 0.2)
 		prog_lbl.add_theme_font_size_override("font_size", 11)
 		box.add_child(prog_lbl)
+
+		# Linha separadora
+		var sep = HSeparator.new()
+		box.add_child(sep)
 
 		ui_quest_list_container.add_child(box)
 

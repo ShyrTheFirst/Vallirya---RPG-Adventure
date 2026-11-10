@@ -30,7 +30,6 @@ horizontal_alignment = 1
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer" unique_id=1165383284]
 custom_minimum_size = Vector2(50, 500)
 layout_mode = 2
-columns = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=569783919]
 layout_mode = 2

@@ -1,11 +1,13 @@
 extends Node
 
-# Dicionário central de todas as quests do jogo carregadas por ID
-# Ex: "quest_tutorial": QuestData (recurso .tres)
+# Banco de dados de recursos .tres carregados automaticamente
 var quests_database: Dictionary = {}
 
+# Estado do Quadro de Missões gerenciado globalmente
+var board_quests: Array = []
+var main_story_progress: int = 1
+
 func _ready() -> void:
-	# Carrega automaticamente os recursos de missões da pasta de quests (ajuste o caminho se necessário)
 	_load_quests_from_directory("res://Resources/Quests/")
 	print("[QUEST MANAGER] Inicializado com sucesso. Quests carregadas: ", quests_database.keys())
 
@@ -23,156 +25,266 @@ func _load_quests_from_directory(path: String) -> void:
 						quests_database[quest_res.quest_id] = quest_res
 			file_name = dir.get_next()
 		dir.list_dir_end()
-	else:
-		# Fallback caso a pasta não exista ou usemos carregamento manual via preload
-		print("[QUEST MANAGER] Aviso: Pasta de quests não encontrada em %s. Usando registro manual se necessário." % path)
 
 # --- 1. ATRIBUIR UMA QUEST AO JOGADOR ---
 func assign_quest(player: Node3D, quest_id: String) -> void:
-	if not player or not "active_quests" in player:
+	if not player or not "client_active_quests" in player:
 		return
 
-	if player.active_quests.has(quest_id) or (player.completed_quests is Array and player.completed_quests.has(quest_id)):
+	# Verifica se já tem ativa ou concluída
+	for q in player.client_active_quests:
+		if q.get("id") == quest_id:
+			return
+	if "completed_quests" in player and player.completed_quests.has(quest_id):
 		return
 
-	# Se a quest não estiver no banco dinâmico, você pode definir fallback ou carregar direto
-	var quest_data: QuestData = quests_database.get(quest_id, null)
+	var quest_data: QuestData = null
+	for key in quests_database.keys():
+		if key.to_lower() == quest_id.to_lower():
+			quest_data = quests_database[key]
+			break
 	if not quest_data:
-		print("[QUEST MANAGER] Erro: Quest ID '%s' não foi encontrada no banco de dados!" % quest_id)
+		print("[QUEST MANAGER] Erro: Quest ID '%s' não encontrada no banco de dados!" % quest_id)
 		return
 
-	# Adiciona ao dicionário de missões ativas do player
-	player.active_quests[quest_id] = {
+	var new_quest = {
+		"id": quest_id,
 		"title": quest_data.title,
 		"description": quest_data.description,
+		"target_enemy": quest_data.target_id if "target_id" in quest_data else "",
+		"required": quest_data.required_amount if "required_amount" in quest_data else 1,
 		"current": 0,
-		"required": quest_data.required_amount,
+		"reward_xp": quest_data.reward_xp,
+		"reward_gold": quest_data.reward_gold if "reward_gold" in quest_data else 50,
+		"is_main_story": true,
+		"accepted": true,
 		"completed": false
 	}
 
-	print("[QUEST] Missão aceita: ", quest_data.title)
-	_update_player_quest_hud(player)
-
-# --- 2. PROGRESSO: MONSTRO DERROTADO ---
-func on_monster_killed(player: Node3D, monster_name: String) -> void:
-	if not player or not "active_quests" in player:
-		return
-
-	for q_id in player.active_quests.keys():
-		var quest_entry = player.active_quests[q_id]
-		if quest_entry.get("completed", false):
-			continue
-
-		var quest_data: QuestData = quests_database.get(q_id, null)
-		if quest_data and quest_data.quest_type == QuestData.QuestType.KILL_MONSTERS:
-			# Compara se o alvo bate com o monstro derrotado
-			if quest_data.target_id.to_lower() in monster_name.to_lower():
-				quest_entry["current"] = min(quest_data.required_amount, quest_entry["current"] + 1)
-				
-				if quest_entry["current"] >= quest_data.required_amount:
-					quest_entry["completed"] = true
-					print("[QUEST] Objetivo alcançado! Pronto para entregar: ", quest_data.title)
-
-				_update_player_quest_hud(player)
-
-# --- 3. PROGRESSO: CONVERSA COM NPC ---
-func on_npc_talked(player: Node3D, npc_id: String) -> void:
-	if not player or not "active_quests" in player:
-		return
-
-	for q_id in player.active_quests.keys():
-		var quest_entry = player.active_quests[q_id]
-		if quest_entry.get("completed", false):
-			continue
-
-		var quest_data: QuestData = quests_database.get(q_id, null)
-		if quest_data and quest_data.quest_type == QuestData.QuestType.TALK_TO_NPC:
-			if quest_data.target_id == npc_id:
-				quest_entry["current"] = quest_data.required_amount
-				quest_entry["completed"] = true
-				print("[QUEST] Conversa concluída! Pronto para entregar: ", quest_data.title)
-				_update_player_quest_hud(player)
-
-# --- 4. PROGRESSO: INVENTÁRIO / COLETA DE ITENS ---
-func on_inventory_updated(player: Node3D) -> void:
-	if not player or not "active_quests" in player or not "inventory_items" in player:
-		return
-
-	for q_id in player.active_quests.keys():
-		var quest_entry = player.active_quests[q_id]
-		if quest_entry.get("completed", false):
-			continue
-
-		var quest_data: QuestData = quests_database.get(q_id, null)
-		if quest_data and quest_data.quest_type == QuestData.QuestType.COLLECT_ITEMS:
-			# Conta quantos itens com o resource_path ou ID alvo o player possui
-			var count = 0
-			for slot in player.inventory_items:
-				if slot != null and slot is Dictionary:
-					var item: ItemData = slot.get("item", null)
-					if item and (item.id == quest_data.target_id or item.resource_path == quest_data.target_id):
-						count += slot.get("amount", 1)
-
-			quest_entry["current"] = min(quest_data.required_amount, count)
-			if quest_entry["current"] >= quest_data.required_amount:
-				quest_entry["completed"] = true
-				print("[QUEST] Itens coletados com sucesso! Pronto para entregar: ", quest_data.title)
-
-			_update_player_quest_hud(player)
-
-# --- 5. CONCLUIR E ENTREGAR A QUEST ---
-func complete_and_turn_in_quest(player: Node3D, quest_id: String) -> void:
-	if not player or not "active_quests" in player:
-		return
-
-	if not player.active_quests.has(quest_id):
-		return
-
-	var quest_entry = player.active_quests[quest_id]
-	if not quest_entry.get("completed", false):
-		return
-
-	var quest_data: QuestData = quests_database.get(quest_id, null)
-	if not quest_data:
-		return
-
-	# 1. Remove das ativas e adiciona nas concluídas
-	player.active_quests.erase(quest_id)
-	if not player.completed_quests.has(quest_id):
-		player.completed_quests.append(quest_id)
-
-	# 2. Concede as recompensas de XP
-	if quest_data.reward_xp > 0 and player.has_method("add_experience"):
-		player.add_experience(quest_data.reward_xp)
-
-	# 3. CONcede a recompensa de ITEM (Corrigido aqui!)
-	if quest_data.reward_item and quest_data.reward_item_amount > 0:
-		if player.has_method("add_item_to_inventory"):
-			player.add_item_to_inventory(quest_data.reward_item, quest_data.reward_item_amount)
-			print("[QUEST] Item de recompensa adicionado ao inventário: ", quest_data.reward_item.name)
-
-	print("[QUEST!] Recompensas entregues com sucesso para a missão: ", quest_data.title)
-	_update_player_quest_hud(player)
-
-# Atualiza visualmente o rastreador de missões na tela do player
-func _update_player_quest_hud(player: Node3D) -> void:
-	# Converte o dicionário de ativas em um Array legível para o HUD do player
-	var active_list = []
-	for q_id in player.active_quests.keys():
-		var q_data = player.active_quests[q_id]
-		active_list.append({
-			"id": q_id,
-			"title": q_data["title"],
-			"current": q_data["current"],
-			"required": q_data["required"],
-			"completed": q_data["completed"]
-		})
-
-	# Atualiza a variável local do player e redesenha o tracker
-	player.client_active_quests = active_list
+	player.client_active_quests.append(new_quest)
+	print("[QUEST] Missão atribuída: ", quest_data.title)
+	
 	if player.has_method("update_quest_tracker_ui"):
 		player.update_quest_tracker_ui()
 
-# Sincroniza o estado das quests ao carregar o save do player
-func sync_player_quests(player: Node3D) -> void:
-	_update_player_quest_hud(player)
+# --- 2. PROGRESSO: MONSTRO DERROTADO ---
+func on_monster_killed(player: Node3D, monster_name: String) -> void:
+	if not player or not "client_active_quests" in player:
+		return
+
+	for q in player.client_active_quests:
+		if q.get("completed", false):
+			continue
+
+		var q_id = q.get("id", "")
+		var quest_data: QuestData = quests_database.get(q_id, null)
+		
+		# Verifica se é missão de matar monstro (via QuestData ou via target_enemy procedural)
+		var target = q.get("target_enemy", "")
+		if quest_data and quest_data.quest_type == QuestData.QuestType.KILL_MONSTERS:
+			target = quest_data.target_id
+
+		if target != "" and target.to_lower() in monster_name.to_lower():
+			q["current"] = min(int(q.get("required", 1)), int(q.get("current", 0)) + 1)
+			
+			if int(q.get("current", 0)) >= int(q.get("required", 1)):
+				q["completed"] = true
+				print("[QUEST] Objetivo alcançado! Pronto para entregar: ", q.get("title", ""))
+
+	if player.has_method("update_quest_tracker_ui"):
+		player.update_quest_tracker_ui()
+
+# --- 3. PROGRESSO: CONVERSA COM NPC ---
+func on_npc_talked(player: Node3D, npc_id: String) -> void:
+	if not player or not "client_active_quests" in player:
+		return
+
+	for q in player.client_active_quests:
+		if q.get("completed", false):
+			continue
+
+		var q_id = q.get("id", "")
+		var quest_data: QuestData = quests_database.get(q_id, null)
+		if quest_data and quest_data.quest_type == QuestData.QuestType.TALK_TO_NPC:
+			if quest_data.target_id == npc_id:
+				q["current"] = quest_data.required_amount
+				q["completed"] = true
+				print("[QUEST] Conversa concluída com o NPC %s! Pronto para entregar: " % npc_id, q.get("title", ""))
+
+	if player.has_method("update_quest_tracker_ui"):
+		player.update_quest_tracker_ui()
+
+# --- 4. CONCLUIR E ENTREGAR A QUEST (Recompensas de XP e Itens) ---
+func complete_and_turn_in_quest(player: Node3D, quest_id: String) -> void:
+	if not player or not "client_active_quests" in player:
+		return
+
+	var quest_index = -1
+	var quest_entry = {}
+	
+	for i in range(player.client_active_quests.size()):
+		if player.client_active_quests[i]["id"] == quest_id:
+			quest_index = i
+			quest_entry = player.client_active_quests[i]
+			break
+
+	if quest_index == -1:
+		print("[QUEST] Erro: Quest '%s' não encontrada nas ativas do player para entrega." % quest_id)
+		return
+
+	if not quest_entry.get("completed", false):
+		print("[QUEST] Tentou entregar a quest '%s', mas ela ainda não está concluída!" % quest_id)
+		return
+
+	var quest_data: QuestData = null
+	for key in quests_database.keys():
+		if key.to_lower() == quest_id.to_lower():
+			quest_data = quests_database[key]
+			break
+
+	# 1. Remove das ativas e adiciona nas concluídas do player
+	player.client_active_quests.remove_at(quest_index)
+	if "completed_quests" in player and not player.completed_quests.has(quest_id):
+		player.completed_quests.append(quest_id)
+
+	# 2. Concede Recompensa de Experiência (XP)
+	var reward_xp = quest_data.reward_xp if quest_data else int(quest_entry.get("reward_xp", 50))
+	if reward_xp > 0 and player.has_method("add_experience"):
+		player.add_experience(reward_xp)
+		print("[RECOMPENSA] +", reward_xp, " XP concedidos.")
+
+	# 3. Concede Recompensa de Item (Como a Espada de Ferro do Tutorial!)
+	if quest_data and quest_data.reward_item and quest_data.reward_item_amount > 0:
+		if player.has_method("add_item_to_inventory"):
+			player.add_item_to_inventory(quest_data.reward_item, quest_data.reward_item_amount)
+			print("[RECOMPENSA] Item adicionado ao inventário: ", quest_data.reward_item.name)
+
+	print("[QUEST!] Quest '%s' entregue com sucesso!" % quest_id)
+	
+	if player.has_method("update_quest_tracker_ui"):
+		player.update_quest_tracker_ui()
+	if player.has_method("populate_quest_log_ui"):
+		player.populate_quest_log_ui()
+
+# --- GERAÇÃO DAS 6 MISSÕES DO QUADRO (5 Procedurais + 1 Principal) ---
+func generate_board_quests() -> void:
+	board_quests.clear()
+	
+	var possible_targets = ["Orc Guerreiro", "Goblin", "Aranha"]
+	var verbs = ["Caçar", "Expurgar", "Eliminar ameaças de"]
+	
+	for i in range(5):
+		var target = possible_targets[randi() % possible_targets.size()]
+		var amount = randi_range(5, 12)
+		var gold_reward = amount * 15
+		var xp_reward = amount * 25
+		
+		var quest = {
+			"id": "bounty_%d_%d_%d" % [i, Time.get_ticks_msec(), randi()],
+			"title": "%s %d %s" % [verbs[randi() % verbs.size()], amount, target],
+			"description": "Ajude a guilda eliminando criaturas na região. Derrote %d %ss." % [amount, target],
+			"target_enemy": target,
+			"required": amount,
+			"current": 0,
+			"reward_xp": xp_reward,
+			"reward_gold": gold_reward,
+			"is_main_story": false,
+			"accepted": false,
+			"turned_in": false,
+			"completed": false
+		}
+		board_quests.append(quest)
+	
+	var main_quest = _get_main_story_by_progress(main_story_progress)
+	if not main_quest.is_empty():
+		board_quests.append(main_quest)
+	else:
+		var target = possible_targets[randi() % possible_targets.size()]
+		var amount = randi_range(5, 12)
+		var extra_bounty = {
+			"id": "bounty_extra_%d_%d" % [Time.get_ticks_msec(), randi()],
+			"title": "Patrulha: Caçar %d %s" % [amount, target],
+			"description": "Elimine ameaças extras na região. Derrote %d %ss." % [amount, target],
+			"target_enemy": target,
+			"required": amount,
+			"current": 0,
+			"reward_xp": amount * 25,
+			"reward_gold": amount * 15,
+			"is_main_story": false,
+			"accepted": false,
+			"turned_in": false,
+			"completed": false
+		}
+		board_quests.append(extra_bounty)
+
+func _get_main_story_by_progress(step: int) -> Dictionary:
+	var q_id = "main_story_%d" % step
+	if quests_database.has(q_id):
+		var q_data: QuestData = quests_database[q_id]
+		return {
+			"id": q_id,
+			"title": q_data.title,
+			"description": q_data.description,
+			"target_enemy": q_data.target_id if "target_id" in q_data else "",
+			"required": q_data.required_amount if "required_amount" in q_data else 1,
+			"current": 0,
+			"reward_xp": q_data.reward_xp,
+			"reward_gold": q_data.reward_gold if "reward_gold" in q_data else 50,
+			"is_main_story": true,
+			"accepted": false,
+			"turned_in": false,
+			"completed": false
+		}
+	return {}
+
+func try_refresh_board(player: Node3D) -> bool:
+	if not player or not "client_active_quests" in player:
+		return false
+
+	for active_q in player.client_active_quests:
+		if not active_q.get("completed", false):
+			return false
+
+	main_story_progress += 1
+	generate_board_quests()
+	sync_board_with_player(player)
+	return true
+
+func sync_board_with_player(player: Node3D) -> void:
+	if board_quests.is_empty():
+		generate_board_quests()
+		
+	if not player:
+		return
+
+	for b in board_quests:
+		if "client_active_quests" in player:
+			for active_q in player.client_active_quests:
+				if active_q["id"] == b["id"]:
+					b["accepted"] = true
+					b["completed"] = active_q.get("completed", false)
+					
+		if "completed_quests" in player and player.completed_quests.has(b["id"]):
+			b["accepted"] = true
+			b["turned_in"] = true
+
+# --- PERSISTÊNCIA UNIFICADA DENTRO DO SAVE DO PLAYER ---
+func save_quest_board_data(player_name: String, account_data: Dictionary) -> void:
+	# Embuti os dados do quadro diretamente no dicionário principal da conta do player!
+	account_data["quest_board_data"] = {
+		"main_story_progress": main_story_progress,
+		"board_quests": board_quests
+	}
+
+func load_quest_board_data_from_json(json_data: Dictionary) -> void:
+	# Lê os dados do quadro diretamente de dentro do save unificado do player
+	var board_data = json_data.get("quest_board_data", null)
+	if board_data is Dictionary:
+		main_story_progress = int(board_data.get("main_story_progress", 1))
+		board_quests = board_data.get("board_quests", [])
+	else:
+		main_story_progress = 1
+		generate_board_quests()
+		
+	if board_quests.is_empty():
+		generate_board_quests()
