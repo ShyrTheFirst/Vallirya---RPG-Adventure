@@ -1,0 +1,157 @@
+[gd_resource type="Environment" format=3 uid="uid://v6qwweiju7a7"]
+
+[sub_resource type="Shader" id="Shader_vhl67"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.2.1.stable's ProceduralSkyMaterial.
+
+shader_type sky;
+render_mode use_debanding;
+
+uniform vec4 sky_top_color : source_color = vec4(0.385, 0.454, 0.55, 1.0);
+uniform vec4 sky_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
+uniform float sky_curve : hint_range(0, 1) = 0.15;
+uniform float sky_energy = 1.0;
+uniform sampler2D sky_cover : filter_linear, source_color, hint_default_black;
+uniform vec4 sky_cover_modulate : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 ground_bottom_color : source_color = vec4(0.2, 0.169, 0.133, 1.0);
+uniform vec4 ground_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
+uniform float ground_curve : hint_range(0, 1) = 0.02;
+uniform float ground_energy = 1.0;
+uniform float sun_angle_max = 30.0;
+uniform float sun_curve : hint_range(0, 1) = 0.15;
+
+uniform sampler2D cloudtexture : filter_linear_mipmap, repeat_enable;
+uniform sampler2D cloudtexture2 : filter_linear_mipmap, repeat_enable;
+uniform vec2 cloud_direction = vec2(4.0, 1.0);
+uniform vec2 cloud_direction2 = vec2(2.0, 3.0);
+uniform vec2 cloud_scale = vec2(0.03, 0.03);
+uniform float cloud_distance = 1.0;
+
+void sky() {
+	float v_angle = acos(clamp(EYEDIR.y, -1.0, 1.0));
+	float c = (1.0 - v_angle / (PI * 0.5));
+	vec3 sky = mix(sky_horizon_color.rgb, sky_top_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / sky_curve), 0.0, 1.0));
+	sky *= sky_energy;
+
+	if (LIGHT0_ENABLED) {
+		float sun_angle = acos(dot(LIGHT0_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT0_SIZE) {
+			sky = LIGHT0_COLOR * LIGHT0_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT0_SIZE) / (sun_angle_max - LIGHT0_SIZE);
+			sky = mix(LIGHT0_COLOR * LIGHT0_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	if (LIGHT1_ENABLED) {
+		float sun_angle = acos(dot(LIGHT1_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT1_SIZE) {
+			sky = LIGHT1_COLOR * LIGHT1_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT1_SIZE) / (sun_angle_max - LIGHT1_SIZE);
+			sky = mix(LIGHT1_COLOR * LIGHT1_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	if (LIGHT2_ENABLED) {
+		float sun_angle = acos(dot(LIGHT2_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT2_SIZE) {
+			sky = LIGHT2_COLOR * LIGHT2_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT2_SIZE) / (sun_angle_max - LIGHT2_SIZE);
+			sky = mix(LIGHT2_COLOR * LIGHT2_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	if (LIGHT3_ENABLED) {
+		float sun_angle = acos(dot(LIGHT3_DIRECTION, EYEDIR));
+		if (sun_angle < LIGHT3_SIZE) {
+			sky = LIGHT3_COLOR * LIGHT3_ENERGY;
+		} else if (sun_angle < sun_angle_max) {
+			float c2 = (sun_angle - LIGHT3_SIZE) / (sun_angle_max - LIGHT3_SIZE);
+			sky = mix(LIGHT3_COLOR * LIGHT3_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
+		}
+	}
+
+	vec4 sky_cover_texture = texture(sky_cover, SKY_COORDS);
+	sky += (sky_cover_texture.rgb * sky_cover_modulate.rgb) * sky_cover_texture.a * sky_cover_modulate.a * sky_energy;
+
+	c = (v_angle - (PI * 0.5)) / (PI * 0.5);
+	vec3 ground = mix(ground_horizon_color.rgb, ground_bottom_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / ground_curve), 0.0, 1.0));
+	ground *= ground_energy;
+
+	// Renderização suave de nuvens apenas no hemisfério superior
+	if (EYEDIR.y > 0.0) {
+		vec2 sky_uv = EYEDIR.xz / (EYEDIR.y + 0.28);
+
+		float n1 = texture(cloudtexture, sky_uv * cloud_scale + TIME * cloud_direction * 0.0005).r;
+		float n2 = texture(cloudtexture2, sky_uv * cloud_scale * 0.75 + TIME * cloud_direction2 * 0.0005).r;
+
+		// Filtro suave para dar corpo às nuvens
+		float cloud_mask = smoothstep(0.35, 0.7, n1 * n2 * 1.7);
+
+		// Desvanece gradualmente antes de tocar a linha do horizonte
+		cloud_mask *= smoothstep(0.0, 0.4, EYEDIR.y);
+
+		vec3 cloud_color = vec3(0.95, 0.98, 1.0);
+		sky = mix(sky, cloud_color, cloud_mask * 0.85);
+	}
+
+	COLOR = mix(ground, sky, step(0.0, EYEDIR.y));
+}"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_debkw"]
+offset = Vector3(1, 1, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kbuji"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_debkw")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_bb1ug"]
+seed = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xcq2r"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_bb1ug")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iu8i6"]
+shader = SubResource("Shader_vhl67")
+shader_parameter/sky_top_color = Color(0.168627, 0.709804, 0.933333, 1)
+shader_parameter/sky_horizon_color = Color(0.168627, 0.992157, 1, 1)
+shader_parameter/sky_curve = 0.15
+shader_parameter/sky_energy = 1.0
+shader_parameter/sky_cover_modulate = Color(1, 1, 1, 1)
+shader_parameter/ground_bottom_color = Color(0.168627, 0.709804, 0.933333, 1)
+shader_parameter/ground_horizon_color = Color(0.168627, 0.992157, 1, 1)
+shader_parameter/ground_curve = 0.02
+shader_parameter/ground_energy = 1.0
+shader_parameter/sun_angle_max = 1.5708
+shader_parameter/sun_curve = 0.15
+shader_parameter/cloudtexture = SubResource("NoiseTexture2D_kbuji")
+shader_parameter/cloudtexture2 = SubResource("NoiseTexture2D_xcq2r")
+shader_parameter/cloud_direction = Vector2(4, 1)
+shader_parameter/cloud_direction2 = Vector2(2, 3)
+shader_parameter/cloud_scale = Vector2(0.02, 0.02)
+shader_parameter/cloud_distance = 10.0
+
+[sub_resource type="Sky" id="Sky_30t2u"]
+sky_material = SubResource("ShaderMaterial_iu8i6")
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_30t2u")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.5176471, 0.627451, 0.69803923, 1)
+fog_light_energy = 0.85
+fog_sun_scatter = 0.2
+fog_density = 1.0
+fog_aerial_perspective = 0.4
+fog_sky_affect = 0.7
+fog_depth_begin = 80.0
+fog_depth_end = 260.0

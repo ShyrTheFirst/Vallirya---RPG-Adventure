@@ -15,10 +15,16 @@ run/main_scene="uid://cxw8jiumrvcvj"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://da4rlysarg0k3"
+
 [autoload]
 
 QuestManager="*uid://dastricacomjm"
 LevelManager="*uid://wt4370n57u57"
+AudioManager="*uid://cqysrcfjlu8jp"
+CraftManager="*uid://devokygwxxw5"
 
 [display]
 

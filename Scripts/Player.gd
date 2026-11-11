@@ -243,10 +243,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 
-	if event is InputEventMouseButton and event.pressed and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
-		var viewport = get_viewport()
-		if viewport and not viewport.gui_get_hovered_control():
+	if event is InputEventKey and event.pressed and (event.keycode == KEY_CTRL):
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		get_viewport().set_input_as_handled()
 		return
 
 	if Input.is_action_just_pressed("Ataque") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -411,6 +413,8 @@ func add_experience(amount: int) -> void:
 		mana = max_mana
 		rpc_play_levelup_effect()
 		save_player_account()
+		if name_label:
+			name_label.text = "%s [Nv. %d]" % [player_name, player_level]
 
 	update_hud_display()
 

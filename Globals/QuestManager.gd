@@ -170,7 +170,7 @@ func complete_and_turn_in_quest(player: Node3D, quest_id: String) -> void:
 func generate_board_quests() -> void:
 	board_quests.clear()
 	
-	var possible_targets = ["Orc Guerreiro", "Goblin", "Aranha"]
+	var possible_targets = ["Orc Guerreiro", "Goblin Errante", "Aranha"]
 	var verbs = ["Caçar", "Expurgar", "Eliminar ameaças de"]
 	
 	for i in range(5):

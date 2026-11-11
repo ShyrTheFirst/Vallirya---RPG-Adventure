@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bpm1u0yq3v7w0"
+path="res://.godot/imported/5. Emberlight.mp3-9e9f5692df136d834b20cb8272bdb6e4.mp3str"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Fantasy Ambient Music/5. Emberlight.mp3"
+dest_files=["res://.godot/imported/5. Emberlight.mp3-9e9f5692df136d834b20cb8272bdb6e4.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

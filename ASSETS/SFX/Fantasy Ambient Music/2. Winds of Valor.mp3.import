@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cfn1cqqb6k013"
+path="res://.godot/imported/2. Winds of Valor.mp3-e4d002c5f659f2db50b638382e798ab7.mp3str"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Fantasy Ambient Music/2. Winds of Valor.mp3"
+dest_files=["res://.godot/imported/2. Winds of Valor.mp3-e4d002c5f659f2db50b638382e798ab7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

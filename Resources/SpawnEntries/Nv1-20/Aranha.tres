@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3 uid="uid://rnpfejbu7ai7"]
+
+[ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/SpawnEntry.gd" id="1_genay"]
+[ext_resource type="PackedScene" uid="uid://dfxluh22i38xf" path="res://Scenes/Aranha.tscn" id="1_wauas"]
+
+[resource]
+script = ExtResource("1_genay")
+scene = ExtResource("1_wauas")
+count = 5
+min_level = 15
+max_level = 20
+metadata/_custom_type_script = "uid://cbe7834febh5o"

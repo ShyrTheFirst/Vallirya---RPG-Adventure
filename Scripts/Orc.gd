@@ -37,15 +37,17 @@ func execute_attack(target: CharacterBody3D, range_dist: float) -> void:
 	var combo_step = randi_range(1, 5)
 	var anim_name = "Armature|Ataque %d" % combo_step
 	
-	# Chamada direta local (sem RPC)
 	play_orc_attack(anim_name)
 
 func play_orc_attack(anim_name: String) -> void:
+	# 1. Dispara a animação na StateMachine de combos (que é o que realmente toca o ataque)
 	if attacks_playback:
 		attacks_playback.start(anim_name)
 		
+	# 2. Se o seu AnimationTree realmente usa o OneShot, chamamos direto sem o 'has_parameter'
 	if anim_tree:
 		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 		
+	# 3. Toca o som de ataque
 	if attack_audio and attack_audio.stream:
 		attack_audio.play()

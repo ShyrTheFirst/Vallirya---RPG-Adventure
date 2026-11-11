@@ -7,10 +7,12 @@ extends Node3D
 @onready var monster_spawn_areas: Node3D = get_node_or_null("MonsterSpawnAreas")
 @onready var prop_spawn_areas: Node3D = get_node_or_null("PropSpawnAreas")
 @onready var props_container: Node3D = get_node_or_null("PropsContainer")
+@onready var bgm_player: AudioStreamPlayer = $BGMPlayer
 
 var default_drop_scene = preload("res://Resources/Scenes/drop.tscn")
 
 func _ready() -> void:
+	bgm_player.play()
 	# Garante que os containers essenciais existam na cena
 	if not props_container:
 		props_container = Node3D.new()

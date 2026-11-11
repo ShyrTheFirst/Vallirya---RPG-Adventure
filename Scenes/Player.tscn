@@ -6827,18 +6827,21 @@ stream = ExtResource("2_kyqiw")
 unit_size = 5.0
 max_distance = 20.0
 max_polyphony = 2
+bus = &"Enemy Player SFX"
 
 [node name="AttackAudio" type="AudioStreamPlayer3D" parent="." unique_id=1593273802]
 stream = ExtResource("3_gntrk")
 unit_size = 4.0
 max_distance = 15.0
 max_polyphony = 2
+bus = &"Enemy Player SFX"
 
 [node name="StepAudio" type="AudioStreamPlayer3D" parent="." unique_id=1170253230]
 stream = ExtResource("20_m0x7a")
 unit_size = 3.0
 max_distance = 15.0
 max_polyphony = 2
+bus = &"Enemy Player SFX"
 
 [node name="Slashes" type="Node3D" parent="." unique_id=1474885773]
 
@@ -6879,3 +6882,4 @@ stream = ExtResource("22_x63xi")
 unit_size = 5.0
 max_distance = 25.0
 max_polyphony = 2
+bus = &"Enemy Player SFX"

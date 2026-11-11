@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bah4v4lvaiy37"
+path="res://.godot/imported/3. Darkwood Path.mp3-6abf7b97a49497147a4eed25e5db7dff.mp3str"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Fantasy Ambient Music/3. Darkwood Path.mp3"
+dest_files=["res://.godot/imported/3. Darkwood Path.mp3-6abf7b97a49497147a4eed25e5db7dff.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

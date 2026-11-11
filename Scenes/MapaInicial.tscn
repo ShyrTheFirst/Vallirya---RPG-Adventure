@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c14531cjaajji" path="res://Scripts/world.gd" id="1_5cjrv"]
 [ext_resource type="Script" uid="uid://cmav6fs21bxlq" path="res://Scripts/PropSpawner.gd" id="2_7yo87"]
+[ext_resource type="Environment" uid="uid://v6qwweiju7a7" path="res://ASSETS/VFX/WorldEnv.tres" id="2_pfy1j"]
 [ext_resource type="Script" uid="uid://bf8hkvybxc4lu" path="res://Scripts/EnemySpawner.gd" id="2_q2d71"]
 [ext_resource type="Texture2D" uid="uid://bjtmyqgmx5thh" path="res://ASSETS/Terrenos/MapaInicial_0.png" id="2_y7y61"]
 [ext_resource type="PackedScene" uid="uid://dlyhpe74ol48k" path="res://Scenes/Props/arvore_a.tscn" id="3_b5aes"]
@@ -20,9 +21,13 @@
 [ext_resource type="PackedScene" uid="uid://map2og30fvuu" path="res://Scenes/Props/arvore_c_normal.tscn" id="11_0bcf6"]
 [ext_resource type="PackedScene" uid="uid://b2pklf13r4hqo" path="res://Scenes/Props/galho_arvore.tscn" id="12_y1bqn"]
 [ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/SpawnEntry.gd" id="20_ntf1i"]
-[ext_resource type="Resource" uid="uid://dyahr2odless2" path="res://Resources/SpawnEntries/Orcs.tres" id="21_644y4"]
+[ext_resource type="Resource" uid="uid://dyahr2odless2" path="res://Resources/SpawnEntries/Nv1-20/Orcs.tres" id="21_644y4"]
+[ext_resource type="AudioStream" uid="uid://dvqq5awj6glom" path="res://ASSETS/SFX/Forest Day.wav" id="22_11wv0"]
 [ext_resource type="PackedScene" uid="uid://cf5mjapvui5hv" path="res://Scenes/Props/quadro_avisos.tscn" id="22_644y4"]
+[ext_resource type="Resource" uid="uid://rnpfejbu7ai7" path="res://Resources/SpawnEntries/Nv1-20/Aranha.tres" id="22_hk40w"]
+[ext_resource type="Resource" uid="uid://p1ekm7elu0e5" path="res://Resources/SpawnEntries/Nv1-20/Goblin.tres" id="22_iamah"]
 [ext_resource type="PackedScene" uid="uid://dxuvjxn7i6cmt" path="res://Scenes/NPCs/npc_valkor.tscn" id="24_d3ars"]
+[ext_resource type="PackedScene" uid="uid://58yfc58ogy4d" path="res://Scenes/Props/poste_luz.tscn" id="31_mfh7x"]
 [ext_resource type="PackedScene" uid="uid://dbi1b5myivpu8" path="res://Scenes/casa_normal_ardosia.tscn" id="36_d2jk0"]
 [ext_resource type="PackedScene" uid="uid://fn76k3ifu4r5" path="res://Scenes/Props/bau_simples.tscn" id="39_bbwj2"]
 [ext_resource type="PackedScene" uid="uid://kcfbtuyqo7xw" path="res://Scenes/Props/mesa.tscn" id="39_uvb3s"]
@@ -31,162 +36,6 @@
 [ext_resource type="PackedScene" uid="uid://x1tg1b5gfeuc" path="res://Scenes/Props/bigorna_basica.tscn" id="41_fq1sc"]
 [ext_resource type="PackedScene" uid="uid://dw3tdthgpo1bv" path="res://Scenes/casa_sobrado_ardosia.tscn" id="51_irs1d"]
 [ext_resource type="PackedScene" uid="uid://cu4vls5k8j3yn" path="res://Scenes/castelo_ardosia.tscn" id="68_d1bd8"]
-
-[sub_resource type="Shader" id="Shader_vhl67"]
-code = "// NOTE: Shader automatically converted from Godot Engine 4.2.1.stable's ProceduralSkyMaterial.
-
-shader_type sky;
-render_mode use_debanding;
-
-uniform vec4 sky_top_color : source_color = vec4(0.385, 0.454, 0.55, 1.0);
-uniform vec4 sky_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
-uniform float sky_curve : hint_range(0, 1) = 0.15;
-uniform float sky_energy = 1.0;
-uniform sampler2D sky_cover : filter_linear, source_color, hint_default_black;
-uniform vec4 sky_cover_modulate : source_color = vec4(1.0, 1.0, 1.0, 1.0);
-uniform vec4 ground_bottom_color : source_color = vec4(0.2, 0.169, 0.133, 1.0);
-uniform vec4 ground_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
-uniform float ground_curve : hint_range(0, 1) = 0.02;
-uniform float ground_energy = 1.0;
-uniform float sun_angle_max = 30.0;
-uniform float sun_curve : hint_range(0, 1) = 0.15;
-
-uniform sampler2D cloudtexture : filter_linear_mipmap, repeat_enable;
-uniform sampler2D cloudtexture2 : filter_linear_mipmap, repeat_enable;
-uniform vec2 cloud_direction = vec2(4.0, 1.0);
-uniform vec2 cloud_direction2 = vec2(2.0, 3.0);
-uniform vec2 cloud_scale = vec2(0.03, 0.03);
-uniform float cloud_distance = 1.0;
-
-void sky() {
-	float v_angle = acos(clamp(EYEDIR.y, -1.0, 1.0));
-	float c = (1.0 - v_angle / (PI * 0.5));
-	vec3 sky = mix(sky_horizon_color.rgb, sky_top_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / sky_curve), 0.0, 1.0));
-	sky *= sky_energy;
-
-	if (LIGHT0_ENABLED) {
-		float sun_angle = acos(dot(LIGHT0_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT0_SIZE) {
-			sky = LIGHT0_COLOR * LIGHT0_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT0_SIZE) / (sun_angle_max - LIGHT0_SIZE);
-			sky = mix(LIGHT0_COLOR * LIGHT0_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	if (LIGHT1_ENABLED) {
-		float sun_angle = acos(dot(LIGHT1_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT1_SIZE) {
-			sky = LIGHT1_COLOR * LIGHT1_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT1_SIZE) / (sun_angle_max - LIGHT1_SIZE);
-			sky = mix(LIGHT1_COLOR * LIGHT1_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	if (LIGHT2_ENABLED) {
-		float sun_angle = acos(dot(LIGHT2_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT2_SIZE) {
-			sky = LIGHT2_COLOR * LIGHT2_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT2_SIZE) / (sun_angle_max - LIGHT2_SIZE);
-			sky = mix(LIGHT2_COLOR * LIGHT2_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	if (LIGHT3_ENABLED) {
-		float sun_angle = acos(dot(LIGHT3_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT3_SIZE) {
-			sky = LIGHT3_COLOR * LIGHT3_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT3_SIZE) / (sun_angle_max - LIGHT3_SIZE);
-			sky = mix(LIGHT3_COLOR * LIGHT3_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	vec4 sky_cover_texture = texture(sky_cover, SKY_COORDS);
-	sky += (sky_cover_texture.rgb * sky_cover_modulate.rgb) * sky_cover_texture.a * sky_cover_modulate.a * sky_energy;
-
-	c = (v_angle - (PI * 0.5)) / (PI * 0.5);
-	vec3 ground = mix(ground_horizon_color.rgb, ground_bottom_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / ground_curve), 0.0, 1.0));
-	ground *= ground_energy;
-
-	// Renderização suave de nuvens apenas no hemisfério superior
-	if (EYEDIR.y > 0.0) {
-		vec2 sky_uv = EYEDIR.xz / (EYEDIR.y + 0.28);
-
-		float n1 = texture(cloudtexture, sky_uv * cloud_scale + TIME * cloud_direction * 0.0005).r;
-		float n2 = texture(cloudtexture2, sky_uv * cloud_scale * 0.75 + TIME * cloud_direction2 * 0.0005).r;
-
-		// Filtro suave para dar corpo às nuvens
-		float cloud_mask = smoothstep(0.35, 0.7, n1 * n2 * 1.7);
-
-		// Desvanece gradualmente antes de tocar a linha do horizonte
-		cloud_mask *= smoothstep(0.0, 0.4, EYEDIR.y);
-
-		vec3 cloud_color = vec3(0.95, 0.98, 1.0);
-		sky = mix(sky, cloud_color, cloud_mask * 0.85);
-	}
-
-	COLOR = mix(ground, sky, step(0.0, EYEDIR.y));
-}"
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_debkw"]
-offset = Vector3(1, 1, 1)
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kbuji"]
-width = 1024
-height = 1024
-noise = SubResource("FastNoiseLite_debkw")
-seamless = true
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_bb1ug"]
-seed = 3
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xcq2r"]
-width = 1024
-height = 1024
-noise = SubResource("FastNoiseLite_bb1ug")
-seamless = true
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_iu8i6"]
-shader = SubResource("Shader_vhl67")
-shader_parameter/sky_top_color = Color(0.168627, 0.709804, 0.933333, 1)
-shader_parameter/sky_horizon_color = Color(0.168627, 0.992157, 1, 1)
-shader_parameter/sky_curve = 0.15
-shader_parameter/sky_energy = 1.0
-shader_parameter/sky_cover_modulate = Color(1, 1, 1, 1)
-shader_parameter/ground_bottom_color = Color(0.168627, 0.709804, 0.933333, 1)
-shader_parameter/ground_horizon_color = Color(0.168627, 0.992157, 1, 1)
-shader_parameter/ground_curve = 0.02
-shader_parameter/ground_energy = 1.0
-shader_parameter/sun_angle_max = 1.5708
-shader_parameter/sun_curve = 0.15
-shader_parameter/cloudtexture = SubResource("NoiseTexture2D_kbuji")
-shader_parameter/cloudtexture2 = SubResource("NoiseTexture2D_xcq2r")
-shader_parameter/cloud_direction = Vector2(4, 1)
-shader_parameter/cloud_direction2 = Vector2(2, 3)
-shader_parameter/cloud_scale = Vector2(0.02, 0.02)
-shader_parameter/cloud_distance = 10.0
-
-[sub_resource type="Sky" id="Sky_30t2u"]
-sky_material = SubResource("ShaderMaterial_iu8i6")
-
-[sub_resource type="Environment" id="Environment_ve8tj"]
-background_mode = 2
-sky = SubResource("Sky_30t2u")
-ambient_light_source = 3
-ambient_light_color = Color(1, 1, 1, 1)
-fog_enabled = true
-fog_mode = 1
-fog_light_color = Color(0.5176471, 0.627451, 0.69803923, 1)
-fog_light_energy = 0.85
-fog_sun_scatter = 0.2
-fog_density = 1.0
-fog_aerial_perspective = 0.4
-fog_sky_affect = 0.7
-fog_depth_begin = 80.0
-fog_depth_end = 260.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqsmw"]
 resource_name = "M_Ilha01_A"
@@ -341,68 +190,83 @@ shadow_mesh = SubResource("ArrayMesh_mbck2")
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_kwl8l"]
 data = PackedVector3Array(-0.23629999, 0.1302, 0.012, -0.2536, 0.053799998, 0.012, -0.3777, 0.0828, -0.2713, -0.3777, 0.0828, -0.2713, -0.35189998, 0.197, -0.2713, -0.23629999, 0.1302, 0.012, 0.1457, -0.1648, 0.012, 0.1563, -0.100899994, 0.012, 0.2261, -0.1296, -0.024699999, 0.2473, -0.0532, -0.024699999, 0.24689999, 0.0139, -0.024699999, 0.5324, 0.0232, -0.21689999, 0.5324, 0.0232, -0.21689999, 0.5791, -0.077199996, -0.21689999, 0.2473, -0.0532, -0.024699999, -0.2536, 0.053799998, 0.012, -0.23629999, -0.048499998, 0.012, -0.35189998, -0.070199996, -0.2713, -0.35189998, -0.070199996, -0.2713, -0.3777, 0.0828, -0.2713, -0.2536, 0.053799998, 0.012, 0.23539999, 0.108899996, -0.024699999, 0.56119996, 0.1652, -0.21689999, 0.5324, 0.0232, -0.21689999, 0.5324, 0.0232, -0.21689999, 0.24689999, 0.0139, -0.024699999, 0.23539999, 0.108899996, -0.024699999, -0.19579999, -0.1575, 0.012, -0.2913, -0.2332, -0.2713, -0.35189998, -0.070199996, -0.2713, -0.35189998, -0.070199996, -0.2713, -0.23629999, -0.048499998, 0.012, -0.19579999, -0.1575, 0.012, 0.23539999, 0.108899996, -0.024699999, 0.20019999, 0.1634, 0.012, 0.5085, 0.24669999, -0.21689999, 0.5085, 0.24669999, -0.21689999, 0.56119996, 0.1652, -0.21689999, 0.23539999, 0.108899996, -0.024699999, -0.19579999, -0.1575, 0.012, -0.0791, -0.1881, 0.012, -0.11669999, -0.27899998, -0.2713, -0.11669999, -0.27899998, -0.2713, -0.2913, -0.2332, -0.2713, -0.19579999, -0.1575, 0.012, 0.20019999, 0.1634, 0.012, 0.0985, 0.1721, 0.012, 0.1489, 0.25959998, -0.21689999, 0.1489, 0.25959998, -0.21689999, 0.5085, 0.24669999, -0.21689999, 0.20019999, 0.1634, 0.012, 0.2473, -0.0532, -0.024699999, 0.5791, -0.077199996, -0.21689999, 0.5473, -0.19139999, -0.21689999, 0.5473, -0.19139999, -0.21689999, 0.2261, -0.1296, -0.024699999, 0.2473, -0.0532, -0.024699999, -0.0791, -0.1881, 0.012, -0.0179, -0.167, 0.012, -0.0368, -0.2818, -0.2713, -0.0368, -0.2818, -0.2713, -0.11669999, -0.27899998, -0.2713, -0.0791, -0.1881, 0.012, 0.0985, 0.1721, 0.012, -0.0231, 0.2066, 0.012, 0.0991, 0.2066, -0.2713, 0.0991, 0.2066, -0.2713, 0.1489, 0.25959998, -0.21689999, 0.0985, 0.1721, 0.012, 0.2261, -0.1296, -0.024699999, 0.5473, -0.19139999, -0.21689999, 0.21939999, -0.24409999, -0.21689999, 0.21939999, -0.24409999, -0.21689999, 0.1457, -0.1648, 0.012, 0.2261, -0.1296, -0.024699999, 0.0991, 0.2066, -0.2713, 0.5473, -0.19139999, -0.21689999, 0.5791, -0.077199996, -0.21689999, 0.0991, 0.2066, -0.2713, 0.21939999, -0.24409999, -0.21689999, 0.5473, -0.19139999, -0.21689999, 0.0991, 0.2066, -0.2713, 0.1136, -0.2595, -0.2713, 0.21939999, -0.24409999, -0.21689999, 0.1136, -0.2595, -0.2713, 0.1384, -0.2837, -0.21689999, 0.21939999, -0.24409999, -0.21689999, 0.1489, 0.25959998, -0.21689999, 0.0991, 0.2066, -0.2713, 0.5791, -0.077199996, -0.21689999, 0.1489, 0.25959998, -0.21689999, 0.5791, -0.077199996, -0.21689999, 0.5324, 0.0232, -0.21689999, 0.5085, 0.24669999, -0.21689999, 0.1489, 0.25959998, -0.21689999, 0.5324, 0.0232, -0.21689999, 0.5085, 0.24669999, -0.21689999, 0.5324, 0.0232, -0.21689999, 0.56119996, 0.1652, -0.21689999, -0.0231, 0.2066, 0.012, -0.1706, 0.17469999, 0.012, -0.25349998, 0.2636, -0.2713, -0.25349998, 0.2636, -0.2713, 0.0991, 0.2066, -0.2713, -0.0231, 0.2066, 0.012, -0.0058, -0.1927, 0.012, 0.0967, -0.21769999, 0.012, 0.1384, -0.2837, -0.21689999, 0.1384, -0.2837, -0.21689999, 0.1136, -0.2595, -0.2713, -0.0058, -0.1927, 0.012, -0.0058, -0.1927, 0.012, 0.1136, -0.2595, -0.2713, -0.0368, -0.2818, -0.2713, -0.0368, -0.2818, -0.2713, -0.0179, -0.167, 0.012, -0.0058, -0.1927, 0.012, -0.23629999, 0.1302, 0.012, -0.35189998, 0.197, -0.2713, -0.25349998, 0.2636, -0.2713, -0.25349998, 0.2636, -0.2713, -0.1706, 0.17469999, 0.012, -0.23629999, 0.1302, 0.012, 0.1457, -0.1648, 0.012, 0.21939999, -0.24409999, -0.21689999, 0.1384, -0.2837, -0.21689999, 0.1384, -0.2837, -0.21689999, 0.0967, -0.21769999, 0.012, 0.1457, -0.1648, 0.012, -0.0368, -0.2818, -0.2713, 0.0991, 0.2066, -0.2713, -0.25349998, 0.2636, -0.2713, -0.0368, -0.2818, -0.2713, 0.1136, -0.2595, -0.2713, 0.0991, 0.2066, -0.2713, -0.0368, -0.2818, -0.2713, -0.25349998, 0.2636, -0.2713, -0.35189998, 0.197, -0.2713, -0.0368, -0.2818, -0.2713, -0.35189998, 0.197, -0.2713, -0.3777, 0.0828, -0.2713, -0.0368, -0.2818, -0.2713, -0.3777, 0.0828, -0.2713, -0.35189998, -0.070199996, -0.2713, -0.0368, -0.2818, -0.2713, -0.35189998, -0.070199996, -0.2713, -0.2913, -0.2332, -0.2713, -0.0368, -0.2818, -0.2713, -0.2913, -0.2332, -0.2713, -0.11669999, -0.27899998, -0.2713, 0.1648, -0.049799997, 0.012, 0.1457, -0.1648, 0.012, 0.0967, -0.21769999, 0.012, 0.1648, -0.049799997, 0.012, 0.1563, -0.100899994, 0.012, 0.1457, -0.1648, 0.012, 0.1648, -0.049799997, 0.012, 0.0967, -0.21769999, 0.012, -0.0058, -0.1927, 0.012, 0.17369999, 0.0042, 0.012, 0.1648, -0.049799997, 0.012, -0.0058, -0.1927, 0.012, 0.185, 0.071899995, 0.012, 0.17369999, 0.0042, 0.012, -0.0058, -0.1927, 0.012, 0.20019999, 0.1634, 0.012, 0.185, 0.071899995, 0.012, -0.0058, -0.1927, 0.012, 0.0985, 0.1721, 0.012, 0.20019999, 0.1634, 0.012, -0.0058, -0.1927, 0.012, -0.0231, 0.2066, 0.012, 0.0985, 0.1721, 0.012, -0.0058, -0.1927, 0.012, -0.1706, 0.17469999, 0.012, -0.0231, 0.2066, 0.012, -0.0058, -0.1927, 0.012, -0.1706, 0.17469999, 0.012, -0.0058, -0.1927, 0.012, -0.0179, -0.167, 0.012, -0.23629999, 0.1302, 0.012, -0.1706, 0.17469999, 0.012, -0.0179, -0.167, 0.012, -0.2536, 0.053799998, 0.012, -0.23629999, 0.1302, 0.012, -0.0179, -0.167, 0.012, -0.23629999, -0.048499998, 0.012, -0.2536, 0.053799998, 0.012, -0.0179, -0.167, 0.012, -0.19579999, -0.1575, 0.012, -0.23629999, -0.048499998, 0.012, -0.0179, -0.167, 0.012, -0.19579999, -0.1575, 0.012, -0.0179, -0.167, 0.012, -0.0791, -0.1881, 0.012, 0.185, 0.071899995, 0.012, 0.23539999, 0.108899996, -0.024699999, 0.24689999, 0.0139, -0.024699999, 0.24689999, 0.0139, -0.024699999, 0.17369999, 0.0042, 0.012, 0.185, 0.071899995, 0.012, 0.1648, -0.049799997, 0.012, 0.2473, -0.0532, -0.024699999, 0.2261, -0.1296, -0.024699999, 0.2261, -0.1296, -0.024699999, 0.1563, -0.100899994, 0.012, 0.1648, -0.049799997, 0.012, 0.17369999, 0.0042, 0.012, 0.24689999, 0.0139, -0.024699999, 0.2473, -0.0532, -0.024699999, 0.2473, -0.0532, -0.024699999, 0.1648, -0.049799997, 0.012, 0.17369999, 0.0042, 0.012, 0.20019999, 0.1634, 0.012, 0.23539999, 0.108899996, -0.024699999, 0.185, 0.071899995, 0.012)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_57qmd"]
-size = Vector3(50.58197, 5, 102.09204)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_g4v7s"]
+height = 1.1728516
+radius = 38.230957
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ti1bm"]
-size = Vector3(154.90317, 5, 41.357544)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_tnw7q"]
+height = 1.1728516
+radius = 27.572754
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_8l3nt"]
-size = Vector3(134.19676, 5, 58.023308)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_wi15y"]
+height = 1.1728516
+radius = 15.841309
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_kwl8l"]
-size = Vector3(91.35956, 5, 78.09238)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_qrjxm"]
+height = 1.1728516
+radius = 10.668457
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_xiqgv"]
-size = Vector3(32.65255, 5, 44.040844)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pfy1j"]
+height = 1.1728516
+radius = 10.501953
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_waglr"]
-size = Vector3(28.14891, 5, 59.462402)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_we6k1"]
+height = 1.1728516
+radius = 18.609863
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_rwt1y"]
-size = Vector3(104.0519, 5, 25.544952)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_44qgb"]
+height = 1.1728516
+radius = 19.532227
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_7yo87"]
-size = Vector3(34.221893, 5, 29.844635)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_h0n6w"]
+height = 1.1728516
+radius = 73.53027
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_mvfa8"]
-size = Vector3(46.996887, 5, 44.787506)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_vcow6"]
+height = 1.1728516
+radius = 71.927734
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_r0dna"]
-size = Vector3(108.73253, 5, 85.36172)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_421jm"]
+height = 1.1728516
+radius = 19.532227
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_b5aes"]
-size = Vector3(12.180767, 5, 44.040844)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_id3l1"]
+height = 1.1728516
+radius = 37.623535
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_w0bku"]
-size = Vector3(27.559902, 11.626526, 27.622477)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_7df0d"]
+height = 1.1728516
+radius = 13.512695
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_0ao37"]
-size = Vector3(27.559902, 11.626526, 27.622477)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_7tx14"]
+height = 1.1728516
+radius = 9.043457
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_irg3d"]
-size = Vector3(71.82125, 5, 38.149643)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_r37ai"]
+height = 1.1728516
+radius = 15.456543
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_y8a40"]
-size = Vector3(84.75502, 5, 28.329704)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_d4o7i"]
-size = Vector3(54.015995, 5, 30.60385)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_n1aqv"]
-size = Vector3(71.82125, 5, 37.966537)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_op4cu"]
-size = Vector3(71.82125, 5, 95.01218)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_12l2b"]
+height = 1.1728516
+radius = 11.808105
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
-size = Vector3(89.96393, 2, 41.018066)
+size = Vector3(10.957291, 2.414032, 9.23645)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_11wv0"]
+size = Vector3(10.957291, 2.414032, 9.23645)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h0n6w"]
+size = Vector3(16.478975, 2.414032, 17.079231)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_g4v7s"]
+agent_radius = 0.6
 
 [node name="MapaInicial" type="Node3D" unique_id=120673684]
 script = ExtResource("1_5cjrv")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1735368035]
-environment = SubResource("Environment_ve8tj")
+environment = ExtResource("2_pfy1j")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2117348713]
 transform = Transform3D(0.70710653, 0.5416754, -0.45451948, 0, 0.6427879, 0.76604444, 0.70710653, -0.5416754, 0.45451948, 0, 43.3524, 0)
@@ -414,7 +278,7 @@ shadow_normal_bias = 1.5
 shadow_blur = 1.5
 
 [node name="SpawnPoint" type="Marker3D" parent="." unique_id=319654900]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -104.975716, 23.209972, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -103.857994, 23.209972, 0.42717052)
 
 [node name="MapaInicial" type="Node3D" parent="." unique_id=553194279]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.429489, 0, -36.95226)
@@ -449,182 +313,241 @@ shape = SubResource("ConcavePolygonShape3D_kwl8l")
 [node name="PropSpawnAreas" type="Node3D" parent="." unique_id=1524940080]
 
 [node name="Trees_A" type="Area3D" parent="PropSpawnAreas" unique_id=1081239232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.62664, 0, -34.026398)
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("3_b5aes"), ExtResource("4_w0bku")])
-spawn_count = 100
+spawn_count = 150
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=601906721]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.790985, 0, -49.070354)
-shape = SubResource("BoxShape3D_57qmd")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=586176493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5131836, 0)
+shape = SubResource("CylinderShape3D_g4v7s")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=1172020605]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.36337, 0, -79.43761)
-shape = SubResource("BoxShape3D_ti1bm")
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=1257985609]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.25734, 0.5131836, -17.900799)
+shape = SubResource("CylinderShape3D_tnw7q")
 
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=1394689175]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.757164, 0, -125.70512)
-shape = SubResource("BoxShape3D_8l3nt")
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=441566818]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.93692, 0.5131836, 71.751274)
+shape = SubResource("CylinderShape3D_wi15y")
 
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=282888982]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.64557, 0, -187.99193)
-shape = SubResource("BoxShape3D_kwl8l")
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=1519443199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.457676, 0.5131836, 71.751274)
+shape = SubResource("CylinderShape3D_qrjxm")
 
-[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=1762540349]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52.02319, 0, -180.30861)
-shape = SubResource("BoxShape3D_xiqgv")
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=1682881293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0042209625, 0.5131836, 46.72798)
+shape = SubResource("CylinderShape3D_qrjxm")
 
 [node name="Pedras_Basicas" type="Area3D" parent="PropSpawnAreas" unique_id=190288990]
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("5_0ao37"), ExtResource("6_d3ars"), ExtResource("7_l11rc")])
 spawn_count = 100
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=247691868]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.96653, 0, -50.13664)
-shape = SubResource("BoxShape3D_waglr")
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1488957725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.62664, 0.5131836, -94.587845)
+shape = SubResource("CylinderShape3D_pfy1j")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=417539312]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.503704, 0, -81.02841)
-shape = SubResource("BoxShape3D_rwt1y")
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=589242393]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.443634, 0.5131836, -44.226624)
+shape = SubResource("CylinderShape3D_we6k1")
 
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=988965756]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90.807365, 0, -40.467766)
-shape = SubResource("BoxShape3D_7yo87")
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=886198302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.443634, 0.5131836, -207.34021)
+shape = SubResource("CylinderShape3D_we6k1")
 
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1560955496]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -71.06621, 0, 32.69352)
-shape = SubResource("BoxShape3D_mvfa8")
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1620016161]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -152.74951, 0.5131836, -196.43568)
+shape = SubResource("CylinderShape3D_we6k1")
 
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=135938199]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72.876495, 0, -137.6921)
-shape = SubResource("BoxShape3D_r0dna")
-
-[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=542106629]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -167.88422, 0, -180.30861)
-shape = SubResource("BoxShape3D_b5aes")
-
-[node name="CollisionShape3D7" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1586124542]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.67036, -1.8698921, -127.08702)
-shape = SubResource("BoxShape3D_w0bku")
-
-[node name="CollisionShape3D8" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1902908334]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.1818, -1.8698921, -83.866135)
-shape = SubResource("BoxShape3D_0ao37")
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=584098522]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82.385635, 0.5131836, 35.73962)
+shape = SubResource("CylinderShape3D_44qgb")
 
 [node name="Gramas" type="Area3D" parent="PropSpawnAreas" unique_id=1329846457]
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("8_w86vl")])
-spawn_count = 10000
+spawn_count = 1000
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1356284248]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.790985, 0, -49.070354)
-shape = SubResource("BoxShape3D_57qmd")
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1235133778]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.066687, 0.5131836, -41.676315)
+shape = SubResource("CylinderShape3D_h0n6w")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=511344318]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.36337, 0, -79.43761)
-shape = SubResource("BoxShape3D_ti1bm")
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1529972658]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.56941, 0, -42.58895)
-shape = SubResource("BoxShape3D_irg3d")
-
-[node name="CollisionShape3D7" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1623220640]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.94274, 0, 41.69077)
-shape = SubResource("BoxShape3D_y8a40")
-
-[node name="CollisionShape3D8" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1455414752]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0137463, 0, 18.32378)
-shape = SubResource("BoxShape3D_d4o7i")
-
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1874872167]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.757164, 0, -125.70512)
-shape = SubResource("BoxShape3D_8l3nt")
-
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=875154366]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.64557, 0, -187.99193)
-shape = SubResource("BoxShape3D_kwl8l")
-
-[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=884411665]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52.02319, 0, -180.30861)
-shape = SubResource("BoxShape3D_xiqgv")
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=160571382]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90.20631, 0.5131836, -159.32693)
+shape = SubResource("CylinderShape3D_vcow6")
 
 [node name="Arbustos" type="Area3D" parent="PropSpawnAreas" unique_id=235644590]
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("9_33kev")])
 spawn_count = 250
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=721604373]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.790985, 0, -49.070354)
-shape = SubResource("BoxShape3D_57qmd")
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1610073403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.423931, 0.5131836, -24.185974)
+shape = SubResource("CylinderShape3D_421jm")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1412279365]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.36337, 0, -79.43761)
-shape = SubResource("BoxShape3D_ti1bm")
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=410930712]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.31218, 0.5131836, -55.914497)
+shape = SubResource("CylinderShape3D_421jm")
 
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=8051923]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.56941, 0, -42.680504)
-shape = SubResource("BoxShape3D_n1aqv")
+[node name="CollisionShape3D8" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=957932198]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.31218, 0.5131836, -123.78585)
+shape = SubResource("CylinderShape3D_421jm")
 
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1186079052]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.757164, 0, -125.70512)
-shape = SubResource("BoxShape3D_8l3nt")
+[node name="CollisionShape3D9" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=2030421832]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.48761, 0.5131836, -123.78585)
+shape = SubResource("CylinderShape3D_421jm")
 
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1008324328]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.64557, 0, -187.99193)
-shape = SubResource("BoxShape3D_kwl8l")
-
-[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1722698594]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52.02319, 0, -180.30861)
-shape = SubResource("BoxShape3D_xiqgv")
+[node name="CollisionShape3D10" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1109542015]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.48761, 0.5131836, -187.20111)
+shape = SubResource("CylinderShape3D_421jm")
 
 [node name="Trees_C" type="Area3D" parent="PropSpawnAreas" unique_id=1540942106]
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("10_g01fq"), ExtResource("11_0bcf6")])
-spawn_count = 200
+spawn_count = 150
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=130896483]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.790985, 0, -49.070354)
-shape = SubResource("BoxShape3D_57qmd")
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=1840299466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.128963, 0.5131836, -112.72133)
+shape = SubResource("CylinderShape3D_id3l1")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=739058954]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.36337, 0, -79.43761)
-shape = SubResource("BoxShape3D_ti1bm")
+[node name="CollisionShape3D8" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=600361327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -118.24527, 0.5131836, -127.150795)
+shape = SubResource("CylinderShape3D_7df0d")
+
+[node name="CollisionShape3D9" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=966406757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101.69895, 0.5131836, -74.91335)
+shape = SubResource("CylinderShape3D_7tx14")
+
+[node name="CollisionShape3D10" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=1033312268]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -123.26768, 0.5131836, -95.76237)
+shape = SubResource("CylinderShape3D_7tx14")
+
+[node name="CollisionShape3D11" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=558397091]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.20523, 0.5131836, -45.63459)
+shape = SubResource("CylinderShape3D_7tx14")
+
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=49586347]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -137.01744, 0.5131836, -184.23999)
+shape = SubResource("CylinderShape3D_id3l1")
+
+[node name="CollisionShape3D12" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=1895307021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47.80235, 0.5131836, -181.93683)
+shape = SubResource("CylinderShape3D_r37ai")
+
+[node name="CollisionShape3D13" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=1578041922]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.08296, 0.5131836, -164.93858)
+shape = SubResource("CylinderShape3D_r37ai")
 
 [node name="Galhos" type="Area3D" parent="PropSpawnAreas" unique_id=185767780]
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("12_y1bqn")])
-spawn_count = 50
+spawn_count = 100
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=1676188491]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.790985, 0, -49.070354)
-shape = SubResource("BoxShape3D_57qmd")
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=1266539327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.992157, 0.5131836, -49.42203)
+shape = SubResource("CylinderShape3D_44qgb")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=138818642]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.36337, 0, -79.43761)
-shape = SubResource("BoxShape3D_ti1bm")
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=2009195973]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.580246, 0.5131836, -24.080854)
+shape = SubResource("CylinderShape3D_44qgb")
 
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=1042576695]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.56941, 0, -14.157684)
-shape = SubResource("BoxShape3D_op4cu")
+[node name="CollisionShape3D8" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=1342919487]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.1771965, 0.5131836, 22.227427)
+shape = SubResource("CylinderShape3D_12l2b")
 
 [node name="MonsterSpawnAreas" type="Node3D" parent="." unique_id=47503837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.429489, 0, -36.95226)
 
-[node name="Acampamento Orc" type="Area3D" parent="MonsterSpawnAreas" unique_id=1489597987]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.54135, 0, -87.572525)
+[node name="Acampamento Orc" type="Node3D" parent="MonsterSpawnAreas" unique_id=615853961]
+
+[node name="Acampamento Orc" type="Area3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=1489597987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -138.91588, 0.8182039, -98.54503)
 script = ExtResource("2_q2d71")
 spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("21_644y4")])
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=1723732955]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.111725, 1, -4.509033)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc/Acampamento Orc" unique_id=1723732955]
 shape = SubResource("BoxShape3D_g4v7s")
 
-[node name="QuadroAvisos" parent="MonsterSpawnAreas" unique_id=36560846 instance=ExtResource("22_644y4")]
-transform = Transform3D(-0.9659258, 0, 0.25881907, 0, 1, 0, -0.25881907, 0, -0.9659258, -99.06512, 22.210325, 34.771023)
+[node name="Acampamento Orc2" type="Area3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=816225760]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -123.16023, 1.0503912, -72.21265)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("21_644y4")])
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=540441504]
-volume_db = -31.0
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc/Acampamento Orc2" unique_id=1112572378]
+shape = SubResource("BoxShape3D_11wv0")
+
+[node name="Acampamento Orc3" type="Area3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=1740719438]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82.17962, 0.95484114, -102.4852)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("21_644y4")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc/Acampamento Orc3" unique_id=454580854]
+shape = SubResource("BoxShape3D_11wv0")
+
+[node name="Acampamento Orc4" type="Area3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=1975654700]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -113.3482, 0.9742694, -115.34927)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("21_644y4")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc/Acampamento Orc4" unique_id=2081499482]
+shape = SubResource("BoxShape3D_11wv0")
+
+[node name="Acampamento Orc5" type="Area3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=624264404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.232014, 1.0467613, -116.45247)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("21_644y4")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc/Acampamento Orc5" unique_id=1711746461]
+shape = SubResource("BoxShape3D_11wv0")
+
+[node name="Acampamento Orc6" type="Area3D" parent="MonsterSpawnAreas/Acampamento Orc" unique_id=325822751]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.7307, 1.9526739, -79.16438)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("21_644y4")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Acampamento Orc/Acampamento Orc6" unique_id=1200804179]
+shape = SubResource("BoxShape3D_11wv0")
+
+[node name="Ninho de Aranhas" type="Node3D" parent="MonsterSpawnAreas" unique_id=137677485]
+
+[node name="Ninho de Aranhas" type="Area3D" parent="MonsterSpawnAreas/Ninho de Aranhas" unique_id=604035540]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -156.29193, 0.9914551, -170.56615)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("22_hk40w")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Ninho de Aranhas/Ninho de Aranhas" unique_id=946035837]
+shape = SubResource("BoxShape3D_h0n6w")
+
+[node name="Ninho de Aranhas2" type="Area3D" parent="MonsterSpawnAreas/Ninho de Aranhas" unique_id=516699723]
+transform = Transform3D(0.13419205, 0, -0.99095535, 0, 1, 0, 0.99095535, 0, 0.13419205, -71.07611, 0.8624854, -169.26192)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("22_hk40w")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Ninho de Aranhas/Ninho de Aranhas2" unique_id=1893246901]
+shape = SubResource("BoxShape3D_h0n6w")
+
+[node name="Expediçao Goblin" type="Node3D" parent="MonsterSpawnAreas" unique_id=2012401407]
+
+[node name="Expediçao Goblin" type="Area3D" parent="MonsterSpawnAreas/Expediçao Goblin" unique_id=1686411120]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.81607, 0.91414165, -46.909176)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("22_iamah")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Expediçao Goblin/Expediçao Goblin" unique_id=273365065]
+shape = SubResource("BoxShape3D_h0n6w")
+
+[node name="Expediçao Goblin2" type="Area3D" parent="MonsterSpawnAreas/Expediçao Goblin" unique_id=1338234714]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.668922, 0.9024241, 1.3026314)
+script = ExtResource("2_q2d71")
+spawn_entries = Array[ExtResource("20_ntf1i")]([ExtResource("22_iamah")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MonsterSpawnAreas/Expediçao Goblin/Expediçao Goblin2" unique_id=999705707]
+shape = SubResource("BoxShape3D_h0n6w")
 
 [node name="PropsContainer" type="Node3D" parent="." unique_id=1441444937]
+
+[node name="QuadroAvisos" parent="PropsContainer" unique_id=36560846 instance=ExtResource("22_644y4")]
+transform = Transform3D(-0.88844645, 0, 0.45898032, 0, 1, 0, -0.45898032, 0, -0.88844645, -104.920074, 22.210325, -4.078043)
 
 [node name="Castelo_Ardosia" parent="PropsContainer" unique_id=1742118571 instance=ExtResource("68_d1bd8")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -117.1746, 22.027372, 0)
@@ -662,9 +585,28 @@ transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70
 [node name="Bigorna_Basica" parent="PropsContainer" unique_id=1695242169 instance=ExtResource("41_fq1sc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.159325, 0.7546889, 10.5486965)
 
+[node name="PosteLuz" parent="PropsContainer" unique_id=405027687 instance=ExtResource("31_mfh7x")]
+transform = Transform3D(0.7071067, 0, -0.7071068, 0, 1, 0, 0.7071068, 0, 0.7071067, -104.39256, 22.079605, 4.3934135)
+
+[node name="PosteLuz2" parent="PropsContainer" unique_id=677795379 instance=ExtResource("31_mfh7x")]
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -104.39256, 22.079605, -5.6321783)
+
+[node name="PosteLuz3" parent="PropsContainer" unique_id=1348613938 instance=ExtResource("31_mfh7x")]
+transform = Transform3D(-0.92476314, 0, -0.38054323, 0, 1, 0, 0.38054323, 0, -0.92476314, -104.39256, 22.079605, -15.301994)
+
+[node name="PosteLuz4" parent="PropsContainer" unique_id=152844277 instance=ExtResource("31_mfh7x")]
+transform = Transform3D(0.8566636, 0, -0.5158756, 0, 1, 0, 0.5158756, 0, 0.8566636, -104.39256, 22.079605, 14.029678)
+
 [node name="NPCContainer" type="Node3D" parent="." unique_id=663891675]
 
 [node name="NPCValkor" parent="NPCContainer" unique_id=224469840 instance=ExtResource("24_d3ars")]
 transform = Transform3D(-0.98874235, 0, 0.14962871, 0, 1, 0, -0.14962871, 0, -0.98874235, -99.9165, 23.113882, -15.299026)
 
 [node name="MonstersContainer" type="Node3D" parent="." unique_id=582457962]
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=1094322462]
+stream = ExtResource("22_11wv0")
+bus = &"BGM"
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1597552966]
+navigation_mesh = SubResource("NavigationMesh_g4v7s")

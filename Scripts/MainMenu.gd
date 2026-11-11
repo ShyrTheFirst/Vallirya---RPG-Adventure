@@ -1,6 +1,7 @@
 extends Node3D
 
 @export var main_game_scene: PackedScene = preload("res://Scenes/Main.tscn")
+@onready var bgm_player: AudioStreamPlayer = $BGMPlayer
 
 # Caminho onde os saves dos personagens são armazenados localmente
 const ACCOUNTS_DIR = "user://accounts/"
@@ -13,6 +14,7 @@ const ACCOUNTS_DIR = "user://accounts/"
 var selected_character_name: String = ""
 
 func _ready() -> void:
+	_random_select_bgm()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
 	# Garante que a pasta de contas existe
@@ -163,3 +165,21 @@ func _launch_game_with_character(char_name: String) -> void:
 	
 	# Abre a cena Main. O próprio script da Main vai cuidar de puxar o mapa.
 	get_tree().change_scene_to_packed(main_game_scene)
+
+func _random_select_bgm():
+	var bgm_list = [
+	"res://ASSETS/SFX/Fantasy Ambient Music/1. Moonspire.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/2. Winds of Valor.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/3. Darkwood Path.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/4. Frostbound.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/5. Emberlight.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/6. Silverbrook.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/7. Mystic Grove.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/8. Throne of Storms.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/9. Sorrow’s Edge.mp3",
+	"res://ASSETS/SFX/Fantasy Ambient Music/10. Elven Dawn.mp3"
+	]
+	var pick_bgm = bgm_list.pick_random()
+	bgm_player.stream = load(pick_bgm)
+	bgm_player.play()
+	

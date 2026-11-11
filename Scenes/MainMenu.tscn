@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://c0ou5bu062w32" path="res://Scenes/Props/arvore_a_com_folhas.tscn" id="5_loo7a"]
 [ext_resource type="PackedScene" uid="uid://bk65r40ntolc1" path="res://Scenes/Props/arvore_c.tscn" id="6_if7li"]
 [ext_resource type="PackedScene" uid="uid://map2og30fvuu" path="res://Scenes/Props/arvore_c_normal.tscn" id="7_rrcx7"]
+[ext_resource type="AudioStream" uid="uid://dvqq5awj6glom" path="res://ASSETS/SFX/Forest Day.wav" id="10_loo7a"]
 
 [sub_resource type="Shader" id="Shader_vhl67"]
 code = "
@@ -488,3 +489,7 @@ alignment = 1
 
 [node name="HSeparator2" type="HSeparator" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=376545391]
 layout_mode = 2
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=949123143]
+stream = ExtResource("10_loo7a")
+bus = &"BGM"

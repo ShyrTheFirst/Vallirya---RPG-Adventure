@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://l7g8i4xt7hyw"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/QuestData.gd" id="1_eypwy"]
+
+[resource]
+script = ExtResource("1_eypwy")
+quest_id = "main_story_1"
+title = "Conhecendo os arredores"
+description = "Fale com Valkor, ele vai te ajudar a começar sua jornada como aventureiro!"
+quest_type = 2
+target_id = "npc_valkor"
+required_amount = 1
+reward_xp = 500
+metadata/_custom_type_script = "uid://co3cscegp8qam"

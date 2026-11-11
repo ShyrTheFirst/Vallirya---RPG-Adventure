@@ -1,13 +1,13 @@
 [gd_scene format=4 uid="uid://58yfc58ogy4d"]
 
-[ext_resource type="Texture2D" uid="uid://b8tddxy4qqyhi" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_0.png" id="1_21u0x"]
-[ext_resource type="Texture2D" uid="uid://dbrfahgdqd2v5" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_1.png" id="2_1efa2"]
-[ext_resource type="Texture2D" uid="uid://dyntrouhnmkvq" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_3.png" id="3_nk73t"]
-[ext_resource type="Texture2D" uid="uid://d0h6tk0aclssk" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_4.png" id="4_esk6n"]
-[ext_resource type="Texture2D" uid="uid://33ixy3vuqnrl" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_7.png" id="5_6oewu"]
-[ext_resource type="Texture2D" uid="uid://bxihvsjibf8a4" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_8.png" id="6_52f40"]
-[ext_resource type="Texture2D" uid="uid://bgidncoja2yfi" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_11.png" id="7_vy52c"]
-[ext_resource type="Texture2D" uid="uid://djbdtax51lmtt" path="res://Assets/Pacote Modular Vallirya - Objetos/PosteLuz_12.png" id="8_2q88k"]
+[ext_resource type="Texture2D" uid="uid://b8tddxy4qqyhi" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_0.png" id="1_21u0x"]
+[ext_resource type="Texture2D" uid="uid://dbrfahgdqd2v5" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_1.png" id="2_1efa2"]
+[ext_resource type="Texture2D" uid="uid://dyntrouhnmkvq" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_3.png" id="3_nk73t"]
+[ext_resource type="Texture2D" uid="uid://d0h6tk0aclssk" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_4.png" id="4_esk6n"]
+[ext_resource type="Texture2D" uid="uid://33ixy3vuqnrl" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_7.png" id="5_6oewu"]
+[ext_resource type="Texture2D" uid="uid://bxihvsjibf8a4" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_8.png" id="6_52f40"]
+[ext_resource type="Texture2D" uid="uid://bgidncoja2yfi" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_11.png" id="7_vy52c"]
+[ext_resource type="Texture2D" uid="uid://djbdtax51lmtt" path="res://ASSETS/Pacote Modular Vallirya - Objetos/PosteLuz_12.png" id="8_2q88k"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gr1qn"]
 resource_name = "M_PosteCorrenteMetal"
@@ -180,6 +180,26 @@ size = Vector3(0.0025, 0.0025532385, 0.041175902)
 
 [node name="PosteLuz" type="StaticBody3D" unique_id=36560846]
 
+[node name="Iluminaçao" type="SpotLight3D" parent="." unique_id=1517254401]
+transform = Transform3D(0.9735861, -9.980199e-09, 0.22832035, -0.22832035, -4.25568e-08, 0.9735861, 0, -1, -4.371139e-08, 0.05144751, 3.2285194, -1.6314125)
+light_energy = 1.2
+light_volumetric_fog_energy = 0.0
+light_size = 1.0
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 1.0852576
+spot_attenuation = 10.0
+spot_angle = 52.371857
+
+[node name="Iluminaçao2" type="SpotLight3D" parent="." unique_id=1462177073]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.014623523, 3.256498, -1.638691)
+light_energy = 1.2
+light_volumetric_fog_energy = 0.0
+light_size = 1.0
+distance_fade_enabled = true
+spot_attenuation = -1.0
+spot_angle = 44.659256
+
 [node name="Corrente_PosteDeLuz" type="MeshInstance3D" parent="." unique_id=364580444]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)
 mesh = SubResource("ArrayMesh_ti5wf")
@@ -191,9 +211,3 @@ mesh = SubResource("ArrayMesh_huapp")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1583108366]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 2.0587914, -0.0026623607)
 shape = SubResource("BoxShape3D_amrmf")
-
-[node name="Iluminaçao" type="SpotLight3D" parent="." unique_id=1517254401]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.014623523, 3.2514327, -1.638691)
-light_color = Color(0.9804447, 0.9603941, 2.3102762e-06, 1)
-spot_range = 4.3116994
-spot_angle = 32.706997

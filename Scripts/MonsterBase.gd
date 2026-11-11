@@ -3,14 +3,18 @@ extends CharacterBody3D
 
 @export_category("Configurações da Criatura")
 @export var monster_name: String = "Criatura"
-@export var speed: float = 2.8
-@export var leash_radius: float = 8.5
-@export var base_attack_range: float = 1.4
+@export var speed: float = 3.0
+@export var leash_radius: float = 10.0
+@export var base_attack_range: float = 1.5
 @export var mesh_base_y: float = -1.28
 @export var health_bar_height: float = 1.8
 
 @export_category("Sistema de Loot / Drops")
 @export var drop_table: Array[MonsterDrop] = []
+
+# Estados da Inteligência Artificial
+enum State { IDLE, PATROL, CHASE, ATTACK, RETURN }
+var current_state: State = State.IDLE
 
 var level: int = 1
 var rarity: String = "Normal"
@@ -20,18 +24,17 @@ var attack_damage: int = 10
 
 var is_dead: bool = false
 var spawn_origin: Vector3 = Vector3.ZERO
+var origin_area: Area3D = null
+var current_target_player: CharacterBody3D = null
 
+# Timers e Controle de Estados
+var state_timer: float = 0.0
+var attack_cooldown: float = 0.0
 var combat_reset_timer: float = 0.0
 const COMBAT_TIMEOUT: float = 10.0
 
-var ai_timer: float = 0.0
-var move_dir: Vector3 = Vector3.ZERO
-var attack_cooldown: float = 0.0
-var origin_area: Area3D = null
-var current_target_player: CharacterBody3D = null
-var current_anim_state: String = ""
-
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
+@onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var anim_tree: AnimationTree = $AnimationTree
 var attacks_playback: AnimationNodeStateMachinePlayback
 
@@ -58,6 +61,11 @@ func _ready() -> void:
 	if anim_tree:
 		anim_tree.active = true
 		attacks_playback = anim_tree.get("parameters/AttacksCombo/playback")
+
+	# Configurações iniciais do agente de navegação
+	if nav_agent:
+		nav_agent.path_desired_distance = 0.5
+		nav_agent.target_desired_distance = base_attack_range
 
 func update_display() -> void:
 	if not health_bar or not name_label: return
@@ -96,85 +104,182 @@ func setup_stats(new_level: int, new_rarity: String) -> void:
 	apply_rarity_effects()
 	update_display()
 
-func _process(delta: float) -> void:
-	if not is_dead:
-		update_animations()
-
-func update_animations() -> void:
-	if not anim_tree or not anim_tree.active or is_dead: return
-
-	# Detecta movimento localmente comparando a velocidade ou deslocamento
-	var is_moving: bool = velocity.length() > 0.1
-	var target_state: String = "state_1" if is_moving else "state_0"
-
-	if current_anim_state != target_state:
-		current_anim_state = target_state
-		anim_tree.set("parameters/locomotion/transition_request", target_state)
-
 func _physics_process(delta: float) -> void:
 	if is_dead: return
 
-	if not is_on_floor(): velocity.y -= 9.8 * delta
-	else: velocity.y = 0.0
+	if not is_on_floor(): 
+		velocity.y -= 9.8 * delta
+	else: 
+		velocity.y = 0.0
 
-	ai_timer -= delta
 	attack_cooldown -= delta
+	state_timer -= delta
 
 	if combat_reset_timer > 0.0:
 		combat_reset_timer -= delta
 		if combat_reset_timer <= 0.0:
 			reset_combat_state()
 
-	var players = get_tree().get_nodes_in_group("Players")
-	var valid_target: CharacterBody3D = null
+	# Executa a Máquina de Estados da IA
+	update_ai_state(delta)
+	update_animations()
+	move_and_slide()
+
+# --- MÁQUINA DE ESTADOS DA IA ---
+func update_ai_state(delta: float) -> void:
+	var players = get_tree().get_nodes_in_group("Player")
+	var nearest_player: CharacterBody3D = null
 	var min_dist: float = 999.0
 
-	if is_instance_valid(current_target_player) and not current_target_player.is_dead:
-		var d = global_position.distance_to(current_target_player.global_position)
-		if d < 9.0 and global_position.distance_to(spawn_origin) < (leash_radius + 4.0):
-			valid_target = current_target_player
-			min_dist = d
-		else:
-			current_target_player = null
+	# Procura o player mais próximo
+	for p in players:
+		if is_instance_valid(p) and not p.is_dead:
+			var d = global_position.distance_to(p.global_position)
+			if d < min_dist:
+				min_dist = d
+				nearest_player = p
 
-	if not valid_target:
-		for p in players:
-			if not p.is_dead:
-				var d = global_position.distance_to(p.global_position)
-				if d < min_dist:
-					min_dist = d
-					valid_target = p
-		current_target_player = valid_target
+	# Transições de Estado Globais
+	if is_instance_valid(current_target_player) and current_target_player.is_dead:
+		current_target_player = null
 
-	var attack_range = base_attack_range
+	# Se tomou dano ou o player está dentro do raio de aggro (ex: 8 metros)
+	if not is_instance_valid(current_target_player) and nearest_player and min_dist <= 8.0:
+		if global_position.distance_to(spawn_origin) < (leash_radius + 4.0):
+			current_target_player = nearest_player
+			current_state = State.CHASE
 
-	if valid_target and min_dist <= attack_range:
-		velocity.x = 0; velocity.z = 0
-		var look_dir = (valid_target.global_position - global_position).normalized()
-		rotation.y = atan2(-look_dir.x, -look_dir.z)
+	# Se o alvo fugiu para muito longe do spawn original, ativa o estado de Retorno
+	if is_instance_valid(current_target_player):
+		if global_position.distance_to(spawn_origin) > (leash_radius + 6.0) or global_position.distance_to(current_target_player.global_position) > 14.0:
+			reset_combat_state()
+			current_state = State.RETURN
 
-		if attack_cooldown <= 0.0:
-			execute_attack(valid_target, attack_range)
-			attack_cooldown = 1.8
-	elif valid_target and min_dist < 8.5 and global_position.distance_to(spawn_origin) < (leash_radius + 4.0):
-		var dir = (valid_target.global_position - global_position).normalized()
-		velocity.x = dir.x * speed; velocity.z = dir.z * speed
-		rotation.y = atan2(-dir.x, -dir.z)
-	else:
-		if global_position.distance_to(spawn_origin) > leash_radius:
-			var return_dir = (spawn_origin - global_position).normalized()
-			velocity.x = return_dir.x * (speed * 0.6)
-			velocity.z = return_dir.z * (speed * 0.6)
-			rotation.y = atan2(-return_dir.x, -return_dir.z)
-		else:
-			if ai_timer <= 0.0:
-				ai_timer = randf_range(2.0, 4.0)
-				move_dir = Vector3(randf_range(-1, 1), 0, randf_range(-1, 1)).normalized() if randf() > 0.4 else Vector3.ZERO
-			velocity.x = move_dir.x * (speed * 0.5)
-			velocity.z = move_dir.z * (speed * 0.5)
-			if move_dir.length() > 0.1: rotation.y = atan2(-move_dir.x, -move_dir.z)
+	# Comportamento específico por Estado
+	match current_state:
+		State.IDLE:
+			velocity.x = move_toward(velocity.x, 0, speed * delta)
+			velocity.z = move_toward(velocity.z, 0, speed * delta)
+			
+			if state_timer <= 0.0:
+				state_timer = randf_range(3.0, 6.0)
+				# Decide se vai patrulhar ou continuar ocioso
+				if randf() > 0.4:
+					current_state = State.PATROL
+					_pick_new_patrol_destination()
 
-	move_and_slide()
+			if is_instance_valid(current_target_player):
+				current_state = State.CHASE
+
+		State.PATROL:
+			# Se o agente terminou a rota de patrulha ou chegou perto do destino, volta para o IDLE
+			var dist_to_patrol = global_position.distance_to(nav_agent.target_position)
+			if nav_agent.is_navigation_finished() or dist_to_patrol < 1.0:
+				current_state = State.IDLE
+				state_timer = randf_range(2.0, 4.0)
+			else:
+				var next_pos = nav_agent.get_next_path_position()
+				var dir = global_position.direction_to(next_pos)
+				
+				# Rede de segurança para patrulha caso o nav_agent dê stall
+				if global_position.distance_to(next_pos) < 0.1:
+					dir = (nav_agent.target_position - global_position).normalized()
+					dir.y = 0.0
+
+				velocity.x = dir.x * (speed * 0.5)
+				velocity.z = dir.z * (speed * 0.5)
+				
+				if dir.length() > 0.1:
+					rotation.y = lerp_angle(rotation.y, atan2(-dir.x, -dir.z), delta * 6.0)
+
+			# Se o player chegar perto enquanto ele patrulha, ativa o CHASE na hora
+			if is_instance_valid(current_target_player):
+				current_state = State.CHASE
+
+		State.CHASE:
+			if not is_instance_valid(current_target_player):
+				current_state = State.RETURN
+				return
+
+			var dist_to_target = global_position.distance_to(current_target_player.global_position)
+			
+			if dist_to_target <= base_attack_range:
+				current_state = State.ATTACK
+			else:
+				# Tenta usar o nav_agent se ele estiver mapeado, senão vai direto no player
+				var target_pos = current_target_player.global_position
+				var move_dir = Vector3.ZERO
+				
+				if nav_agent and nav_agent.is_target_reachable():
+					nav_agent.target_position = target_pos
+					var next_pos = nav_agent.get_next_path_position()
+					move_dir = global_position.direction_to(next_pos)
+				else:
+					# FALLBACK DIRETO: Se o nav_agent não achou o mapa, o monstro vai direto em linha reta
+					move_dir = (target_pos - global_position).normalized()
+					move_dir.y = 0.0
+
+				velocity.x = move_dir.x * speed
+				velocity.z = move_dir.z * speed
+				
+				if move_dir.length() > 0.1:
+					rotation.y = lerp_angle(rotation.y, atan2(-move_dir.x, -move_dir.z), delta * 10.0)
+
+		State.ATTACK:
+			velocity.x = 0; velocity.z = 0
+			if is_instance_valid(current_target_player):
+				var look_dir = (current_target_player.global_position - global_position).normalized()
+				rotation.y = lerp_angle(rotation.y, atan2(-look_dir.x, -look_dir.z), delta * 12.0)
+
+				var dist = global_position.distance_to(current_target_player.global_position)
+				if dist > base_attack_range + 0.3:
+					current_state = State.CHASE
+				elif attack_cooldown <= 0.0:
+					execute_attack(current_target_player, base_attack_range)
+					attack_cooldown = 1.8
+			else:
+				current_state = State.RETURN
+
+		State.RETURN:
+			nav_agent.target_position = spawn_origin
+			var dist_to_spawn = global_position.distance_to(spawn_origin)
+			
+			# Se chegou perto do ponto de spawn original, volta para o IDLE e recupera a vida
+			if dist_to_spawn < 1.5 or nav_agent.is_navigation_finished():
+				current_state = State.IDLE
+				state_timer = 2.0
+				reset_combat_state()
+			else:
+				var next_pos = nav_agent.get_next_path_position()
+				var dir = global_position.direction_to(next_pos)
+				
+				# Rede de segurança para o retorno
+				if global_position.distance_to(next_pos) < 0.1:
+					dir = (spawn_origin - global_position).normalized()
+					dir.y = 0.0
+
+				velocity.x = dir.x * (speed * 0.7)
+				velocity.z = dir.z * (speed * 0.7)
+				
+				if dir.length() > 0.1:
+					rotation.y = lerp_angle(rotation.y, atan2(-dir.x, -dir.z), delta * 8.0)
+
+func _pick_new_patrol_destination() -> void:
+	var random_angle = randf() * TAU
+	var random_dist = randf_range(2.0, 5.0)
+	var offset = Vector3(cos(random_angle) * random_dist, 0, sin(random_angle) * random_dist)
+	var target_pos = spawn_origin + offset
+	nav_agent.target_position = target_pos
+
+func update_animations() -> void:
+	if not anim_tree or not anim_tree.active or is_dead: return
+	var is_moving: bool = velocity.length() > 0.1 and current_state != State.ATTACK
+	var target_state: String = "state_1" if is_moving else "state_0"
+	if current_anim_state != target_state:
+		current_anim_state = target_state
+		anim_tree.set("parameters/locomotion/transition_request", target_state)
+
+var current_anim_state: String = ""
 
 # Funções virtuais para sobrescrever nas subclasses (Orc, Aranha, etc.)
 func execute_attack(target: CharacterBody3D, range_dist: float) -> void:
@@ -185,12 +290,12 @@ func apply_rarity_effects() -> void:
 
 func perform_cleave_attack(range_dist: float) -> void:
 	var forward_dir = -global_transform.basis.z.normalized()
-	for p in get_tree().get_nodes_in_group("Players"):
-		if not p.is_dead:
+	for p in get_tree().get_nodes_in_group("Player"):
+		if is_instance_valid(p) and not p.is_dead:
 			var diff = p.global_position - global_position
 			diff.y = 0.0
-			if diff.length() <= range_dist + 0.3:
-				if forward_dir.dot(diff.normalized()) >= 0.3:
+			if diff.length() <= range_dist + 0.4:
+				if forward_dir.dot(diff.normalized()) >= 0.2:
 					p.take_damage(attack_damage)
 
 func reset_combat_state() -> void:
@@ -202,8 +307,9 @@ func reset_combat_state() -> void:
 func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 	if is_dead: return
 	combat_reset_timer = COMBAT_TIMEOUT
-	if is_instance_valid(attacker) and randf() < 0.65:
+	if is_instance_valid(attacker):
 		current_target_player = attacker
+		current_state = State.CHASE
 
 	hp = max(0, hp - amount)
 	show_damage_effect(amount, hp)
@@ -218,12 +324,10 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 		
 		_roll_loot_drops()
 		
-		# Concede XP diretamente ao player local (ou ao atacante)
 		if is_instance_valid(attacker) and attacker.has_method("add_experience"):
 			attacker.add_experience(total_exp)
 		else:
-			# Fallback para o player principal da cena
-			var players = get_tree().get_nodes_in_group("Players")
+			var players = get_tree().get_nodes_in_group("Player")
 			if players.size() > 0 and players[0].has_method("add_experience"):
 				players[0].add_experience(total_exp)
 
@@ -232,7 +336,6 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 
 		rpc_despawn()
 
-		# Timer de Respawn Local
 		get_tree().create_timer(3.5).timeout.connect(func():
 			var world = get_tree().current_scene
 			var new_pos = spawn_origin
@@ -243,12 +346,11 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 				var r_data = origin_area.get_respawn_data()
 				new_pos = r_data["pos"]
 				new_lvl = r_data["level"]
-			elif origin_area and origin_area.has_method("get_safe_spawn_point"):
-				new_pos = world.get_safe_spawn_point(origin_area)
 
 			setup_stats(new_lvl, new_rarity)
 			current_target_player = null
 			combat_reset_timer = 0.0
+			current_state = State.IDLE
 			is_dead = false
 			global_position = new_pos
 			spawn_origin = new_pos
@@ -287,16 +389,20 @@ func rpc_respawn(pos: Vector3, new_hp: int, new_max_hp: int, new_lvl: int, new_r
 	update_display()
 
 func _roll_loot_drops() -> void:
-	# Como é singleplayer, podemos instanciar o item dropado direto no mundo ou via método local
 	for drop_entry in drop_table:
 		if not drop_entry or not drop_entry.item_data:
 			continue
-
 		var item_res: ItemData = drop_entry.item_data
 		var chance: float = drop_entry.drop_chance
 
 		if randf() <= chance:
 			var drop_pos = global_position + Vector3(randf_range(-0.6, 0.6), 0.4, randf_range(-0.6, 0.6))
-			var world = get_tree().current_scene
-			if world and world.has_method("server_spawn_world_item"):
-				world.server_spawn_world_item(item_res.resource_path, drop_pos)
+			var world_item_scene = load("res://Scenes/WorldItem.tscn")
+			if world_item_scene:
+				var item_instance = world_item_scene.instantiate()
+				var world = get_tree().current_scene
+				if world:
+					world.add_child(item_instance)
+					item_instance.global_position = drop_pos
+					if item_instance.has_method("setup"):
+						item_instance.setup(item_res)

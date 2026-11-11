@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dbyjdq4jth3dg"
+path="res://.godot/imported/10. Elven Dawn.mp3-1091805d33caf9ba456d2b4a73474862.mp3str"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Fantasy Ambient Music/10. Elven Dawn.mp3"
+dest_files=["res://.godot/imported/10. Elven Dawn.mp3-1091805d33caf9ba456d2b4a73474862.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

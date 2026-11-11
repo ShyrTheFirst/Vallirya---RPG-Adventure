@@ -6,5 +6,7 @@
 [resource]
 script = ExtResource("1_mmwpy")
 scene = ExtResource("1_k3mkr")
-count = 100
+count = 8
+min_level = 3
+max_level = 8
 metadata/_custom_type_script = "uid://cbe7834febh5o"

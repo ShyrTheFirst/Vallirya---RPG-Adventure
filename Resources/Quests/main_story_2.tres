@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://bfd24ymitv4ld"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/QuestData.gd" id="1_hf10w"]
+
+[resource]
+script = ExtResource("1_hf10w")
+quest_id = "main_story_2"
+title = "Limpeza no campo"
+description = "Algumas aranhas estao incomodando os moradores da regiao. Mate 10 delas para ajudar a reduzir os ataques na regiao!"
+target_id = "Aranha"
+required_amount = 10
+reward_xp = 150
+metadata/_custom_type_script = "uid://co3cscegp8qam"

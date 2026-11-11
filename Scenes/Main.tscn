@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bohw58o3vxrms" path="res://Scenes/Player.tscn" id="1_r150o"]
 [ext_resource type="Script" uid="uid://ds20oivgyuosh" path="res://Scripts/MenuJogo.gd" id="3_rgh2o"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_pbw6q"]
+[ext_resource type="Script" uid="uid://cbga4vb4e1bbn" path="res://Scripts/VolumeControl.gd" id="5_pbw6q"]
 
 [node name="Main" type="Node3D" unique_id=780729372]
 script = ExtResource("1_idj7w")
@@ -80,6 +81,88 @@ text = "SAIR DO JOGO"
 
 [node name="HSeparator3" type="HSeparator" parent="UI/MenuJogo/Panel/VBoxContainer" unique_id=1811630664]
 layout_mode = 2
+
+[node name="VolumeControl" type="Control" parent="UI/MenuJogo" unique_id=725576164]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -348.0
+offset_top = -20.0
+offset_right = -308.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_pbw6q")
+
+[node name="Panel" type="Panel" parent="UI/MenuJogo/VolumeControl" unique_id=1676031168]
+custom_minimum_size = Vector2(250, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = -200.0
+offset_right = 125.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/MenuJogo/VolumeControl/Panel" unique_id=1948144780]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -82.0
+offset_top = -56.5
+offset_right = 82.0
+offset_bottom = 56.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="MasterLabel" type="Label" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=1450626566]
+layout_mode = 2
+text = "Volume Geral"
+horizontal_alignment = 1
+
+[node name="SliderMaster" type="HSlider" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=510657411]
+layout_mode = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="BGMLabel" type="Label" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=1288344050]
+layout_mode = 2
+text = "Musica"
+horizontal_alignment = 1
+
+[node name="SliderBGM" type="HSlider" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=1454879322]
+layout_mode = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="SFXLabel" type="Label" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=1268677337]
+layout_mode = 2
+text = "Efeitos Player e Monstros"
+horizontal_alignment = 1
+
+[node name="SliderEnemySFX" type="HSlider" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=1625699813]
+layout_mode = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="WorldSFXLabel" type="Label" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=170850806]
+layout_mode = 2
+text = "Efeitos do Mundo"
+horizontal_alignment = 1
+
+[node name="SliderWorldSFX" type="HSlider" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=438646702]
+layout_mode = 2
+theme = ExtResource("4_pbw6q")
 
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnSave" to="UI/MenuJogo" method="_on_btn_save_pressed"]
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnQuit" to="UI/MenuJogo" method="_on_btn_quit_pressed"]
