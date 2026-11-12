@@ -18,6 +18,7 @@ uniform float ground_curve : hint_range(0, 1) = 0.02;
 uniform float ground_energy = 1.0;
 uniform float sun_angle_max = 30.0;
 uniform float sun_curve : hint_range(0, 1) = 0.15;
+uniform vec4 cloud_color : source_color = vec4(0.95, 0.98, 1.0, 1.0);
 
 uniform sampler2D cloudtexture : filter_linear_mipmap, repeat_enable;
 uniform sampler2D cloudtexture2 : filter_linear_mipmap, repeat_enable;
@@ -92,8 +93,7 @@ void sky() {
 		// Desvanece gradualmente antes de tocar a linha do horizonte
 		cloud_mask *= smoothstep(0.0, 0.4, EYEDIR.y);
 
-		vec3 cloud_color = vec3(0.95, 0.98, 1.0);
-		sky = mix(sky, cloud_color, cloud_mask * 0.85);
+		sky = mix(sky, cloud_color.rgb, cloud_mask * cloud_color.a);
 	}
 
 	COLOR = mix(ground, sky, step(0.0, EYEDIR.y));
@@ -130,6 +130,7 @@ shader_parameter/ground_curve = 0.02
 shader_parameter/ground_energy = 1.0
 shader_parameter/sun_angle_max = 1.5708
 shader_parameter/sun_curve = 0.15
+shader_parameter/cloud_color = Color(0.95, 0.98, 1, 1)
 shader_parameter/cloudtexture = SubResource("NoiseTexture2D_kbuji")
 shader_parameter/cloudtexture2 = SubResource("NoiseTexture2D_xcq2r")
 shader_parameter/cloud_direction = Vector2(4, 1)

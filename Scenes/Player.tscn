@@ -6883,3 +6883,8 @@ unit_size = 5.0
 max_distance = 25.0
 max_polyphony = 2
 bus = &"Enemy Player SFX"
+
+[node name="TorchLight" type="OmniLight3D" parent="." unique_id=1239669367]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23510677, -0.135198, 0.165726)
+light_color = Color(1, 0.7977378, 0.48452926, 1)
+light_energy = 1.5

@@ -6,7 +6,6 @@
 [resource]
 script = ExtResource("1_genay")
 scene = ExtResource("1_wauas")
-count = 5
 min_level = 15
 max_level = 20
 metadata/_custom_type_script = "uid://cbe7834febh5o"

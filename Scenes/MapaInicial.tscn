@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://c14531cjaajji" path="res://Scripts/world.gd" id="1_5cjrv"]
 [ext_resource type="Script" uid="uid://cmav6fs21bxlq" path="res://Scripts/PropSpawner.gd" id="2_7yo87"]
-[ext_resource type="Environment" uid="uid://v6qwweiju7a7" path="res://ASSETS/VFX/WorldEnv.tres" id="2_pfy1j"]
 [ext_resource type="Script" uid="uid://bf8hkvybxc4lu" path="res://Scripts/EnemySpawner.gd" id="2_q2d71"]
 [ext_resource type="Texture2D" uid="uid://bjtmyqgmx5thh" path="res://ASSETS/Terrenos/MapaInicial_0.png" id="2_y7y61"]
 [ext_resource type="PackedScene" uid="uid://dlyhpe74ol48k" path="res://Scenes/Props/arvore_a.tscn" id="3_b5aes"]
@@ -265,18 +264,6 @@ agent_radius = 0.6
 [node name="MapaInicial" type="Node3D" unique_id=120673684]
 script = ExtResource("1_5cjrv")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1735368035]
-environment = ExtResource("2_pfy1j")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2117348713]
-transform = Transform3D(0.70710653, 0.5416754, -0.45451948, 0, 0.6427879, 0.76604444, 0.70710653, -0.5416754, 0.45451948, 0, 43.3524, 0)
-light_color = Color(1, 0.95686275, 0.9019608, 1)
-light_energy = 1.1
-shadow_enabled = true
-shadow_bias = 0.04
-shadow_normal_bias = 1.5
-shadow_blur = 1.5
-
 [node name="SpawnPoint" type="Marker3D" parent="." unique_id=319654900]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -103.857994, 23.209972, 0.42717052)
 
@@ -352,11 +339,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.443634, 0.5131836, -44.22
 shape = SubResource("CylinderShape3D_we6k1")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=886198302]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.443634, 0.5131836, -207.34021)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -124.52427, 0.5131836, -169.44643)
 shape = SubResource("CylinderShape3D_we6k1")
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1620016161]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -152.74951, 0.5131836, -196.43568)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.079124, 0.5131836, -165.25203)
 shape = SubResource("CylinderShape3D_we6k1")
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=584098522]

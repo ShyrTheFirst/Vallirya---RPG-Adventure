@@ -12,7 +12,7 @@ extends Node3D
 var default_drop_scene = preload("res://Resources/Scenes/drop.tscn")
 
 func _ready() -> void:
-	bgm_player.play()
+	bgm_player.play(	)
 	# Garante que os containers essenciais existam na cena
 	if not props_container:
 		props_container = Node3D.new()

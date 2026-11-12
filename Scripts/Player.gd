@@ -155,6 +155,9 @@ var active_inventory_slot: int = -1
 var active_equipment_slot: String = ""
 
 @onready var right_hand_bone: BoneAttachment3D = get_node_or_null("Personagem (IK)/Armature/Skeleton3D/RightHand")
+@onready var torch_light: OmniLight3D = $TorchLight
+
+
 
 func _init() -> void:
 	inventory_items.resize(INVENTORY_CAPACITY)
@@ -341,6 +344,7 @@ func _process(delta: float) -> void:
 			skills_data[s_id]["timer"] -= delta
 
 	update_client_visuals(delta)
+	check_torch_status(delta)
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0.0:
@@ -558,7 +562,18 @@ func rpc_player_death() -> void:
 func rpc_player_respawn(pos: Vector3, new_hp: int) -> void:
 	is_dead = false
 	hp = new_hp
-	global_position = pos
+	
+	# --- BUSCA INTELIGENTE DO SPAWNPOINT ---
+	var current_scene = get_tree().current_scene
+	var spawn_node = current_scene.find_child("SpawnPoint", true, false)
+	
+	if spawn_node and spawn_node is Node3D:
+		global_position = spawn_node.global_position
+	else:
+		# Fallback caso o SpawnPoint não seja encontrado no mapa atual
+		global_position = pos if pos != Vector3.ZERO else Vector3(0, 1, 0)
+	# ----------------------------------------
+
 	visible = true
 	collision_shape.set_deferred("disabled", false)
 
@@ -1748,3 +1763,29 @@ func populate_quest_log_ui() -> void:
 
 func _exit_tree() -> void:
 	save_player_account()
+
+func check_torch_status(delta: float) -> void:
+	if not torch_light: return
+	
+	# Como o nó Cycle está na Main, subimos para o root e procuramos por ele
+	var main_node = get_tree().root.get_node_or_null("Main")
+	if not main_node: return
+	
+	var day_night_node = main_node.find_child("Cycle", true, false)
+	
+	if day_night_node:
+		# Se o seu script DayNightCycle tem a variável 'time_progress':
+		# O dia vai de 0.0 a 0.5 (aproximadamente), e a noite de 0.5 a 1.0.
+		var time_val = day_night_node.get("time_progress")
+		
+		if time_val != null:
+			# Se o tempo estiver na faixa da noite (ex: entre 0.55 e 0.95)
+			var is_night = (time_val >= 0.52 and time_val <= 0.98)
+			
+			if is_night:
+				torch_light.visible = true
+				torch_light.light_energy = move_toward(torch_light.light_energy, 1.2, delta * 2.0)
+			else:
+				torch_light.light_energy = move_toward(torch_light.light_energy, 0.0, delta * 2.0)
+				if torch_light.light_energy <= 0.05:
+					torch_light.visible = false

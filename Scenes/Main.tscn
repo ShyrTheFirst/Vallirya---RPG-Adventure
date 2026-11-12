@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://b2wf3i8qrswg4" path="res://Scripts/main.gd" id="1_idj7w"]
 [ext_resource type="PackedScene" uid="uid://bohw58o3vxrms" path="res://Scenes/Player.tscn" id="1_r150o"]
+[ext_resource type="Script" uid="uid://bq8gyu2tp5wjh" path="res://Globals/DayNightCycle.gd" id="3_jw32o"]
 [ext_resource type="Script" uid="uid://ds20oivgyuosh" path="res://Scripts/MenuJogo.gd" id="3_rgh2o"]
+[ext_resource type="Environment" uid="uid://v6qwweiju7a7" path="res://ASSETS/VFX/WorldEnv.tres" id="4_50glp"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_pbw6q"]
 [ext_resource type="Script" uid="uid://cbga4vb4e1bbn" path="res://Scripts/VolumeControl.gd" id="5_pbw6q"]
 
@@ -12,6 +14,23 @@ script = ExtResource("1_idj7w")
 [node name="Player" parent="." unique_id=1422835273 instance=ExtResource("1_r150o")]
 
 [node name="LevelContainer" type="Node3D" parent="." unique_id=160777478]
+
+[node name="Cycle" type="Node3D" parent="." unique_id=942097268 node_paths=PackedStringArray("directional_light", "world_environment")]
+script = ExtResource("3_jw32o")
+directional_light = NodePath("DirectionalLight3D")
+world_environment = NodePath("WorldEnvironment")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Cycle" unique_id=1380711150]
+environment = ExtResource("4_50glp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Cycle" unique_id=1818491150]
+transform = Transform3D(0.70710677, 0.5416752, -0.4545195, 0, 0.64278764, 0.76604444, 0.70710677, -0.5416752, 0.4545195, 0, 43.3524, 0)
+light_color = Color(1, 0.95686275, 0.9019608, 1)
+light_energy = 1.1
+shadow_enabled = true
+shadow_bias = 0.04
+shadow_normal_bias = 1.5
+shadow_blur = 1.5
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=935365433]
 process_mode = 3
