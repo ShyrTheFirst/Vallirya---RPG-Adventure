@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://n055wuem1lnl"]
+
+[ext_resource type="PackedScene" uid="uid://c4qulvnuvp1ie" path="res://Resources/MESH/Pocao_Mana_Pequena.tscn" id="1_77nav"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_rpyxv"]
+
+[resource]
+script = ExtResource("1_rpyxv")
+id = "Mana_Pequena"
+name = "Poçao de Mana Pequena"
+item_type = 4
+description = "Poçao que recupera 500 MP"
+mesh_scene = ExtResource("1_77nav")
+sell_price = 100
+bonus_mana = 500
+metadata/_custom_type_script = "uid://eaep86qi61ki"

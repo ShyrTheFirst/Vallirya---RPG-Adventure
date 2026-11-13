@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://donv0g3fvawp6"]
 
-[ext_resource type="Script" uid="uid://dl5amtqf2v3nn" path="res://Scripts/WorldItem.gd" id="1_ji1af"]
+[ext_resource type="Script" uid="uid://dx5ap08h6cn3e" path="res://Scripts/WorldItem.gd" id="1_ji1af"]
+[ext_resource type="AudioStream" uid="uid://durt51e5mci5r" path="res://ASSETS/SFX/Pickup_Gold_00.mp3" id="2_2dbi4"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_8kmmi"]
 radius = 0.2734667
@@ -22,3 +23,10 @@ shape = SubResource("SphereShape3D_8kmmi")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1923073275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46400005, 0)
 shape = SubResource("SphereShape3D_g4v7s")
+
+[node name="CollectedAudio" type="AudioStreamPlayer3D" parent="." unique_id=2145717240]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0042511225, 0)
+stream = ExtResource("2_2dbi4")
+max_distance = 50.0
+max_polyphony = 2
+bus = &"World SFX"

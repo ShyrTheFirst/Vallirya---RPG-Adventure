@@ -5,6 +5,11 @@ extends CharacterBody3D
 @export var attack_reach: float = 3.0
 @export var combo_window_time: float = 1.0
 @export var max_targets_per_hit: int = 4
+@export var hud_ref : HUD
+
+var spell_cast_lockout: float = 0.0
+
+@onready var skill_manager = $SkillManager
 
 # Identificação e Atributos Base
 var player_name: String = "Aventureiro"
@@ -47,15 +52,6 @@ var ui_dialogue_close_btn: Button = null
 var ui_quest_panel: PanelContainer = null
 var ui_quest_list_container: VBoxContainer = null
 
-# --- SISTEMA DE SKILLS, MANA E COOLDOWNS ---
-var skills_data: Dictionary = {
-	1: { "name": "Bola de Fogo", "mana_cost": 25, "cooldown": 1.2, "timer": 0.0, "requires_staff": true },
-	2: { "name": "Lança de Gelo", "mana_cost": 20, "cooldown": 1.0, "timer": 0.0, "requires_staff": true },
-	3: { "name": "Nova Arcana", "mana_cost": 45, "cooldown": 3.0, "timer": 0.0, "requires_staff": true },
-	4: { "name": "Cura", "mana_cost": 30, "cooldown": 4.0, "timer": 0.0, "requires_staff": false },
-	5: { "name": "Relâmpago", "mana_cost": 35, "cooldown": 2.0, "timer": 0.0, "requires_staff": true },
-	6: { "name": "Escudo Mágico", "mana_cost": 50, "cooldown": 6.0, "timer": 0.0, "requires_staff": false }
-}
 
 # --- EQUIPAMENTOS ATIVOS ---
 var equipped_items: Dictionary = {
@@ -83,6 +79,12 @@ var attack_timer: float = 0.0
 var combo_step: int = 1
 var combo_reset_timer: float = 0.0
 
+#Magias
+var is_targeting_spell: bool = false
+var pending_spell_id: int = -1
+var active_spell_decal: Node3D = null
+var spell_decal_scene = preload("res://Scenes/SpellDecal.tscn") 
+
 # Animações e passos
 var current_locomotion_state: String = ""
 var step_timer: float = 0.0
@@ -101,6 +103,7 @@ var attacks_playback: AnimationNodeStateMachinePlayback
 @onready var sub_viewport: SubViewport = $PlayerInfoSprite/SubViewport
 @onready var name_label: Label = $PlayerInfoSprite/SubViewport/VBoxContainer/NameLabel
 @onready var health_bar: ProgressBar = $PlayerInfoSprite/SubViewport/VBoxContainer/ProgressBar
+@onready var mana_bar: ProgressBar = $PlayerInfoSprite/SubViewport/VBoxContainer/ManaBar
 
 # Áudios e Efeitos Visuais
 @onready var hit_audio: AudioStreamPlayer3D = $HitAudio
@@ -182,6 +185,8 @@ func _ready() -> void:
 		player_info_sprite.texture = sub_viewport.get_texture()
 		health_bar.max_value = max_hp
 		health_bar.value = hp
+		mana_bar.max_value = max_mana
+		mana_bar.value = mana
 
 	if anim_tree:
 		anim_tree.active = true
@@ -218,12 +223,18 @@ func recalculate_derived_stats() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dead:
 		return
-
-	if event.is_action_pressed("Magia1"): try_cast_spell(1)
-	elif event.is_action_pressed("Magia2"): try_cast_spell(2)
-	elif event.is_action_pressed("Magia3"): try_cast_spell(3)
-	elif event.is_action_pressed("Magia4"): try_cast_spell(4)
-	elif event.is_action_pressed("Magia5"): try_cast_spell(5)
+	
+	if skill_manager and skill_manager.is_targeting_spell:
+		if event is InputEventMouseButton and event.pressed:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				skill_manager.confirm_targeted_cast()
+				get_viewport().set_input_as_handled()
+				return
+			elif event.button_index == MOUSE_BUTTON_RIGHT or event.is_action_pressed("ui_cancel"):
+				skill_manager.cancel_targeting()
+				get_viewport().set_input_as_handled()
+				return
+		return
 
 	if event is InputEventKey and event.pressed and event.keycode == KEY_C:
 		toggle_attribute_window()
@@ -233,12 +244,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event is InputEventKey and event.pressed and event.keycode == KEY_Q:
 		toggle_quest_window()
-
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 	if event is InputEventKey and event.pressed and event.keycode == KEY_T:
 		if ui_dialogue_panel and ui_dialogue_panel.visible:
@@ -254,8 +259,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	if Input.is_action_just_pressed("Ataque") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		try_perform_local_attack()
+	if Input.is_action_just_pressed("Ataque") or (Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE):
+		if skill_manager and skill_manager.is_targeting_spell:
+			skill_manager.confirm_targeted_cast()
+			return
+		elif Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			try_perform_local_attack()
 
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
@@ -263,26 +272,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			spring_arm.rotate_x(-event.relative.y * mouse_sensitivity)
 			spring_arm.rotation.x = clamp(spring_arm.rotation.x, deg_to_rad(-65.0), deg_to_rad(30.0))
 
-func try_cast_spell(skill_id: int) -> void:
-	if not skills_data.has(skill_id) or is_dead:
-		return
-
-	var skill = skills_data[skill_id]
-	if skill.get("requires_staff", false):
-		var weapon: ItemData = equipped_items.get("weapon", null)
-		if not weapon or weapon.weapon_type != ItemData.WeaponType.STAFF:
-			print("[MAGIA] Você precisa de um Cajado equipado para lançar %s!" % skill["name"])
-			return
-
-	if skill["timer"] > 0.0 or mana < skill["mana_cost"]:
-		return
-
-	mana -= skill["mana_cost"]
-	skill["timer"] = skill["cooldown"]
-	print("Usou a skill %d (%s)" % [skill_id, skill["name"]])
-	update_hud_display()
+func try_cast_spell(skill_id: SkillData) -> void:
+	if skill_manager:
+		skill_manager.try_cast(skill_id)
 
 func try_perform_local_attack() -> void:
+	if spell_cast_lockout > 0.0 or (skill_manager and skill_manager.is_targeting_spell):
+		return
+
 	if attack_timer > 0.0 or is_dead:
 		return
 
@@ -339,12 +336,10 @@ func perform_melee_hit() -> void:
 						break
 
 func _process(delta: float) -> void:
-	for s_id in skills_data:
-		if skills_data[s_id]["timer"] > 0.0:
-			skills_data[s_id]["timer"] -= delta
-
 	update_client_visuals(delta)
 	check_torch_status(delta)
+	if spell_cast_lockout > 0.0:
+		spell_cast_lockout -= delta
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0.0:
@@ -520,7 +515,7 @@ func take_damage(amount: int) -> void:
 			is_dead = false
 			global_position = spawn_pos
 			set_physics_process(true)
-			rpc_player_respawn(spawn_pos, max_hp)
+			rpc_player_respawn(spawn_pos, max_hp, max_mana)
 		)
 
 func rpc_play_levelup_effect() -> void:
@@ -559,9 +554,10 @@ func rpc_player_death() -> void:
 
 	show_death_ui()
 
-func rpc_player_respawn(pos: Vector3, new_hp: int) -> void:
+func rpc_player_respawn(pos: Vector3, new_hp: int, new_mp: int) -> void:
 	is_dead = false
 	hp = new_hp
+	mana = new_mp
 	
 	# --- BUSCA INTELIGENTE DO SPAWNPOINT ---
 	var current_scene = get_tree().current_scene
@@ -579,6 +575,8 @@ func rpc_player_respawn(pos: Vector3, new_hp: int) -> void:
 
 	if health_bar:
 		health_bar.value = new_hp
+	if mana_bar:
+		mana_bar.value = new_mp
 
 	if anim_tree:
 		current_locomotion_state = "state_0"
@@ -1093,6 +1091,14 @@ func _on_inventory_slot_clicked(slot_idx: int, _slot_node: Control) -> void:
 	
 	if item.item_type == ItemData.ItemType.CONSUMABLE:
 		item_context_menu.add_item("Usar", 0)
+   
+		# Se for consumível de HP, permite atrelar ao Z
+		if item.bonus_hp > 0:
+			item_context_menu.add_item("Atribuir ao Atalho Z", 100)
+		# Se for consumível de Mana, permite atrelar ao X
+		elif item.bonus_mana > 0:
+			item_context_menu.add_item("Atribuir ao Atalho X", 101)
+
 	elif item.item_type in [ItemData.ItemType.WEAPON, ItemData.ItemType.ARMOR, ItemData.ItemType.HELM, ItemData.ItemType.BOOTS]:
 		item_context_menu.add_item("Equipar", 1)
 
@@ -1133,6 +1139,20 @@ func _on_context_menu_item_selected(id: int) -> void:
 				equip_item_from_inventory(item, selected_slot_index)
 			2:
 				discard_item(selected_slot_index)
+			100: # Atribuir ao Atalho Z (Poção de HP)
+				var hud = get_tree().current_scene.find_child("HUD", true, false)
+				if hud and hud.has_method("assign_potion_to_slot"):
+					hud.assign_potion_to_slot("hp", item)
+					print("[PLAYER] Poção de HP atribuída ao atalho Z: ", item.name)
+				_hide_item_tooltip()
+				return
+			101: # Atribuir ao Atalho X (Poção de Mana)
+				var hud = get_tree().current_scene.find_child("HUD", true, false)
+				if hud and hud.has_method("assign_potion_to_slot"):
+					hud.assign_potion_to_slot("mp", item)
+					print("[PLAYER] Poção de MP atribuída ao atalho X: ", item.name)
+				_hide_item_tooltip()
+				return
 
 		selected_slot_index = -1
 
@@ -1250,14 +1270,23 @@ func _on_equipment_menu_selected(_id: int) -> void:
 	pass
 
 func use_consumable(item: ItemData, slot_idx: int) -> void:
-	hp = min(max_hp, hp + item.bonus_hp)
-	mana = min(max_mana, mana + item.bonus_mana)
+	if not item:
+		return
+
+	# 1. Aplica o efeito usando as funções especializadas (que já disparam animação e texto flutuante)
+	if item.bonus_hp > 0:
+		heal(item.bonus_hp, item)
 	
+	if item.bonus_mana > 0:
+		restore_mana(item.bonus_mana, item)
+
+	# 2. Reduz a quantidade no inventário do player
 	if inventory_items[slot_idx] != null:
 		inventory_items[slot_idx]["amount"] -= 1
 		if inventory_items[slot_idx]["amount"] <= 0:
 			inventory_items[slot_idx] = null
 
+	# 3. Atualiza as exibições na tela
 	recalculate_derived_stats()
 	update_hud_display()
 	update_inventory_display()
@@ -1337,7 +1366,12 @@ func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 		vbox.add_child(q_lbl)
 
 	item_tooltip_panel.visible = true
-	item_tooltip_panel.position = slot_node.global_position + Vector2(65, 0)
+	var slot_pos = slot_node.global_position
+	var screen_size = get_viewport().get_visible_rect().size
+	if slot_pos.x > screen_size.x - 350:
+		item_tooltip_panel.position = slot_pos + Vector2(-280, 0) # Abre à esquerda
+	else:
+		item_tooltip_panel.position = slot_node.global_position + Vector2(65, 0)
 
 func _hide_item_tooltip() -> void:
 	if item_tooltip_panel:
@@ -1367,11 +1401,11 @@ func create_stat_row(title: String, stat_key: String) -> Dictionary:
 func toggle_attribute_window() -> void:
 	if not ui_attr_panel or not ui_status_panel:
 		return
-	var is_visible = not ui_attr_panel.visible
-	ui_attr_panel.visible = is_visible
-	ui_status_panel.visible = is_visible
+	var is_Visible = not ui_attr_panel.visible
+	ui_attr_panel.visible = is_Visible
+	ui_status_panel.visible = is_Visible
 	
-	if is_visible or (ui_inventory_panel and ui_inventory_panel.visible):
+	if is_Visible or (ui_inventory_panel and ui_inventory_panel.visible):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -1379,11 +1413,11 @@ func toggle_attribute_window() -> void:
 func toggle_inventory_window() -> void:
 	if not ui_inventory_panel or not ui_equipment_panel:
 		return
-	var is_visible = not ui_inventory_panel.visible
-	ui_inventory_panel.visible = is_visible
-	ui_equipment_panel.visible = is_visible
+	var is_Visible = not ui_inventory_panel.visible
+	ui_inventory_panel.visible = is_Visible
+	ui_equipment_panel.visible = is_Visible
 	
-	if is_visible or (ui_attr_panel and ui_attr_panel.visible):
+	if is_Visible or (ui_attr_panel and ui_attr_panel.visible):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -1392,7 +1426,7 @@ func update_hud_display() -> void:
 	if not ui_level_label:
 		return
 
-	ui_level_label.text = "Nível %d (EXP: %d / %d) [C: Atrib | I: Inv]" % [player_level, current_xp, required_xp]
+	ui_level_label.text = "Nível %d (EXP: %d / %d)" % [player_level, current_xp, required_xp]
 	ui_xp_bar.max_value = required_xp
 	ui_xp_bar.value = current_xp
 	ui_points_label.text = "Pontos Disponíveis: %d" % unspent_points
@@ -1422,7 +1456,8 @@ func update_hud_display() -> void:
 	ui_btn_vit.disabled = not can_spend
 	ui_btn_int.disabled = not can_spend
 
-func update_hand_visual(mesh_scene: PackedScene) -> void:
+func update_hand_visual(mesh_scene: PackedScene, Scale : Vector3 = Vector3(0.01, 0.01, 0.01)) -> void:
+	
 	if not right_hand_bone:
 		return
 
@@ -1433,7 +1468,7 @@ func update_hand_visual(mesh_scene: PackedScene) -> void:
 		var item_instance = mesh_scene.instantiate()
 		right_hand_bone.add_child(item_instance)
 		item_instance.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
-		item_instance.scale = Vector3(0.01, 0.01, 0.01)
+		item_instance.scale = Scale
 		item_instance.position = Vector3.ZERO
 
 func discard_item(slot_idx: int) -> void:
@@ -1476,10 +1511,10 @@ func toggle_quest_window() -> void:
 	if not ui_quest_panel:
 		return
 	
-	var is_visible = not ui_quest_panel.visible
-	ui_quest_panel.visible = is_visible
+	var is_Visible = not ui_quest_panel.visible
+	ui_quest_panel.visible = is_Visible
 	
-	if is_visible:
+	if is_Visible:
 		# POPULA O DIÁRIO COM AS MISSÕES ATIVAS ASSIM QUE ELE ABRE!
 		populate_quest_log_ui()
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -1518,6 +1553,11 @@ func load_player_save(username: String) -> void:
 	stat_agi = int(stats.get("agi", 5))
 	stat_vit = int(stats.get("vit", 5))
 	stat_int = int(stats.get("int", 5))
+	
+	if hud_ref and json_data.has("equipped_skills"):
+		print(json_data.get("equipped_potions", {}))
+		if skill_manager:
+			hud_ref.load_saved_data(json_data.get("equipped_skills", {}), json_data.get("equipped_potions", {}), skill_manager.available_skills)
 
 	var inv_data = json_data.get("inventory", []) as Array
 	inventory_items.clear()
@@ -1532,6 +1572,9 @@ func load_player_save(username: String) -> void:
 					"item": load(res_path),
 					"amount": amt
 				}
+	
+	if json_data.has("skills_data") and skill_manager:
+		skill_manager.load_saved_data(json_data["skills_data"])
 
 	# Limpa os equipamentos antes de carregar para evitar sobreposição de bônus ou referências fantasmas
 	for k in equipped_items.keys():
@@ -1646,8 +1689,13 @@ func save_player_account() -> void:
 			"z": global_position.z
 		},
 		"client_active_quests": client_active_quests,
-		"completed_quests": completed_quests
+		"completed_quests": completed_quests,
+		"equipped_skills": hud_ref.equipped_skill_slots if hud_ref else {},
+		"equipped_potions": hud_ref.equipped_potion_items if hud_ref else {},
+		"skills_data": skill_manager.get_save_data() if skill_manager else {}
 	}
+	print("HUD : ", hud_ref)
+	print("pocoes : ", hud_ref.equipped_potion_items)
 	if has_node("/root/QuestManager"):
 		QuestManager.save_quest_board_data(player_name, account_data)
 
@@ -1789,3 +1837,68 @@ func check_torch_status(delta: float) -> void:
 				torch_light.light_energy = move_toward(torch_light.light_energy, 0.0, delta * 2.0)
 				if torch_light.light_energy <= 0.05:
 					torch_light.visible = false
+
+# Função para curar o HP do player (usada por poções, magias de cura, etc.)
+func heal(amount: int, Potion: ItemData) -> void:
+	if is_dead: return 
+	hp = min(hp + amount, max_hp) 
+	if health_bar: health_bar.value = hp 
+	play_drink_animation(Potion)
+	show_heal_effect(amount, "HP")
+	update_hud_display() 
+
+func restore_mana(amount: int, Potion: ItemData) -> void:
+	if is_dead: return
+	mana = min(mana + amount, max_mana)
+	if mana_bar: mana_bar.value = mana
+	play_drink_animation(Potion)
+	show_heal_effect(amount, "MP")
+	update_hud_display()
+
+func play_drink_animation(potion_item: ItemData) -> void:
+	var _current_weapon: ItemData = equipped_items.get("weapon", null)
+	if potion_item.mesh_scene:
+		update_hand_visual(potion_item.mesh_scene, Vector3(0.1 , 0.1 , 0.1))
+
+	if attacks_playback:
+		attacks_playback.start("Armature|Beber")
+
+	if anim_tree:
+		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+	
+	get_tree().create_timer(1.2).timeout.connect(func():
+		var active_weapon: ItemData = equipped_items.get("weapon", null)
+		if active_weapon and active_weapon.mesh_scene:
+			update_hand_visual(active_weapon.mesh_scene)
+		else:
+			update_hand_visual(null)
+	)
+
+func show_heal_effect(amount: int, type : String = "HP") -> void:
+	# Dispara o texto flutuante verde subindo do player (mesmo sistema do dano, mas em verde!)
+	var heal_lbl = floating_damage_scene.instantiate()
+	get_parent().add_child(heal_lbl)
+	heal_lbl.global_position = global_position + Vector3(0, 2.0, 0)
+	if heal_lbl.has_method("setup"):
+		if type == "HP":
+			heal_lbl.setup("+%d" % amount, Color(0.2, 1.0, 0.3))
+		elif type == "MP":
+			heal_lbl.setup("+%d" % amount, Color(0.2, 0.243, 0.948, 1.0))
+
+func get_level() -> int:
+	return player_level
+
+func magic_heal(amount: int) -> void:
+	if is_dead: return 
+	hp = min(hp + amount, max_hp) 
+	if health_bar: health_bar.value = hp
+	show_heal_effect(amount, "HP")
+	update_hud_display() 
+
+func play_spell_animation(anim_name: String) -> void:
+	if attacks_playback:
+		attacks_playback.travel("Armature|" + anim_name)
+
+	if anim_tree:
+		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		print("[PLAYER] Executando animação de magia: ", anim_name)

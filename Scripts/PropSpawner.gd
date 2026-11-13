@@ -38,11 +38,11 @@ func start_spawning() -> void:
 			spawn_pos = get_ground_position(spawn_pos)
 
 		# Instancia o prop diretamente na cena de forma local (Singleplayer)
-		var prop_instance = selected_scene.instantiate() as Node3D
+		var prop_instance = selected_scene.instantiate()
 		if prop_instance:
 			get_parent().call_deferred("add_child", prop_instance)
-			prop_instance.global_position = spawn_pos + Vector3(0, height_offset, 0)
-			prop_instance.rotation.y = rand_rot_y
+			prop_instance.set_deferred("global_position", spawn_pos - Vector3(0, height_offset, 0))
+			prop_instance.set_deferred("rotation", Vector3(0, rand_rot_y, 0))
 
 	# --- AUTO-BAKE DO NAVIGATION MESH ---
 	# Após espalhar todos os props pelo mapa, mandamos o NavigationRegion3D recalcular o mapa de calor!

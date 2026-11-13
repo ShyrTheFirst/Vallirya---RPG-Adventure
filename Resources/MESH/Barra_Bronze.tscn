@@ -1,9 +1,9 @@
 [gd_scene format=4 uid="uid://dums66q041xmg"]
 
-[ext_resource type="Texture2D" uid="uid://buvej8bu8a2p" path="res://Assets/Pacote Modular Vallirya - Objetos/Barra_Bronze_0.png" id="1_2cqt8"]
-[ext_resource type="Texture2D" uid="uid://bhn02nhyn6v77" path="res://Assets/Pacote Modular Vallirya - Objetos/Barra_Bronze_1.png" id="2_ajhx2"]
+[ext_resource type="Texture2D" uid="uid://buvej8bu8a2p" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Barra_Bronze_0.png" id="1_2cqt8"]
+[ext_resource type="Texture2D" uid="uid://bhn02nhyn6v77" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Barra_Bronze_1.png" id="2_ajhx2"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bm7hi"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bpqpp"]
 resource_name = "M_Barra"
 transparency = 2
 alpha_scissor_threshold = 0.5
@@ -17,7 +17,7 @@ normal_enabled = true
 normal_scale = 0.0
 normal_texture = ExtResource("2_ajhx2")
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_bv7je"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_h32h8"]
 _surfaces = [{
 "aabb": AABB(-0.0010659848, -0.0023543034, -1.5635044e-07, 0.0021319697, 0.0047086067, 0.00091323245),
 "format": 34359742465,
@@ -31,7 +31,7 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_wl5d7"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_27052"]
 resource_name = "Cone"
 _surfaces = [{
 "aabb": AABB(-0.0010659848, -0.0023543034, -1.5635044e-07, 0.0021319697, 0.0047086067, 0.00091323245),
@@ -39,7 +39,7 @@ _surfaces = [{
 "format": 34359742487,
 "index_count": 60,
 "index_data": PackedByteArray("AAABAAIAAgADAAAABAAFAAYABgAHAAQACAAJAAoACgALAAgADAANAA4ADgAPAAwAEAARABIAEgATABAAFAAVABYAFAAXABUAFAAWABgAFAAYABkAGgAbABwAHAAdABoAHgAfACAAIAAhAB4AIgAjACQAJAAlACIA"),
-"material": SubResource("StandardMaterial3D_bm7hi"),
+"material": SubResource("StandardMaterial3D_bpqpp"),
 "name": "M_Barra",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
@@ -47,8 +47,8 @@ _surfaces = [{
 "vertex_data": PackedByteArray("hLiLOp9bBjtI4Se0I105OrFItDqAW286AAAAAM6xzDqAW286AAAAAKhKGjtI4Se0AAAAAM6xzLqAW286I105OrFItLqAW286hLiLOp9bBrtI4Se0AAAAAKhKGrtI4Se0hLiLup9bBrtI4Se0I105urFItLqAW286AAAAAM6xzLqAW286AAAAAKhKGrtI4Se0AAAAAM6xzLqAW286AAAAAM6xzDqAW286I105OrFItDqAW286I105OrFItLqAW286AAAAAM6xzDqAW286I105urFItDqAW286hLiLup9bBjtI4Se0AAAAAKhKGjtI4Se0hLiLOp9bBrtI4Se0AAAAAKhKGjtI4Se0hLiLup9bBjtI4Se0hLiLOp9bBjtI4Se0hLiLup9bBrtI4Se0AAAAAKhKGrtI4Se0I105urFItDqAW286I105urFItLqAW286hLiLup9bBrtI4Se0hLiLup9bBjtI4Se0I105OrFItLqAW286I105OrFItDqAW286hLiLOp9bBjtI4Se0hLiLOp9bBrtI4Se0I105urFItDqAW286AAAAAM6xzDqAW286AAAAAM6xzLqAW286I105urFItLqAW286lZD4u/9/cqKVkPi7/39yopWQ+Lv/f3KilZD4u/9/cqKVkAZE5sQAgJWQBkTmxACAlZAGRObEAICVkAZE5sQAgGlvBkToxAKAaW8GROM6K4BpbwZEDTsIgGlvBkT4xByA/3//f/7//7//f/9//v//v/9//3/+//+//3//f/7//79pb/i7EoB4omlv+LtWgI2iaW/4u/l/c6Jpb/i7xn97ov////8AAP+//////wAA/7//////AAD/v/////8AAP+//////wAA/7//////AAD/vxwk/38AAPDtHCT/fwAA8O0cJP9/AADw7Rwk/38AAPDt4tv/f///8O3i2/9////w7eLb/3////Dt4tv/f///8O3/f/9//v//v/9//3/+//+//3//f/7//7//f/9//v//vw==")
 }]
 blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_bv7je")
+shadow_mesh = SubResource("ArrayMesh_h32h8")
 
-[node name="Barra_Bronze" type="MeshInstance3D" unique_id=714321051]
-transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 0, 0, 0)
-mesh = SubResource("ArrayMesh_wl5d7")
+[node name="Barra de Metal" type="MeshInstance3D" unique_id=1021417817]
+transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)
+mesh = SubResource("ArrayMesh_27052")

@@ -5,6 +5,11 @@
 [ext_resource type="AudioStream" uid="uid://espjqmh8sqhk" path="res://ASSETS/SFX/Sword Attack 1.wav" id="3_gntrk"]
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="4_1iu4k"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="5_m0x7a"]
+[ext_resource type="Script" uid="uid://cqsffnwvjo0q2" path="res://Scripts/SkillManager.gd" id="13_miouo"]
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="14_lslt6"]
+[ext_resource type="Resource" uid="uid://dkoex0vaiyys5" path="res://Resources/Skills/Bola_de_Fogo.tres" id="15_ulo2v"]
+[ext_resource type="Resource" uid="uid://c7rjgnpg5d4ui" path="res://Resources/Skills/Cura.tres" id="16_1iu4k"]
+[ext_resource type="Resource" uid="uid://ce1bisc62sx10" path="res://Resources/Skills/Meteoro.tres" id="17_m0x7a"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="18_8flut"]
 [ext_resource type="StyleBox" uid="uid://d2q0hfvlmass8" path="res://ASSETS/VFX/Themes/background_progress_bar.tres" id="18_qidb7"]
 [ext_resource type="StyleBox" uid="uid://h12ndbr2278k" path="res://ASSETS/VFX/Themes/fill_progress_bar_HP.tres" id="19_70hv0"]
@@ -6229,6 +6234,9 @@ _data = {
 &"RESET": SubResource("Animation_x63xi")
 }
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_miouo"]
+viewport_path = NodePath("PlayerInfoSprite/SubViewport")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kyqiw"]
 bg_color = Color(0, 0.59000057, 1, 1)
 border_width_left = 4
@@ -6271,6 +6279,9 @@ animation = &"Armature|Interagindo"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lyrkg"]
 animation = &"Armature|Minerar"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lslt6"]
+animation = &"Armature|Nadando"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_c43xd"]
 animation = &"Armature|Pegando"
@@ -6345,6 +6356,13 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ulo2v"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1iu4k"]
+switch_mode = 2
+advance_mode = 2
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_3rw25"]
 "states/Armature|Ataque 1/node" = SubResource("AnimationNodeAnimation_x63xi")
 "states/Armature|Ataque 1/position" = Vector2(499, 13)
@@ -6364,10 +6382,12 @@ states/Armature|Interagindo/node = SubResource("AnimationNodeAnimation_kih0c")
 states/Armature|Interagindo/position = Vector2(492, 426)
 states/Armature|Minerar/node = SubResource("AnimationNodeAnimation_lyrkg")
 states/Armature|Minerar/position = Vector2(499, 547)
+states/Armature|Nadando/node = SubResource("AnimationNodeAnimation_lslt6")
+states/Armature|Nadando/position = Vector2(497, -63)
 states/Armature|Pegando/node = SubResource("AnimationNodeAnimation_c43xd")
 states/Armature|Pegando/position = Vector2(492, 375)
-transitions = ["Start", "Armature|Ataque 1", SubResource("AnimationNodeStateMachineTransition_avx33"), "Armature|Ataque 1", "End", SubResource("AnimationNodeStateMachineTransition_rxg2u"), "Start", "Armature|Ataque 2", SubResource("AnimationNodeStateMachineTransition_xixlo"), "Armature|Ataque 2", "End", SubResource("AnimationNodeStateMachineTransition_bfbt0"), "Start", "Armature|Ataque 3", SubResource("AnimationNodeStateMachineTransition_wosd6"), "Armature|Ataque 3", "End", SubResource("AnimationNodeStateMachineTransition_hkrn1"), "Start", "Armature|Ataque 4", SubResource("AnimationNodeStateMachineTransition_wpo1r"), "Armature|Ataque 4", "End", SubResource("AnimationNodeStateMachineTransition_pqity"), "Start", "Armature|Ataque 5", SubResource("AnimationNodeStateMachineTransition_opqna"), "Armature|Ataque 5", "End", SubResource("AnimationNodeStateMachineTransition_00okb"), "Start", "Armature|Beber", SubResource("AnimationNodeStateMachineTransition_6hr71"), "Armature|Beber", "End", SubResource("AnimationNodeStateMachineTransition_y6y60"), "Start", "Armature|Pegando", SubResource("AnimationNodeStateMachineTransition_vmcrb"), "Armature|Pegando", "End", SubResource("AnimationNodeStateMachineTransition_teras"), "Start", "Armature|Interagindo", SubResource("AnimationNodeStateMachineTransition_8p516"), "Armature|Interagindo", "End", SubResource("AnimationNodeStateMachineTransition_fvoow"), "Start", "Armature|Cortar", SubResource("AnimationNodeStateMachineTransition_v5fqo"), "Armature|Cortar", "End", SubResource("AnimationNodeStateMachineTransition_yf17c"), "Start", "Armature|Minerar", SubResource("AnimationNodeStateMachineTransition_awd2i"), "Armature|Minerar", "End", SubResource("AnimationNodeStateMachineTransition_o2sks")]
-graph_offset = Vector2(-211, -30)
+transitions = ["Start", "Armature|Ataque 1", SubResource("AnimationNodeStateMachineTransition_avx33"), "Armature|Ataque 1", "End", SubResource("AnimationNodeStateMachineTransition_rxg2u"), "Start", "Armature|Ataque 2", SubResource("AnimationNodeStateMachineTransition_xixlo"), "Armature|Ataque 2", "End", SubResource("AnimationNodeStateMachineTransition_bfbt0"), "Start", "Armature|Ataque 3", SubResource("AnimationNodeStateMachineTransition_wosd6"), "Armature|Ataque 3", "End", SubResource("AnimationNodeStateMachineTransition_hkrn1"), "Start", "Armature|Ataque 4", SubResource("AnimationNodeStateMachineTransition_wpo1r"), "Armature|Ataque 4", "End", SubResource("AnimationNodeStateMachineTransition_pqity"), "Start", "Armature|Ataque 5", SubResource("AnimationNodeStateMachineTransition_opqna"), "Armature|Ataque 5", "End", SubResource("AnimationNodeStateMachineTransition_00okb"), "Start", "Armature|Beber", SubResource("AnimationNodeStateMachineTransition_6hr71"), "Armature|Beber", "End", SubResource("AnimationNodeStateMachineTransition_y6y60"), "Start", "Armature|Pegando", SubResource("AnimationNodeStateMachineTransition_vmcrb"), "Armature|Pegando", "End", SubResource("AnimationNodeStateMachineTransition_teras"), "Start", "Armature|Interagindo", SubResource("AnimationNodeStateMachineTransition_8p516"), "Armature|Interagindo", "End", SubResource("AnimationNodeStateMachineTransition_fvoow"), "Start", "Armature|Cortar", SubResource("AnimationNodeStateMachineTransition_v5fqo"), "Armature|Cortar", "End", SubResource("AnimationNodeStateMachineTransition_yf17c"), "Start", "Armature|Minerar", SubResource("AnimationNodeStateMachineTransition_awd2i"), "Armature|Minerar", "End", SubResource("AnimationNodeStateMachineTransition_o2sks"), "Start", "Armature|Nadando", SubResource("AnimationNodeStateMachineTransition_ulo2v"), "Armature|Nadando", "End", SubResource("AnimationNodeStateMachineTransition_1iu4k")]
+graph_offset = Vector2(-211, -120)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_u4y2r"]
 animation = &"Armature|Parado"
@@ -6390,7 +6410,7 @@ input_1/break_loop_at_end = false
 input_1/reset = true
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_g4v7s"]
-graph_offset = Vector2(-611.2496, -49.68846)
+graph_offset = Vector2(-466.14725, 108.57199)
 nodes/output/position = Vector2(500, 100)
 nodes/Parado/node = SubResource("AnimationNodeAnimation_u4y2r")
 nodes/Parado/position = Vector2(-278.62112, 63.378708)
@@ -6765,8 +6785,10 @@ transform = Transform3D(-0.946684, 0.32202062, 0.009613842, -0.061446488, -0.151
 bone_name = "Hand R"
 bone_idx = 24
 
-[node name="Braços e Pernas" type="Node3D" parent="Personagem (IK)" unique_id=1747264058]
-transform = Transform3D(-100, -0.0053318343, 5.456968e-10, 0, 5.9604645e-06, 100, -0.0053318343, 100, -1.1920929e-05, 0, 0, 0)
+[node name="LeftHand" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=713198140]
+transform = Transform3D(-0.929947, -0.08244103, 0.35833228, -0.2187759, 0.9073248, -0.3590233, -0.29552573, -0.41226742, -0.8618009, -0.0036014752, 0.00012348176, 0.00067220326)
+bone_name = "Hand L"
+bone_idx = 18
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Personagem (IK)" unique_id=1049801844]
 libraries/ = SubResource("AnimationLibrary_wxoq4")
@@ -6784,10 +6806,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
 cast_shadow = 0
 pixel_size = 0.005
 billboard = 1
+texture = SubResource("ViewportTexture_miouo")
 
 [node name="SubViewport" type="SubViewport" parent="PlayerInfoSprite" unique_id=1318285116]
 transparent_bg = true
-size = Vector2i(400, 46)
+size = Vector2i(400, 56)
 render_target_update_mode = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PlayerInfoSprite/SubViewport" unique_id=84752301]
@@ -6838,7 +6861,6 @@ bus = &"Enemy Player SFX"
 
 [node name="StepAudio" type="AudioStreamPlayer3D" parent="." unique_id=1170253230]
 stream = ExtResource("20_m0x7a")
-unit_size = 3.0
 max_distance = 15.0
 max_polyphony = 2
 bus = &"Enemy Player SFX"
@@ -6871,6 +6893,14 @@ parameters/attack_shot/active = false
 parameters/attack_shot/internal_active = false
 parameters/attack_shot/request = 0
 
+[node name="HitAudio" type="AudioStreamPlayer3D" parent="AnimationTree" unique_id=946765115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0042511225, 0)
+stream = ExtResource("2_kyqiw")
+unit_size = 5.0
+max_distance = 20.0
+max_polyphony = 2
+bus = &"Enemy Player SFX"
+
 [node name="LevelUpBeam" type="MeshInstance3D" parent="." unique_id=1157104825]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 visible = false
@@ -6888,3 +6918,8 @@ bus = &"Enemy Player SFX"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.23510677, -0.135198, 0.165726)
 light_color = Color(1, 0.7977378, 0.48452926, 1)
 light_energy = 1.5
+
+[node name="SkillManager" type="Node3D" parent="." unique_id=2041185931 node_paths=PackedStringArray("player")]
+script = ExtResource("13_miouo")
+player = NodePath("..")
+register_skills = Array[ExtResource("14_lslt6")]([ExtResource("15_ulo2v"), ExtResource("16_1iu4k"), ExtResource("17_m0x7a")])

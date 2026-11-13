@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1wg38ikckjhs"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_8dgmi"]
+[ext_resource type="PackedScene" uid="uid://cwkt3nyr2x74m" path="res://Resources/MESH/Pocao_Mana_Grande.tscn" id="1_8f5rs"]
+
+[resource]
+script = ExtResource("1_8dgmi")
+id = "Mana_Grande"
+name = "Poçao de Mana Grande"
+item_type = 4
+description = "Poçao que recupera 3000 MP"
+mesh_scene = ExtResource("1_8f5rs")
+sell_price = 10000
+bonus_mana = 3000
+metadata/_custom_type_script = "uid://eaep86qi61ki"

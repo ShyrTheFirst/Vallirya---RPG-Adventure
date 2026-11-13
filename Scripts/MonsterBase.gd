@@ -397,7 +397,7 @@ func _roll_loot_drops() -> void:
 
 		if randf() <= chance:
 			var drop_pos = global_position + Vector3(randf_range(-0.6, 0.6), 0.4, randf_range(-0.6, 0.6))
-			var world_item_scene = load("res://Scenes/WorldItem.tscn")
+			var world_item_scene = load("res://Resources/Scenes/drop.tscn")
 			if world_item_scene:
 				var item_instance = world_item_scene.instantiate()
 				var world = get_tree().current_scene

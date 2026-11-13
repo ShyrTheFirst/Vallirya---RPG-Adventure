@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://p6aik3vtbj2e"]
+
+[ext_resource type="PackedScene" uid="uid://dhegga3q6qsj8" path="res://Resources/MESH/Moeda_Ouro_1.tscn" id="1_cg6iq"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_e5knx"]
+
+[resource]
+script = ExtResource("1_e5knx")
+id = "Moeda_Ouro_1"
+name = "Moeda de Ouro"
+description = "Uma moeda de ouro usada para comprar itens."
+mesh_scene = ExtResource("1_cg6iq")
+sell_price = 9801
+inventory_rotation = Vector3(45, 90, 0)
+inventory_scale = Vector3(500, 500, 500)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

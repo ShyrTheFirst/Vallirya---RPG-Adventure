@@ -11,6 +11,6 @@ description = "Barra feita com liga de bronze"
 mesh_scene = ExtResource("1_q4mmy")
 sell_price = 1000
 inventory_rotation = Vector3(-45, 45, -90)
-inventory_scale = Vector3(100, 100, 100)
+inventory_scale = Vector3(200, 200, 200)
 inventory_offset = Vector3(0, 0.5, 0)
 metadata/_custom_type_script = "uid://eaep86qi61ki"

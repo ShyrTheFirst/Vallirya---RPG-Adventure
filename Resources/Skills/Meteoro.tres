@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://ce1bisc62sx10"]
+
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="1_tug47"]
+
+[sub_resource type="Gradient" id="Gradient_5px5t"]
+offsets = PackedFloat32Array(0.4698795, 0.55421686, 0.6506024)
+colors = PackedColorArray(0, 0, 0, 1, 0.8634428, 0.46963003, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vbk5f"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tug47"]
+width = 32
+height = 32
+noise = SubResource("FastNoiseLite_vbk5f")
+color_ramp = SubResource("Gradient_5px5t")
+
+[resource]
+script = ExtResource("1_tug47")
+id = "Meteoro"
+skill_name = "Meteoro"
+description = "Uma grande bola de fogo caindo do ceu"
+mana_cost = 100
+cooldown = 3.0
+icon = SubResource("NoiseTexture2D_tug47")
+damage = 150
+required_level = 10
+required_skill = "Bola_de_Fogo"
+metadata/_custom_type_script = "uid://w0obpvkma68s"

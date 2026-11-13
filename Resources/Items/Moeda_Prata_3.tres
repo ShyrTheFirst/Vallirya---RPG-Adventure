@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dcvvjdcgme2ka"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_gjkiw"]
+[ext_resource type="PackedScene" uid="uid://dnwhwrtbh6dti" path="res://Resources/MESH/Moeda_Prata_3.tscn" id="1_ut1dm"]
+
+[resource]
+script = ExtResource("1_gjkiw")
+id = "Moeda_Prata_3"
+name = "3 Moedas de Prata"
+description = "Tres moeda de prata usada para comprar itens."
+mesh_scene = ExtResource("1_ut1dm")
+sell_price = 297
+inventory_rotation = Vector3(45, 90, 0)
+inventory_scale = Vector3(7, 7, 7)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

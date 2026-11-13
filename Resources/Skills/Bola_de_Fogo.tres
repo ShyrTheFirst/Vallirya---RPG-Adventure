@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://dkoex0vaiyys5"]
+
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="1_y4386"]
+
+[sub_resource type="Gradient" id="Gradient_y4386"]
+offsets = PackedFloat32Array(0, 0.3313253, 0.48192772, 0.6084337, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1, 0.73929507, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_n48h1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_y4386"]
+width = 32
+height = 32
+noise = SubResource("FastNoiseLite_n48h1")
+color_ramp = SubResource("Gradient_y4386")
+
+[resource]
+script = ExtResource("1_y4386")
+icon = SubResource("NoiseTexture2D_y4386")
+metadata/_custom_type_script = "uid://w0obpvkma68s"

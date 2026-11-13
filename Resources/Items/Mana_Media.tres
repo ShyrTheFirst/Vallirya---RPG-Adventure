@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cigalli78ayo6"]
+
+[ext_resource type="PackedScene" uid="uid://cp3mxlnhhrva3" path="res://Resources/MESH/Pocao_Mana_Media.tscn" id="1_8pswv"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_doqwu"]
+
+[resource]
+script = ExtResource("1_doqwu")
+id = "Mana_Media"
+name = "Poçao de Mana Media"
+item_type = 4
+description = "Poçao que recupera 1500 MP"
+mesh_scene = ExtResource("1_8pswv")
+sell_price = 1000
+bonus_mana = 1500
+metadata/_custom_type_script = "uid://eaep86qi61ki"

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dpgnp3wcojcfe"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_6t7n4"]
+[ext_resource type="PackedScene" uid="uid://yq1m82mk1i7f" path="res://Resources/MESH/Moeda_Cobre_3.tscn" id="1_ub8rx"]
+
+[resource]
+script = ExtResource("1_6t7n4")
+id = "Moeda_Cobre_3"
+name = "3 Moedas de Cobre"
+description = "Tres moedas de cobre usada para comprar itens."
+mesh_scene = ExtResource("1_ub8rx")
+sell_price = 3
+inventory_rotation = Vector3(45, 90, 0)
+inventory_scale = Vector3(7, 7, 7)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

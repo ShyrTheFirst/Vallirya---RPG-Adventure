@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c7rjgnpg5d4ui"]
+
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="1_p23wj"]
+
+[sub_resource type="Gradient" id="Gradient_qlvk6"]
+offsets = PackedFloat32Array(0.36746988, 0.5, 0.59638554)
+colors = PackedColorArray(0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5px5t"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vbk5f"]
+width = 32
+height = 32
+noise = SubResource("FastNoiseLite_5px5t")
+color_ramp = SubResource("Gradient_qlvk6")
+
+[resource]
+script = ExtResource("1_p23wj")
+id = "Cura"
+skill_name = "Cura"
+description = "Uma magia que recupera vida"
+mana_cost = 50
+cooldown = 2.0
+requires_staff = false
+type = "Self"
+icon = SubResource("NoiseTexture2D_vbk5f")
+damage = 50
+effect_type = ""
+metadata/_custom_type_script = "uid://w0obpvkma68s"

@@ -7,11 +7,16 @@
 [ext_resource type="Environment" uid="uid://v6qwweiju7a7" path="res://ASSETS/VFX/WorldEnv.tres" id="4_50glp"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_pbw6q"]
 [ext_resource type="Script" uid="uid://cbga4vb4e1bbn" path="res://Scripts/VolumeControl.gd" id="5_pbw6q"]
+[ext_resource type="Script" uid="uid://bjjby0yx6jddh" path="res://Scripts/hud.gd" id="8_vy5pj"]
+[ext_resource type="Texture2D" uid="uid://xgfaltqinryh" path="res://ASSETS/Icones/backpack.png" id="9_4kpch"]
+[ext_resource type="Texture2D" uid="uid://b3q15e7qw8htu" path="res://ASSETS/Icones/attack-gauge.png" id="10_grg3l"]
+[ext_resource type="Texture2D" uid="uid://c5xx502anyjd3" path="res://ASSETS/Icones/open-book.png" id="11_frkhe"]
 
 [node name="Main" type="Node3D" unique_id=780729372]
 script = ExtResource("1_idj7w")
 
-[node name="Player" parent="." unique_id=1422835273 instance=ExtResource("1_r150o")]
+[node name="Player" parent="." unique_id=1422835273 node_paths=PackedStringArray("hud_ref") instance=ExtResource("1_r150o")]
+hud_ref = NodePath("../HUD")
 
 [node name="LevelContainer" type="Node3D" parent="." unique_id=160777478]
 
@@ -182,6 +187,89 @@ horizontal_alignment = 1
 [node name="SliderWorldSFX" type="HSlider" parent="UI/MenuJogo/VolumeControl/Panel/VBoxContainer" unique_id=438646702]
 layout_mode = 2
 theme = ExtResource("4_pbw6q")
+
+[node name="HUD" type="Control" parent="." unique_id=611354852 node_paths=PackedStringArray("inventory_button", "status_button", "quest_button")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_vy5pj")
+inventory_button = NodePath("TopRightMenu/Inventory")
+status_button = NodePath("TopRightMenu/Status")
+quest_button = NodePath("TopRightMenu/Quests")
+
+[node name="TopRightMenu" type="HBoxContainer" parent="HUD" unique_id=104225955]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -224.0
+offset_top = 19.0
+offset_right = -24.0
+offset_bottom = 83.0
+grow_horizontal = 0
+theme_override_constants/separation = 15
+
+[node name="Inventory" type="Button" parent="HUD/TopRightMenu" unique_id=1001490701]
+custom_minimum_size = Vector2(64, 64)
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/TopRightMenu/Inventory" unique_id=2036351236]
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+texture = ExtResource("9_4kpch")
+
+[node name="Status" type="Button" parent="HUD/TopRightMenu" unique_id=1996865498]
+custom_minimum_size = Vector2(64, 64)
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/TopRightMenu/Status" unique_id=1330158280]
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("10_grg3l")
+
+[node name="Quests" type="Button" parent="HUD/TopRightMenu" unique_id=744495545]
+custom_minimum_size = Vector2(64, 64)
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/TopRightMenu/Quests" unique_id=156581738]
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("11_frkhe")
+
+[node name="BottomCenterBar" type="HBoxContainer" parent="HUD" unique_id=614414236]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PotionSlots" type="HBoxContainer" parent="HUD/BottomCenterBar" unique_id=879159587]
+layout_mode = 2
+
+[node name="Separator" type="Control" parent="HUD/BottomCenterBar" unique_id=1495853535]
+layout_mode = 2
+
+[node name="SkillBar" type="HBoxContainer" parent="HUD/BottomCenterBar" unique_id=1911069513]
+layout_mode = 2
 
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnSave" to="UI/MenuJogo" method="_on_btn_save_pressed"]
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnQuit" to="UI/MenuJogo" method="_on_btn_quit_pressed"]

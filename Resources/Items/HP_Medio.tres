@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://od1mw87n7hsq"]
+
+[ext_resource type="PackedScene" uid="uid://raatwtxrebui" path="res://Resources/MESH/Pocao_Vida_Media.tscn" id="1_a8wm6"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_j5i5w"]
+
+[resource]
+script = ExtResource("1_j5i5w")
+id = "HP_Medio"
+name = "Poçao de HP Medio"
+item_type = 4
+description = "Poçao que recupera 1500 HP"
+mesh_scene = ExtResource("1_a8wm6")
+sell_price = 1000
+inventory_scale = Vector3(0.5, 0.5, 0.5)
+bonus_hp = 1500
+metadata/_custom_type_script = "uid://eaep86qi61ki"
