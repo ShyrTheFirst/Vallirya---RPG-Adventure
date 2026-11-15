@@ -1,21 +1,21 @@
 [gd_scene format=4 uid="uid://dbi1b5myivpu8"]
 
-[ext_resource type="Texture2D" uid="uid://dane5a1lidoob" path="res://Assets/Construçoes/Casa_Normal_Ardosia_0.png" id="1_ttqsv"]
-[ext_resource type="Texture2D" uid="uid://ochmudq4sw5y" path="res://Assets/Construçoes/Casa_Normal_Ardosia_1.png" id="2_jbih3"]
-[ext_resource type="Texture2D" uid="uid://cehumuqooaofe" path="res://Assets/Construçoes/Casa_Normal_Ardosia_4.png" id="3_ddr7r"]
-[ext_resource type="Texture2D" uid="uid://dx52a6t2ryvdk" path="res://Assets/Construçoes/Casa_Normal_Ardosia_5.png" id="4_4fwdm"]
-[ext_resource type="Texture2D" uid="uid://buphi3gglsxyo" path="res://Assets/Construçoes/Casa_Normal_Ardosia_8.png" id="5_8hel4"]
-[ext_resource type="Texture2D" uid="uid://df75paiythoim" path="res://Assets/Construçoes/Casa_Normal_Ardosia_9.png" id="6_y78fq"]
-[ext_resource type="Texture2D" uid="uid://d0avi2sqjt3c3" path="res://Assets/Construçoes/Casa_Normal_Ardosia_12.png" id="7_4qm81"]
-[ext_resource type="Texture2D" uid="uid://dhqa4tg1psck6" path="res://Assets/Construçoes/Casa_Normal_Ardosia_13.png" id="8_s4oah"]
-[ext_resource type="Texture2D" uid="uid://bn1y6qm7t826u" path="res://Assets/Construçoes/Casa_Normal_Ardosia_16.png" id="9_10j1j"]
-[ext_resource type="Texture2D" uid="uid://b5bfh224e3xy" path="res://Assets/Construçoes/Casa_Normal_Ardosia_19.png" id="10_gknpb"]
-[ext_resource type="Texture2D" uid="uid://cvnenxxwq023t" path="res://Assets/Construçoes/Casa_Normal_Ardosia_20.png" id="11_27tf1"]
-[ext_resource type="Texture2D" uid="uid://cpsopiysmvxkl" path="res://Assets/Construçoes/Casa_Normal_Ardosia_23.png" id="12_80w64"]
-[ext_resource type="Texture2D" uid="uid://dmgvmt6j587v5" path="res://Assets/Construçoes/Casa_Normal_Ardosia_24.png" id="13_6onqf"]
-[ext_resource type="Texture2D" uid="uid://dbdq76leqkyoq" path="res://Assets/Construçoes/Casa_Normal_Ardosia_27.png" id="14_w7f7c"]
-[ext_resource type="Texture2D" uid="uid://0omgde37hoap" path="res://Assets/Construçoes/Casa_Normal_Ardosia_30.png" id="15_mmoju"]
-[ext_resource type="Texture2D" uid="uid://dk0g3d0jipsi0" path="res://Assets/Construçoes/Casa_Normal_Ardosia_31.png" id="16_wq7vl"]
+[ext_resource type="Texture2D" uid="uid://dane5a1lidoob" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_0.png" id="1_ttqsv"]
+[ext_resource type="Texture2D" uid="uid://ochmudq4sw5y" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_1.png" id="2_jbih3"]
+[ext_resource type="Texture2D" uid="uid://cehumuqooaofe" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_4.png" id="3_ddr7r"]
+[ext_resource type="Texture2D" uid="uid://dx52a6t2ryvdk" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_5.png" id="4_4fwdm"]
+[ext_resource type="Texture2D" uid="uid://buphi3gglsxyo" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_8.png" id="5_8hel4"]
+[ext_resource type="Texture2D" uid="uid://df75paiythoim" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_9.png" id="6_y78fq"]
+[ext_resource type="Texture2D" uid="uid://d0avi2sqjt3c3" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_12.png" id="7_4qm81"]
+[ext_resource type="Texture2D" uid="uid://dhqa4tg1psck6" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_13.png" id="8_s4oah"]
+[ext_resource type="Texture2D" uid="uid://bn1y6qm7t826u" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_16.png" id="9_10j1j"]
+[ext_resource type="Texture2D" uid="uid://b5bfh224e3xy" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_19.png" id="10_gknpb"]
+[ext_resource type="Texture2D" uid="uid://cvnenxxwq023t" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_20.png" id="11_27tf1"]
+[ext_resource type="Texture2D" uid="uid://cpsopiysmvxkl" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_23.png" id="12_80w64"]
+[ext_resource type="Texture2D" uid="uid://dmgvmt6j587v5" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_24.png" id="13_6onqf"]
+[ext_resource type="Texture2D" uid="uid://dbdq76leqkyoq" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_27.png" id="14_w7f7c"]
+[ext_resource type="Texture2D" uid="uid://0omgde37hoap" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_30.png" id="15_mmoju"]
+[ext_resource type="Texture2D" uid="uid://dk0g3d0jipsi0" path="res://ASSETS/Construçoes/Casa_Normal_Ardosia_31.png" id="16_wq7vl"]
 [ext_resource type="PackedScene" uid="uid://dg6o0jjsnq534" path="res://Scenes/Props/caixote_basico.tscn" id="17_ddr7r"]
 [ext_resource type="PackedScene" uid="uid://pkaornv50f6i" path="res://Scenes/Props/barril_basico.tscn" id="18_4fwdm"]
 [ext_resource type="PackedScene" uid="uid://d3d11ececr7ln" path="res://Scenes/Props/arbusto.tscn" id="19_4fwdm"]
@@ -330,8 +330,8 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_dxkaw")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_fcnqv"]
-size = Vector3(0.0149292, 0.021582032, 0.028063964)
+[sub_resource type="BoxShape3D" id="BoxShape3D_y78fq"]
+size = Vector3(0.009681442, 0.0036565557, 0.026055165)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4twum"]
 resource_name = "M_TelhadoUnico"
@@ -377,6 +377,8 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_ud3nm")
 
 [node name="Casa_Normal_Ardosia" type="StaticBody3D" unique_id=1633420492]
+collision_layer = 2
+collision_mask = 9
 
 [node name="Casa_Normal_ParedesVigasJanelas" type="MeshInstance3D" parent="." unique_id=1189371466]
 transform = Transform3D(0, -100, -2.9802322e-06, -2.9802322e-06, 0, 100, -100, 2.9802322e-06, 0, -2.8724282, 0, -2.554449)
@@ -390,11 +392,9 @@ shape = SubResource("ConcavePolygonShape3D_ofme6")
 transform = Transform3D(0, -64.68849, -2.99266e-06, -3.1044176e-06, 0, 100.41701, -104.16697, 1.9278673e-06, 0, 3.1275725, 1.5, 1.1139774)
 mesh = SubResource("ArrayMesh_q0jyb")
 
-[node name="AbrirPorta" type="Area3D" parent="Casa_Normal_Porta" unique_id=1805619472]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Casa_Normal_Porta/AbrirPorta" unique_id=1245429787]
-transform = Transform3D(0.9999998, 0, 0, 0, 1, 0, 0, 0, 0.9999998, -0.006365954, -0.0009277351, -0.001068119)
-shape = SubResource("BoxShape3D_fcnqv")
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=444594616]
+transform = Transform3D(0, -64.68849, -2.99266e-06, -3.1044176e-06, 0, 100.41701, -104.16697, 1.9278673e-06, 0, 3.117793, 1.386375, 1.6124034)
+shape = SubResource("BoxShape3D_y78fq")
 
 [node name="Casa_Normal_Telhado" type="MeshInstance3D" parent="." unique_id=1192294243]
 transform = Transform3D(160.949, 0, 0, 0, -1.4281035e-05, 99.99999, 0, -119.798, -1.1920929e-05, 4.643851, 2.9038846, -1.6049271)

@@ -89,6 +89,16 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_2koqv")
 
-[node name="Arbusto" type="MeshInstance3D" unique_id=186419740]
+[sub_resource type="BoxShape3D" id="BoxShape3D_yf5fn"]
+size = Vector3(1, 0.215, 1)
+
+[node name="StaticBody3D" type="StaticBody3D" unique_id=1540303439]
+collision_layer = 2
+
+[node name="Arbusto" type="MeshInstance3D" parent="." unique_id=186419740]
 transform = Transform3D(100, 0, 0, 0, -4.3711384e-06, 99.99999, 0, -99.99999, -4.3711384e-06, 0, 0, 0)
 mesh = SubResource("ArrayMesh_ev70g")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1019892104]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.011758387, 0.09811706, -0.024951175)
+shape = SubResource("BoxShape3D_yf5fn")

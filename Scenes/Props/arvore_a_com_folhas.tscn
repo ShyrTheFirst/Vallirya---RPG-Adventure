@@ -1,11 +1,11 @@
 [gd_scene format=4 uid="uid://c0ou5bu062w32"]
 
-[ext_resource type="Texture2D" uid="uid://788t6qmq8glo" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_0.png" id="1_6xvbv"]
-[ext_resource type="Texture2D" uid="uid://bkfsesmovj370" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_1.png" id="2_kib16"]
-[ext_resource type="Texture2D" uid="uid://6csramjuit1j" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_2.png" id="3_lutvf"]
-[ext_resource type="Texture2D" uid="uid://c4nmx2p7qtwoi" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_3.png" id="4_nfr5j"]
-[ext_resource type="Texture2D" uid="uid://kdelblintki2" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_4.png" id="5_ajac2"]
-[ext_resource type="Texture2D" uid="uid://bd8uvwgrh7vf5" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_5.png" id="6_6jvrd"]
+[ext_resource type="Texture2D" uid="uid://788t6qmq8glo" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_0.png" id="1_6xvbv"]
+[ext_resource type="Texture2D" uid="uid://bkfsesmovj370" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_1.png" id="2_kib16"]
+[ext_resource type="Texture2D" uid="uid://6csramjuit1j" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_2.png" id="3_lutvf"]
+[ext_resource type="Texture2D" uid="uid://c4nmx2p7qtwoi" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_3.png" id="4_nfr5j"]
+[ext_resource type="Texture2D" uid="uid://kdelblintki2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_4.png" id="5_ajac2"]
+[ext_resource type="Texture2D" uid="uid://bd8uvwgrh7vf5" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_5.png" id="6_6jvrd"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k6u5m"]
 resource_name = "M_Arvore_A"

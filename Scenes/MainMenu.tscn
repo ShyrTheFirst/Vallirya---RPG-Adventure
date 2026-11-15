@@ -4,147 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://bjtmyqgmx5thh" path="res://ASSETS/Terrenos/MapaInicial_0.png" id="2_8um5k"]
 [ext_resource type="Texture2D" uid="uid://c2o5vylhh4rr7" path="res://ASSETS/Terrenos/MapaInicial_1.png" id="3_xim88"]
 [ext_resource type="PackedScene" uid="uid://d3d11ececr7ln" path="res://Scenes/Props/arbusto.tscn" id="4_cmrfp"]
-[ext_resource type="Texture2D" uid="uid://cqkabltxcg8xp" path="res://icon.svg" id="4_koqhg"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="5_cmrfp"]
 [ext_resource type="PackedScene" uid="uid://c0ou5bu062w32" path="res://Scenes/Props/arvore_a_com_folhas.tscn" id="5_loo7a"]
 [ext_resource type="PackedScene" uid="uid://bk65r40ntolc1" path="res://Scenes/Props/arvore_c.tscn" id="6_if7li"]
 [ext_resource type="PackedScene" uid="uid://map2og30fvuu" path="res://Scenes/Props/arvore_c_normal.tscn" id="7_rrcx7"]
+[ext_resource type="Texture2D" uid="uid://b017vxwbjusi3" path="res://ASSETS/Icones/Logo - Redonda.png" id="8_rrcx7"]
 [ext_resource type="AudioStream" uid="uid://dvqq5awj6glom" path="res://ASSETS/SFX/Forest Day.wav" id="10_loo7a"]
-
-[sub_resource type="Shader" id="Shader_vhl67"]
-code = "
-// NOTE: Shader automatically converted from Godot Engine 4.2.1.stable's ProceduralSkyMaterial.
-
-shader_type sky;
-render_mode use_debanding;
-
-uniform vec4 sky_top_color : source_color = vec4(0.385, 0.454, 0.55, 1.0);
-uniform vec4 sky_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
-uniform float sky_curve : hint_range(0, 1) = 0.15;
-uniform float sky_energy = 1.0; // In Lux.
-uniform sampler2D sky_cover : filter_linear, source_color, hint_default_black;
-uniform vec4 sky_cover_modulate : source_color = vec4(1.0, 1.0, 1.0, 1.0);
-uniform vec4 ground_bottom_color : source_color = vec4(0.2, 0.169, 0.133, 1.0);
-uniform vec4 ground_horizon_color : source_color = vec4(0.646, 0.656, 0.67, 1.0);
-uniform float ground_curve : hint_range(0, 1) = 0.02;
-uniform float ground_energy = 1.0;
-uniform float sun_angle_max = 30.0;
-uniform float sun_curve : hint_range(0, 1) = 0.15;
-
-uniform sampler2D cloudtexture;
-uniform sampler2D cloudtexture2;
-uniform vec2 cloud_direction;
-uniform vec2 cloud_direction2;
-uniform vec2 cloud_scale;
-uniform float cloud_distance;
-
-void sky() {
-	float v_angle = acos(clamp(EYEDIR.y, -1.0, 1.0));
-	float c = (1.0 - v_angle / (PI * 0.5));
-	vec3 sky = mix(sky_horizon_color.rgb, sky_top_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / sky_curve), 0.0, 1.0));
-	sky *= sky_energy;
-
-	if (LIGHT0_ENABLED) {
-		float sun_angle = acos(dot(LIGHT0_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT0_SIZE) {
-			sky = LIGHT0_COLOR * LIGHT0_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT0_SIZE) / (sun_angle_max - LIGHT0_SIZE);
-			sky = mix(LIGHT0_COLOR * LIGHT0_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	if (LIGHT1_ENABLED) {
-		float sun_angle = acos(dot(LIGHT1_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT1_SIZE) {
-			sky = LIGHT1_COLOR * LIGHT1_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT1_SIZE) / (sun_angle_max - LIGHT1_SIZE);
-			sky = mix(LIGHT1_COLOR * LIGHT1_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	if (LIGHT2_ENABLED) {
-		float sun_angle = acos(dot(LIGHT2_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT2_SIZE) {
-			sky = LIGHT2_COLOR * LIGHT2_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT2_SIZE) / (sun_angle_max - LIGHT2_SIZE);
-			sky = mix(LIGHT2_COLOR * LIGHT2_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	if (LIGHT3_ENABLED) {
-		float sun_angle = acos(dot(LIGHT3_DIRECTION, EYEDIR));
-		if (sun_angle < LIGHT3_SIZE) {
-			sky = LIGHT3_COLOR * LIGHT3_ENERGY;
-		} else if (sun_angle < sun_angle_max) {
-			float c2 = (sun_angle - LIGHT3_SIZE) / (sun_angle_max - LIGHT3_SIZE);
-			sky = mix(LIGHT3_COLOR * LIGHT3_ENERGY, sky, clamp(1.0 - pow(1.0 - c2, 1.0 / sun_curve), 0.0, 1.0));
-		}
-	}
-
-	vec4 sky_cover_texture = texture(sky_cover, SKY_COORDS);
-	sky += (sky_cover_texture.rgb * sky_cover_modulate.rgb) * sky_cover_texture.a * sky_cover_modulate.a * sky_energy;
-
-	c = (v_angle - (PI * 0.5)) / (PI * 0.5);
-	vec3 ground = mix(ground_horizon_color.rgb, ground_bottom_color.rgb, clamp(1.0 - pow(1.0 - c, 1.0 / ground_curve), 0.0, 1.0));
-	ground *= ground_energy;
-	vec2 sky_uv = EYEDIR.xz / EYEDIR.y;
-	vec3 clouds = texture(cloudtexture, sky_uv * cloud_scale + TIME * cloud_direction * 0.001).rgb - texture(cloudtexture2, sky_uv * cloud_scale + TIME * cloud_direction2 * 0.001).rgb;
-	clouds = clamp(clouds , 0.0, 1.0);
-	sky += clouds;
-
-	COLOR = mix(ground, sky, step(0.0, EYEDIR.y));
-}
-"
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_1ehe0"]
-offset = Vector3(1, 1, 1)
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kbuji"]
-width = 1024
-height = 1024
-noise = SubResource("FastNoiseLite_1ehe0")
-seamless = true
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_ce3w2"]
-seed = 3
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xcq2r"]
-width = 1024
-height = 1024
-noise = SubResource("FastNoiseLite_ce3w2")
-seamless = true
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_n45e2"]
-shader = SubResource("Shader_vhl67")
-shader_parameter/sky_top_color = Color(0.168627, 0.709804, 0.933333, 1)
-shader_parameter/sky_horizon_color = Color(0.168627, 0.992157, 1, 1)
-shader_parameter/sky_curve = 0.15
-shader_parameter/sky_energy = 1.0
-shader_parameter/sky_cover_modulate = Color(1, 1, 1, 1)
-shader_parameter/ground_bottom_color = Color(0.168627, 0.709804, 0.933333, 1)
-shader_parameter/ground_horizon_color = Color(0.168627, 0.992157, 1, 1)
-shader_parameter/ground_curve = 0.02
-shader_parameter/ground_energy = 1.0
-shader_parameter/sun_angle_max = 1.5708
-shader_parameter/sun_curve = 0.15
-shader_parameter/cloudtexture = SubResource("NoiseTexture2D_kbuji")
-shader_parameter/cloudtexture2 = SubResource("NoiseTexture2D_xcq2r")
-shader_parameter/cloud_direction = Vector2(20, 20)
-shader_parameter/cloud_direction2 = Vector2(10, 10)
-shader_parameter/cloud_scale = Vector2(0.15, 0.15)
-shader_parameter/cloud_distance = 10.0
-
-[sub_resource type="Sky" id="Sky_30t2u"]
-sky_material = SubResource("ShaderMaterial_n45e2")
-
-[sub_resource type="Environment" id="Environment_opfnp"]
-background_mode = 2
-sky = SubResource("Sky_30t2u")
-ambient_light_source = 3
-ambient_light_color = Color(1, 1, 1, 1)
+[ext_resource type="Script" uid="uid://bq8gyu2tp5wjh" path="res://Globals/DayNightCycle.gd" id="11_rrcx7"]
+[ext_resource type="Environment" uid="uid://v6qwweiju7a7" path="res://ASSETS/VFX/WorldEnv.tres" id="12_fh7cp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqsmw"]
 resource_name = "M_Ilha01_A"
@@ -196,13 +63,6 @@ shadow_mesh = SubResource("ArrayMesh_ichmt")
 
 [node name="MainMenu" type="Node3D" unique_id=1992861513]
 script = ExtResource("1_cmrfp")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1891855796]
-environment = SubResource("Environment_opfnp")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1141169219]
-transform = Transform3D(-0.12495204, -0.96566254, 0.22777787, 0.02982991, 0.22581689, 0.97371304, -0.9917143, 0.12846202, 0.0005893452, 0, 43.3524, 0)
-shadow_enabled = true
 
 [node name="DioramaVisual" type="Node3D" parent="." unique_id=33817397]
 
@@ -422,14 +282,15 @@ transform = Transform3D(-0.9850884, 0, 0.17204869, 0, 1, 0, -0.17204869, 0, -0.9
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=676898569]
 
 [node name="GameLogo" type="TextureRect" parent="CanvasLayer" unique_id=424921425]
+custom_maximum_size = Vector2(256, 256)
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 40.0
+offset_left = -1000.0
+offset_right = 1000.0
+offset_bottom = 2000.0
 grow_horizontal = 2
-texture = ExtResource("4_koqhg")
+texture = ExtResource("8_rrcx7")
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer" unique_id=682987972]
 anchors_preset = 15
@@ -493,3 +354,21 @@ layout_mode = 2
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=949123143]
 stream = ExtResource("10_loo7a")
 bus = &"BGM"
+
+[node name="Cycle" type="Node3D" parent="." unique_id=178010736 node_paths=PackedStringArray("directional_light", "world_environment")]
+script = ExtResource("11_rrcx7")
+day_duration_seconds = 240.0
+directional_light = NodePath("DirectionalLight3D")
+world_environment = NodePath("WorldEnvironment")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Cycle" unique_id=2009736904]
+environment = ExtResource("12_fh7cp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Cycle" unique_id=1449485750]
+transform = Transform3D(0.70710677, 0.5416752, -0.4545195, 0, 0.64278764, 0.76604444, 0.70710677, -0.5416752, 0.4545195, 0, 43.3524, 0)
+light_color = Color(1, 0.95686275, 0.9019608, 1)
+light_energy = 1.1
+shadow_enabled = true
+shadow_bias = 0.04
+shadow_normal_bias = 1.5
+shadow_blur = 1.5

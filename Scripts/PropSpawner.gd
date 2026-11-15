@@ -4,49 +4,73 @@ extends Node3D
 @export var prop_scenes: Array[PackedScene] = []
 @export var spawn_count: int = 15
 @export var height_offset: float = 0.0
-@export var snap_to_ground: bool = true # Ativa o ajuste de altura pelo chão
+@export var snap_to_ground: bool = true 
+@export var allow_random_rotation: bool = true 
+
+@export_category("Configuração de Respawn")
+@export var enable_respawn: bool = true
+@export var respawn_cooldown: float = 30.0 # Segundos para nascer um novo item após destruído
+
+@export_category("Configuração de Mineração Opcional")
+@export var forced_mineral_index: int = -1 # Se for -1, escolhe aleatório. Se for 0+, força aquele minério nas pedras deste spawner.
 
 @onready var collision_shapes: Array[CollisionShape3D] = []
+var active_spawned_props: int = 0
 
 func _ready() -> void:
-	# Coleta automaticamente todos os CollisionShape3D filhos
 	for child in get_children():
 		if child is CollisionShape3D:
 			collision_shapes.append(child)
 			
-	# Inicia o spawn automaticamente ao carregar a cena
 	start_spawning()
 
 func start_spawning() -> void:
-	if prop_scenes.is_empty():
-		return
-
-	if collision_shapes.is_empty():
-		print("[PROP_SPAWNER] Nenhum CollisionShape3D encontrado em: ", name)
+	if prop_scenes.is_empty() or collision_shapes.is_empty():
 		return
 
 	for i in range(spawn_count):
-		var selected_scene = prop_scenes.pick_random()
-		if not selected_scene:
-			continue
+		spawn_single_prop()
 
-		var spawn_pos = get_random_point_in_area()
-		var rand_rot_y = randf_range(0.0, TAU)
-
-		# --- SNAP TO GROUND (Ajusta a altura perfeitamente ao relevo do terreno) ---
-		if snap_to_ground:
-			spawn_pos = get_ground_position(spawn_pos)
-
-		# Instancia o prop diretamente na cena de forma local (Singleplayer)
-		var prop_instance = selected_scene.instantiate()
-		if prop_instance:
-			get_parent().call_deferred("add_child", prop_instance)
-			prop_instance.set_deferred("global_position", spawn_pos - Vector3(0, height_offset, 0))
-			prop_instance.set_deferred("rotation", Vector3(0, rand_rot_y, 0))
-
-	# --- AUTO-BAKE DO NAVIGATION MESH ---
-	# Após espalhar todos os props pelo mapa, mandamos o NavigationRegion3D recalcular o mapa de calor!
 	call_deferred("_bake_navigation_mesh")
+
+func spawn_single_prop() -> void:
+	var selected_scene = prop_scenes.pick_random()
+	if not selected_scene:
+		return
+
+	var spawn_pos = get_random_point_in_area()
+	var rand_rot_y = randf_range(0.0, TAU) if allow_random_rotation else 0.0
+
+	if snap_to_ground:
+		spawn_pos = get_ground_position(spawn_pos)
+
+	var prop_instance = selected_scene.instantiate()
+	if prop_instance:
+		# Se for uma MiningRock e houver um índice de minério forçado no spawner, repassa para ela
+		if prop_instance is MiningRock and forced_mineral_index >= 0:
+			prop_instance.forced_mineral_index = forced_mineral_index
+
+		# Passa a referência do spawner para gerenciar o respawn
+		if "spawner_reference" in prop_instance:
+			prop_instance.spawner_reference = self
+
+		get_parent().call_deferred("add_child", prop_instance)
+		prop_instance.set_deferred("global_position", spawn_pos - Vector3(0, height_offset, 0))
+		prop_instance.set_deferred("rotation", Vector3(0, rand_rot_y, 0))
+		
+		active_spawned_props += 1
+
+func on_prop_destroyed() -> void:
+	active_spawned_props = max(0, active_spawned_props - 1)
+	
+	if not enable_respawn:
+		return
+
+	get_tree().create_timer(respawn_cooldown).timeout.connect(func():
+		if is_inside_tree():
+			spawn_single_prop()
+			call_deferred("_bake_navigation_mesh")
+	)
 
 func get_random_point_in_area() -> Vector3:
 	if collision_shapes.is_empty():
@@ -77,14 +101,12 @@ func get_random_point_in_area() -> Vector3:
 
 	return shape_node.global_transform * local_pos
 
-# Função de Raycast para colar o prop perfeitamente na superfície do terreno
 func get_ground_position(pos: Vector3) -> Vector3:
 	var space_state = get_world_3d().direct_space_state
-	var ray_origin = pos + Vector3(0, 50.0, 0) # Joga o raio lá do alto
-	var ray_target = pos - Vector3(0, 50.0, 0) # Aponta para baixo
+	var ray_origin = pos + Vector3(0, 50.0, 0)
+	var ray_target = pos - Vector3(0, 50.0, 0)
 
 	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_target)
-	# Opcional: configure a collision_mask se quiser filtrar apenas o terreno
 	var result = space_state.intersect_ray(query)
 
 	if result and result.has("position"):
@@ -92,12 +114,9 @@ func get_ground_position(pos: Vector3) -> Vector3:
 	
 	return pos
 
-# Função que atualiza o mapa de navegação automaticamente com os novos obstáculos
 func _bake_navigation_mesh() -> void:
-	# Pequeno delay para acumular todos os spawners e assar o navmesh apenas uma vez de forma limpa
 	await get_tree().create_timer(0.5).timeout
 	var root_scene = get_tree().current_scene
 	var nav_region = root_scene.find_child("NavigationRegion3D", true, false)
 	if nav_region and nav_region is NavigationRegion3D:
 		nav_region.bake_navigation_mesh()
-		print("[PROP_SPAWNER] NavigationMesh assado com sucesso!")

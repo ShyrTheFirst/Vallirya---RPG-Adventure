@@ -1,13 +1,14 @@
 [gd_scene format=4 uid="uid://fn76k3ifu4r5"]
 
-[ext_resource type="Texture2D" uid="uid://c1juog4d24h42" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_0.png" id="1_y26v4"]
-[ext_resource type="Texture2D" uid="uid://c0xotlib2ltcv" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_1.png" id="2_loy4a"]
-[ext_resource type="Texture2D" uid="uid://crs73vjwt18qq" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_4.png" id="3_n3nk2"]
-[ext_resource type="Texture2D" uid="uid://dwb31soun7k6c" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_5.png" id="4_e31hg"]
-[ext_resource type="Texture2D" uid="uid://jev3c1atp2fo" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_8.png" id="5_8uygc"]
-[ext_resource type="Texture2D" uid="uid://cqyeowq8334ly" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_9.png" id="6_4p4mu"]
-[ext_resource type="Texture2D" uid="uid://cnis2gjoihtxu" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_12.png" id="7_3mt3x"]
-[ext_resource type="Texture2D" uid="uid://45bq5ihd1b3v" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Basico_13.png" id="8_rqhif"]
+[ext_resource type="Texture2D" uid="uid://c1juog4d24h42" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_0.png" id="1_y26v4"]
+[ext_resource type="Texture2D" uid="uid://c0xotlib2ltcv" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_1.png" id="2_loy4a"]
+[ext_resource type="Texture2D" uid="uid://crs73vjwt18qq" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_4.png" id="3_n3nk2"]
+[ext_resource type="Texture2D" uid="uid://dwb31soun7k6c" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_5.png" id="4_e31hg"]
+[ext_resource type="Texture2D" uid="uid://jev3c1atp2fo" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_8.png" id="5_8uygc"]
+[ext_resource type="Texture2D" uid="uid://cqyeowq8334ly" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_9.png" id="6_4p4mu"]
+[ext_resource type="Texture2D" uid="uid://cnis2gjoihtxu" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_12.png" id="7_3mt3x"]
+[ext_resource type="Texture2D" uid="uid://45bq5ihd1b3v" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_13.png" id="8_rqhif"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="9_loy4a"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2hvdp"]
 resource_name = "M_BaseBau"
@@ -202,10 +203,15 @@ shadow_mesh = SubResource("ArrayMesh_o0ikd")
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
 size = Vector3(1, 0.5880127, 0.5454712)
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
-radius = 1.1701429
+[sub_resource type="SphereShape3D" id="SphereShape3D_n3nk2"]
+radius = 1.0377144
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_e31hg"]
+viewport_path = NodePath("InteractionPrompt/SubViewport")
 
 [node name="Bau_Simples" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="Bau_Inferior" type="MeshInstance3D" parent="." unique_id=733434620]
 transform = Transform3D(203.7154, 0, 0, 0, -1.1920929e-05, 139.43735, 0, -99.99999, -1.6622229e-05, 0, 0, 0)
@@ -227,7 +233,38 @@ mesh = SubResource("ArrayMesh_227sp")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32269287, 0.020355225)
 shape = SubResource("BoxShape3D_g4v7s")
 
-[node name="PlayerDetector" type="Area3D" parent="." unique_id=1271682701]
+[node name="InteractionArea" type="Area3D" parent="." unique_id=1086032693]
+collision_layer = 2
+collision_mask = 9
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerDetector" unique_id=2066669710]
-shape = SubResource("SphereShape3D_g4v7s")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=468335368]
+shape = SubResource("SphereShape3D_n3nk2")
+
+[node name="InteractionPrompt" type="Sprite3D" parent="." unique_id=782466231]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3890772, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_e31hg")
+
+[node name="SubViewport" type="SubViewport" parent="InteractionPrompt" unique_id=281894207]
+transparent_bg = true
+size = Vector2i(50, 30)
+
+[node name="Label" type="Label" parent="InteractionPrompt/SubViewport" unique_id=766130572]
+custom_maximum_size = Vector2(50, 50)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.5
+offset_top = -13.5
+offset_right = 7.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+theme = ExtResource("9_loy4a")
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1

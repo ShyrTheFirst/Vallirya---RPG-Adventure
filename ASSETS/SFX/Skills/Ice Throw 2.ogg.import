@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://qpp2gn7ko7aj"
+path="res://.godot/imported/Ice Throw 2.ogg-c3e93b835d530b787577194d4226417b.oggvorbisstr"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Skills/Ice Throw 2.ogg"
+dest_files=["res://.godot/imported/Ice Throw 2.ogg-c3e93b835d530b787577194d4226417b.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

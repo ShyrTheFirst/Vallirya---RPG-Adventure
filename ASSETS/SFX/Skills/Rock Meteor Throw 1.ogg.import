@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cf7uvjgl7fg1x"
+path="res://.godot/imported/Rock Meteor Throw 1.ogg-85c3809e7eddac78172c98690449583f.oggvorbisstr"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Skills/Rock Meteor Throw 1.ogg"
+dest_files=["res://.godot/imported/Rock Meteor Throw 1.ogg-85c3809e7eddac78172c98690449583f.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

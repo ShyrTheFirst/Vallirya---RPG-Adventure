@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://du13jv4rg1aff"]
 
-[ext_resource type="Texture2D" uid="uid://dt65tbdwjddr2" path="res://Assets/Pacote Modular Vallirya - Objetos/Escada_0.png" id="1_a74ni"]
-[ext_resource type="Texture2D" uid="uid://deprb54etg2qc" path="res://Assets/Pacote Modular Vallirya - Objetos/Escada_1.png" id="2_2smm4"]
+[ext_resource type="Texture2D" uid="uid://dt65tbdwjddr2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Escada_0.png" id="1_a74ni"]
+[ext_resource type="Texture2D" uid="uid://deprb54etg2qc" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Escada_1.png" id="2_2smm4"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_86bcb"]
 resource_name = "M_MadeiraEscada"
@@ -55,6 +55,8 @@ shadow_mesh = SubResource("ArrayMesh_ijwl2")
 size = Vector3(0.009939614, 0.003387887, 0.04)
 
 [node name="Escada" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="Escada" type="MeshInstance3D" parent="." unique_id=1407008070]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)

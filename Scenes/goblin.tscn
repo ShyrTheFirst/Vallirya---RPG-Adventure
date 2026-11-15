@@ -9,14 +9,13 @@
 [ext_resource type="Resource" uid="uid://dpgnp3wcojcfe" path="res://Resources/Items/Moeda_Bronze_3.tres" id="4_su1ic"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_wpiyv"]
 [ext_resource type="Texture2D" uid="uid://cwj8m3cn5rxkp" path="res://ASSETS/Armas/Machado/Machado_1.png" id="5_hfpgn"]
-[ext_resource type="Resource" uid="uid://27x1wo7n7np" path="res://Resources/Items/HP_Grande.tres" id="5_j40lr"]
 [ext_resource type="StyleBox" uid="uid://d2q0hfvlmass8" path="res://ASSETS/VFX/Themes/background_progress_bar.tres" id="5_m25tm"]
-[ext_resource type="Resource" uid="uid://d1wg38ikckjhs" path="res://Resources/Items/Mana_Grande.tres" id="5_su1ic"]
 [ext_resource type="Texture2D" uid="uid://bm2qof61qkvll" path="res://ASSETS/Armas/Machado/Machado_4.png" id="6_deoj1"]
 [ext_resource type="StyleBox" uid="uid://h12ndbr2278k" path="res://ASSETS/VFX/Themes/fill_progress_bar_HP.tres" id="6_hfpgn"]
 [ext_resource type="AudioStream" uid="uid://bgnfv1lnte4r1" path="res://ASSETS/SFX/Sword Impact Hit 1.wav" id="7_deoj1"]
 [ext_resource type="Texture2D" uid="uid://clknnubqgxhsl" path="res://ASSETS/Armas/Machado/Machado_5.png" id="7_su1ic"]
 [ext_resource type="AudioStream" uid="uid://bj88ynt1wpi4q" path="res://ASSETS/SFX/Goblin_04.mp3" id="12_wpiyv"]
+[ext_resource type="Shader" uid="uid://nijwjn130dv7" path="res://ASSETS/VFX/Shaders/Bola_De_Fogo.gdshader" id="16_su1ic"]
 
 [sub_resource type="Resource" id="Resource_miouo"]
 script = ExtResource("2_deoj1")
@@ -28,18 +27,6 @@ metadata/_custom_type_script = "uid://bjy3osgd6vcx4"
 script = ExtResource("2_deoj1")
 item_data = ExtResource("4_su1ic")
 drop_chance = 0.8
-metadata/_custom_type_script = "uid://bjy3osgd6vcx4"
-
-[sub_resource type="Resource" id="Resource_tbm5p"]
-script = ExtResource("2_deoj1")
-item_data = ExtResource("5_j40lr")
-drop_chance = 1.0
-metadata/_custom_type_script = "uid://bjy3osgd6vcx4"
-
-[sub_resource type="Resource" id="Resource_j40lr"]
-script = ExtResource("2_deoj1")
-item_data = ExtResource("5_su1ic")
-drop_chance = 1.0
 metadata/_custom_type_script = "uid://bjy3osgd6vcx4"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yyra8"]
@@ -6829,9 +6816,147 @@ shader_parameter/inner_radius = 0.14000000665
 shader_parameter/outer_radius = 0.150000007125
 shader_parameter/pulse_speed = 10.0
 
+[sub_resource type="Curve" id="Curve_tbm5p"]
+_data = [Vector2(0, 0), 0.0, 0.6730875, 0, 0, Vector2(1, 1), -1.446019, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_su1ic"]
+curve = SubResource("Curve_tbm5p")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_57qmd"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 9.8, 0)
+scale_min = 0.0
+scale_max = 0.7
+scale_curve = SubResource("CurveTexture_su1ic")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tbm5p"]
+render_priority = 0
+shader = ExtResource("16_su1ic")
+shader_parameter/core_color = Color(3, 1.2, 0.1, 1)
+shader_parameter/edge_color = Color(1, 0.2, 0, 1)
+shader_parameter/emission_intensity = 4.00000019
+shader_parameter/speed = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
+material = SubResource("ShaderMaterial_tbm5p")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="Curve" id="Curve_su1ic"]
+_data = [Vector2(0, 0), 0.0, 4.751203, 0, 0, Vector2(1, 0.516854), -2.5463488, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_j40lr"]
+curve = SubResource("Curve_su1ic")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_j40lr"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 2, 0)
+scale_min = 0.0
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_j40lr")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xw773"]
+render_priority = 0
+shader = ExtResource("16_su1ic")
+shader_parameter/core_color = Color(0, 1.6507456, 0.11677393, 1)
+shader_parameter/edge_color = Color(0, 0.30943933, 0, 1)
+shader_parameter/emission_intensity = 4.00000019
+shader_parameter/speed = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_sna4k"]
+material = SubResource("ShaderMaterial_xw773")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="Curve" id="Curve_j40lr"]
+_data = [Vector2(0, 0), 0.0, 4.751203, 0, 0, Vector2(0.16216218, 1), -1.1432583, -1.1432583, 0, 0, Vector2(1, 0), -2.5463488, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_sna4k"]
+curve = SubResource("Curve_j40lr")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xw773"]
+emission_shape_scale = Vector3(0.5, 1.5, 1)
+emission_shape = 1
+emission_sphere_radius = 1.0
+gravity = Vector3(0, -1, 0)
+scale_min = 0.0
+scale_max = 0.79999995
+scale_curve = SubResource("CurveTexture_sna4k")
+
+[sub_resource type="Shader" id="Shader_sna4k"]
+code = "shader_type spatial;
+render_mode unshaded, blend_add; // O blend_add dá o efeito luminoso de fogo mágico
+
+uniform vec3 core_color : source_color = vec3(3.0, 1.2, 0.1); // Núcleo brilhante (Amarelo/Branco)
+uniform vec3 edge_color : source_color = vec3(1.0, 0.2, 0.0); // Bordas do fogo (Laranja/Vermelho)
+uniform float emission_intensity : hint_range(0.0, 5.0) = 2.0;
+uniform float speed : hint_range(0.1, 5.0) = 1.5;
+
+// Função simples de ruído para dar o aspecto orgânico de chamas se movendo
+float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float noise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+void fragment() {
+    // Coordenadas UV distorcidas pelo tempo para simular o fogo subindo e tremeluzindo
+    vec2 uv = UV;
+    uv.y += TIME * speed; // Faz o fogo \"subir\" pela esfera
+    
+    // Aplicação de camadas de ruído para criar as línguas de chamas
+    float n = noise(uv * 6.0 + vec2(0.0, TIME * 0.5));
+    n += noise(uv * 12.0 - vec2(0.0, TIME * 1.0)) * 0.5;
+    
+    // Gradiente baseado na distância do centro da UV para arredondar a esfera
+    float dist = length(UV - vec2(0.5)) * 2.0;
+    float fire_mask = 1.0 - smoothstep(0.0, 1.0, dist);
+    
+    // Modula a máscara com o ruído gerado para criar recortes orgânicos nas chamas
+    float final_mask = clamp(fire_mask * (n + 0.3), 0.0, 1.0);
+    
+    // Mistura as cores do núcleo e da borda com base na intensidade do ruído
+    vec3 final_color = mix(edge_color, core_color, final_mask) * emission_intensity;
+    
+    ALBEDO = final_color;
+    ALPHA = final_mask; // As bordas ficam transparentes suavemente
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m8ltg"]
+render_priority = 0
+shader = SubResource("Shader_sna4k")
+shader_parameter/core_color = Color(0, 1.5796229, 2.9996202, 1)
+shader_parameter/edge_color = Color(0, 0.19966345, 1, 1)
+shader_parameter/emission_intensity = 4.00000019
+shader_parameter/speed = 1.5
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_js1vq"]
+material = SubResource("ShaderMaterial_m8ltg")
+radius = 0.1
+height = 0.4
+
 [node name="Goblin" type="CharacterBody3D" unique_id=1422835273 groups=["Monsters"]]
+collision_layer = 4
+collision_mask = 25
 script = ExtResource("1_wpiyv")
-drop_table = Array[ExtResource("2_deoj1")]([SubResource("Resource_miouo"), SubResource("Resource_o3h8g"), SubResource("Resource_tbm5p"), SubResource("Resource_j40lr")])
+mesh_base_y = 0.0
+effect_damage_percent = 0.0
+drop_table = Array[ExtResource("2_deoj1")]([SubResource("Resource_miouo"), SubResource("Resource_o3h8g")])
+respawn_time = 30.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2145907279]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69462305, 0)
@@ -6926,7 +7051,7 @@ bones/11/parent = 10
 bones/11/rest = Transform3D(1, 3.9811286e-23, 0, -3.9811286e-23, 1, 0, 0, 0, 1, 0, 0.0030484207, 0)
 bones/11/enabled = true
 bones/11/position = Vector3(0, 0.0030484207, 0)
-bones/11/rotation = Quaternion(-0.021833973, -2.0723437e-08, 9.4950656e-07, 0.9997617)
+bones/11/rotation = Quaternion(-0.0105274925, -3.1826786e-09, 2.9915407e-07, 0.9999447)
 bones/11/scale = Vector3(1, 1, 1)
 bones/12/name = "Neck"
 bones/12/parent = 11
@@ -6954,7 +7079,7 @@ bones/15/parent = 11
 bones/15/rest = Transform3D(-0.027128337, -0.99963194, 2.5166469e-06, 0.99963194, -0.027128337, -5.1208076e-08, 1.1946155e-07, 2.514331e-06, 1, -0.0021112084, 0.0021345916, -6.2891203e-09)
 bones/15/enabled = true
 bones/15/position = Vector3(-0.0021112084, 0.002134592, -6.2891288e-09)
-bones/15/rotation = Quaternion(-0.86231154, 0.0034442986, 0.5061284, 0.015525136)
+bones/15/rotation = Quaternion(-0.8637054, -0.0003105021, 0.5039614, 0.005979274)
 bones/15/scale = Vector3(0.9999999, 0.99999994, 1.0000001)
 bones/16/name = "Lower Arm L"
 bones/16/parent = 15
@@ -6968,7 +7093,7 @@ bones/17/parent = 16
 bones/17/rest = Transform3D(1, -3.7254377e-09, 3.0436635e-14, 3.7254377e-09, 1, -4.889429e-11, -3.0436452e-14, 4.889429e-11, 1, 1.518254e-09, 0.002046779, -3.0185503e-14)
 bones/17/enabled = true
 bones/17/position = Vector3(1.3096724e-12, 0.0020467786, 2.1800474e-10)
-bones/17/rotation = Quaternion(0.009146829, -0.11711404, -0.13827606, 0.9834025)
+bones/17/rotation = Quaternion(0.014829093, -0.11889313, -0.13069189, 0.9841566)
 bones/17/scale = Vector3(0.9999994, 0.9999999, 1.0000005)
 bones/18/name = "Hand L"
 bones/18/parent = 17
@@ -6996,7 +7121,7 @@ bones/21/parent = 11
 bones/21/rest = Transform3D(-0.027128337, 0.99963194, -2.9934658e-06, -0.99963194, -0.027128337, -5.1208303e-08, -1.3239706e-07, 2.9909745e-06, 1, 0.0021112084, 0.0021345916, -5.2824345e-09)
 bones/21/enabled = true
 bones/21/position = Vector3(0.0021112084, 0.002134592, -5.282427e-09)
-bones/21/rotation = Quaternion(-0.86233807, -0.001532986, -0.50612724, 0.014352102)
+bones/21/rotation = Quaternion(-0.8637051, 0.002752597, -0.5039701, 0.004501481)
 bones/21/scale = Vector3(0.99999976, 0.9999999, 1)
 bones/22/name = "Lower Arm R"
 bones/22/parent = 21
@@ -7010,7 +7135,7 @@ bones/23/parent = 22
 bones/23/rest = Transform3D(1, 3.7254333e-09, -1.0598734e-13, -3.7254333e-09, 1, 4.8894583e-11, 1.0598752e-13, -4.8894583e-11, 1, -1.518254e-09, 0.002046779, 7.140197e-15)
 bones/23/enabled = true
 bones/23/position = Vector3(-8.731149e-13, 0.002046779, -7.0215264e-11)
-bones/23/rotation = Quaternion(0.08147082, 0.007426262, 0.17135626, 0.98180676)
+bones/23/rotation = Quaternion(0.08669682, 0.008403184, 0.16290879, 0.98278886)
 bones/23/scale = Vector3(0.99999934, 0.99999994, 1.0000005)
 bones/24/name = "Hand R"
 bones/24/parent = 23
@@ -7038,21 +7163,21 @@ bones/27/parent = 9
 bones/27/rest = Transform3D(-0.0027454004, 0.052396383, -0.9986265, 0.052330803, -0.99725056, -0.052468464, -0.9986299, -0.052402556, -4.172341e-06, -0.00090274453, 0.0007367001, -0.00018863012)
 bones/27/enabled = true
 bones/27/position = Vector3(-0.00090274453, 0.0007366999, -0.00018863012)
-bones/27/rotation = Quaternion(-0.7685825, -0.027865391, 0.6239523, 0.13852064)
+bones/27/rotation = Quaternion(-0.77009356, -0.012738077, 0.62650466, 0.11952296)
 bones/27/scale = Vector3(1.0000132, 0.9999995, 1.0000099)
 bones/28/name = "Lower Leg L"
 bones/28/parent = 27
 bones/28/rest = Transform3D(0.9940633, -0.1087987, -0.00096444285, 0.10879798, 0.9938942, 0.018371833, -0.0010402768, -0.018367695, 0.9998309, -1.5351605e-11, 0.002400521, 9.9423976e-11)
 bones/28/enabled = true
 bones/28/position = Vector3(-4.4237822e-11, 0.0024005205, 8.1490724e-11)
-bones/28/rotation = Quaternion(-0.04886641, 1.8197114e-05, 0.28942016, 0.9559541)
+bones/28/rotation = Quaternion(-0.039519195, 1.8484194e-05, 0.23405965, 0.9714188)
 bones/28/scale = Vector3(1.0000012, 0.9999996, 0.99999964)
 bones/29/name = "Heel L"
 bones/29/parent = 28
 bones/29/rest = Transform3D(0.97694486, 0.21345362, -0.004008442, -0.21319775, 0.9744455, -0.07072673, -0.011190872, 0.06995071, 0.9974874, 6.7259306e-12, 0.0017787843, -2.126632e-10)
 bones/29/enabled = true
 bones/29/position = Vector3(1.6261765e-11, 0.0017787842, 2.6848284e-11)
-bones/29/rotation = Quaternion(-0.049690224, -0.08509232, -0.25454608, 0.96202725)
+bones/29/rotation = Quaternion(-0.051191557, -0.08900835, -0.22184448, 0.9696608)
 bones/29/scale = Vector3(1.0000079, 0.9999996, 0.99999255)
 bones/30/name = "Feet L"
 bones/30/parent = 29
@@ -7073,21 +7198,21 @@ bones/32/parent = 9
 bones/32/rest = Transform3D(-0.0027461154, -0.052396372, 0.99862623, -0.052330762, -0.99725044, -0.052468482, 0.9986297, -0.052402567, -3.3378724e-06, 0.0009027447, 0.0007367001, -0.0001886297)
 bones/32/enabled = true
 bones/32/position = Vector3(0.0009027447, 0.0007366999, -0.0001886297)
-bones/32/rotation = Quaternion(0.76550925, -0.032697823, 0.62772614, -0.13742799)
+bones/32/rotation = Quaternion(0.76708055, -0.017844647, 0.6302239, -0.11868807)
 bones/32/scale = Vector3(1.0000126, 0.9999996, 1.0000097)
 bones/33/name = "Lower Leg R"
 bones/33/parent = 32
 bones/33/rest = Transform3D(0.9940632, 0.10879873, 0.00096438086, -0.108798, 0.9938942, 0.018371804, 0.0010403359, -0.01836766, 0.9998308, 4.9206375e-11, 0.0024005207, -8.157623e-11)
 bones/33/enabled = true
 bones/33/position = Vector3(5.617039e-11, 0.0024005207, 1.3460522e-10)
-bones/33/rotation = Quaternion(-0.049591243, -1.8196879e-05, -0.2937136, 0.95460624)
+bones/33/rotation = Quaternion(-0.040396463, -1.8493392e-05, -0.23925585, 0.97011596)
 bones/33/scale = Vector3(1.0000013, 0.9999995, 0.9999996)
 bones/34/name = "Heel R"
 bones/34/parent = 33
 bones/34/rest = Transform3D(0.976945, -0.21345368, 0.004008444, 0.21319781, 0.97444564, -0.07072673, 0.011190871, 0.06995071, 0.9974876, -8.2952936e-11, 0.0017787846, 7.3453174e-11)
 bones/34/enabled = true
 bones/34/position = Vector3(-4.7464255e-11, 0.0017787844, -6.766641e-11)
-bones/34/rotation = Quaternion(-0.044171467, 0.08099394, 0.25640363, 0.9621571)
+bones/34/rotation = Quaternion(-0.045849223, 0.084638216, 0.22420052, 0.9697775)
 bones/34/scale = Vector3(1.0000074, 0.9999995, 0.9999928)
 bones/35/name = "Feet R"
 bones/35/parent = 34
@@ -7201,7 +7326,7 @@ skin = SubResource("Skin_8m1ka")
 skeleton = NodePath("..")
 
 [node name="RightHand" type="BoneAttachment3D" parent="GoblinCharacter IK/Armature/Skeleton3D" unique_id=877183113]
-transform = Transform3D(0.94653594, -0.32245308, -0.009686559, 0.061584026, 0.15113358, 0.98659253, -0.31666625, -0.93444204, 0.16291161, -0.0021761577, -0.00015602271, 0.00027085491)
+transform = Transform3D(0.94679004, -0.32171145, -0.009516031, 0.06130579, 0.15123495, 0.98659414, -0.3159598, -0.93468106, 0.16291073, -0.0021037452, -0.00014906423, 0.00027128615)
 bone_name = "Hand R"
 bone_idx = 24
 
@@ -7210,7 +7335,7 @@ transform = Transform3D(-0.6225601, 4.178467e-06, 1.761332e-07, 5.9878116e-06, 0
 mesh = SubResource("ArrayMesh_it580")
 
 [node name="LeftHand" type="BoneAttachment3D" parent="GoblinCharacter IK/Armature/Skeleton3D" unique_id=1245265613]
-transform = Transform3D(0.93002295, 0.08254558, -0.35811234, 0.36692327, -0.15393075, 0.9174263, 0.020605104, -0.98462725, -0.17344688, 0.0021703737, -0.000111863934, 0.00025805843)
+transform = Transform3D(0.92992836, 0.082217455, -0.358433, 0.36718217, -0.15390359, 0.91732717, 0.02025629, -0.98465884, -0.17330799, 0.0021031636, -0.00010490654, 0.00025820293)
 bone_name = "Hand L"
 bone_idx = 18
 
@@ -7298,3 +7423,26 @@ mesh = SubResource("QuadMesh_3ixqr")
 path_desired_distance = 1.2
 target_desired_distance = 1.2
 avoidance_enabled = true
+
+[node name="FireEffect" type="GPUParticles3D" parent="." unique_id=798406184]
+emitting = false
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_57qmd")
+draw_pass_1 = SubResource("SphereMesh_g4v7s")
+
+[node name="VenomEffect" type="GPUParticles3D" parent="." unique_id=177491876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.63808554, 0)
+emitting = false
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_j40lr")
+draw_pass_1 = SubResource("SphereMesh_sna4k")
+
+[node name="FrostEffect" type="GPUParticles3D" parent="." unique_id=399178491]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.63808554, 0)
+emitting = false
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_xw773")
+draw_pass_1 = SubResource("CapsuleMesh_js1vq")

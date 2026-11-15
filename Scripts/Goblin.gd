@@ -61,6 +61,9 @@ func _physics_process(delta: float) -> void:
 func execute_attack(target: CharacterBody3D, range_dist: float) -> void:
 	perform_cleave_attack(range_dist)
 	
+	if attack_effect != "" and effect_damage_percent != 0.0:
+		effect_to_player(target, attack_effect, effect_damage_percent)
+	
 	var combo_step = randi_range(1, 5)
 	var anim_name = "Armature|Ataque %d" % combo_step
 	

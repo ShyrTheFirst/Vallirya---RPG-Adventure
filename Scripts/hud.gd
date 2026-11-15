@@ -5,6 +5,8 @@ extends Control
 @export var inventory_button: Button
 @export var status_button: Button
 @export var quest_button: Button
+@export var skill_button: Button
+@export var maestria_button: Button
 
 var potion_cooldown_timer: float = 0.0
 const POTION_COOLDOWN_DURATION: float = 1.5 # Segundos de espera entre poções
@@ -75,6 +77,19 @@ func setup_menu_buttons() -> void:
 		quest_button.pressed.connect(func():
 			if is_instance_valid(player_ref) and player_ref.has_method("toggle_quest_window"):
 				player_ref.toggle_quest_window()
+		)
+	
+	if skill_button:
+		print("We have button?!")
+		skill_button.pressed.connect(func():
+			if is_instance_valid(player_ref) and player_ref.skill_manager.has_method("toggle_skill_tree_window"):
+				player_ref.skill_manager.toggle_skill_tree_window()
+		)
+	
+	if maestria_button:
+		maestria_button.pressed.connect(func():
+			if is_instance_valid(player_ref) and player_ref.has_method("toggle_mastery_window"):
+				player_ref.toggle_mastery_window()
 		)
 
 # --- GERAÇÃO VISUAL DA BARRA DE AÇÃO E HABILIDADES POR CÓDIGO ---
@@ -261,6 +276,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func use_skill_slot(slot_index: int) -> void:
 	var skill_data: SkillData = equipped_skill_slots.get(slot_index, null)
 	if not skill_data:
+		show_floating_message("Atalho vazio!", Color.YELLOW)
 		print("[HUD] Atalho ", slot_index, " está vazio!")
 		return
 		
@@ -341,6 +357,7 @@ func use_potion(type: String) -> void:
 		
 	var target_item: ItemData = equipped_potion_items.get(type, null)
 	if not target_item:
+		show_floating_message("Nenhuma poçao no atalho " + type.to_upper(), Color.YELLOW)
 		print("[HUD] Nenhuma poção atribuída ao atalho %s!" % type.to_upper())
 		return
 
@@ -471,3 +488,25 @@ func update_action_bar_cooldown_displays(_delta: float) -> void:
 				else:
 					cd_lbl.text = ""
 					cd_lbl.visible = false
+
+func show_floating_message(msg: String, text_color: Color = Color.RED) -> void:
+	var floating_lbl = Label.new()
+	floating_lbl.text = msg
+	floating_lbl.add_theme_font_size_override("font_size", 18)
+	floating_lbl.add_theme_color_override("font_color", text_color)
+	floating_lbl.add_theme_color_override("font_outline_color", Color.BLACK)
+	floating_lbl.add_theme_constant_override("outline_size", 3)
+	
+	# Posiciona o aviso no centro da tela (ou próximo à barra inferior)
+	var viewport_size = get_viewport().get_visible_rect().size
+	floating_lbl.position = Vector2(viewport_size.x / 2 - 100, viewport_size.y / 2 - 50)
+	
+	add_child(floating_lbl)
+	
+	# Animação simples de subir e desaparecer usando Tween
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(floating_lbl, "position:y", floating_lbl.position.y - 60, 1.0)
+	tween.tween_property(floating_lbl, "modulate:a", 0.0, 1.0)
+	
+	# Remove o nó da memória quando a animação terminar
+	tween.chain().tween_callback(floating_lbl.queue_free)

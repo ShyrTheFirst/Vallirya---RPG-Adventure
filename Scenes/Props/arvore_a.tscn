@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://dlyhpe74ol48k"]
 
-[ext_resource type="Texture2D" uid="uid://ii7cqgdq7kbw" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_0.png" id="1_ji6go"]
-[ext_resource type="Texture2D" uid="uid://b3bqidhys30ib" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_1.png" id="2_s2ojy"]
+[ext_resource type="Texture2D" uid="uid://ii7cqgdq7kbw" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_0.png" id="1_ji6go"]
+[ext_resource type="Texture2D" uid="uid://b3bqidhys30ib" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_1.png" id="2_s2ojy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qqskt"]
 resource_name = "M_Arvore_A"

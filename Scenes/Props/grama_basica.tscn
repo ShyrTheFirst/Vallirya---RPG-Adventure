@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://d3oy1spsbki6q"]
 
-[ext_resource type="Texture2D" uid="uid://cqs10l2drpilu" path="res://Assets/Pacote Modular Vallirya - Objetos/Grama_Basica_0.png" id="1_4s18q"]
-[ext_resource type="Texture2D" uid="uid://8tiggvjpao7p" path="res://Assets/Pacote Modular Vallirya - Objetos/Grama_Basica_1.png" id="2_5u4ur"]
+[ext_resource type="Texture2D" uid="uid://cqs10l2drpilu" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Grama_Basica_0.png" id="1_4s18q"]
+[ext_resource type="Texture2D" uid="uid://8tiggvjpao7p" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Grama_Basica_1.png" id="2_5u4ur"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d26bw"]
 resource_name = "M_Grama"
@@ -51,6 +51,17 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_kawrx")
 
-[node name="Grama_Basica" type="MeshInstance3D" unique_id=1186880027]
-transform = Transform3D(30.875523, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)
+[sub_resource type="BoxShape3D" id="BoxShape3D_s6ys2"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Grama_Basica" type="RigidBody3D" unique_id=1943784852]
+collision_layer = 2
+mass = 500.0
+
+[node name="Grama_Basica" type="MeshInstance3D" parent="." unique_id=1186880027]
+transform = Transform3D(30.875523, 0, 0, 0, -4.371139e-06, 100.00001, 0, -100.00001, -4.371139e-06, 0, 0, 0)
 mesh = SubResource("ArrayMesh_vnd5v")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=53489324]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.050956488, 0)
+shape = SubResource("BoxShape3D_s6ys2")

@@ -1,11 +1,11 @@
 [gd_scene format=4 uid="uid://bk65r40ntolc1"]
 
-[ext_resource type="Texture2D" uid="uid://bymxh1qct8tpq" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_C_Escura_4.png" id="1_mfe24"]
-[ext_resource type="Texture2D" uid="uid://bw4jf10uw32qn" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_C_Escura_5.png" id="2_47r75"]
-[ext_resource type="Texture2D" uid="uid://6csramjuit1j" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_2.png" id="3_je48c"]
-[ext_resource type="Texture2D" uid="uid://c4nmx2p7qtwoi" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_3.png" id="4_vkye0"]
-[ext_resource type="Texture2D" uid="uid://kdelblintki2" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_4.png" id="5_0y1ge"]
-[ext_resource type="Texture2D" uid="uid://bd8uvwgrh7vf5" path="res://Assets/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_5.png" id="6_end6o"]
+[ext_resource type="Texture2D" uid="uid://bymxh1qct8tpq" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_C_Escura_4.png" id="1_mfe24"]
+[ext_resource type="Texture2D" uid="uid://bw4jf10uw32qn" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_C_Escura_5.png" id="2_47r75"]
+[ext_resource type="Texture2D" uid="uid://6csramjuit1j" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_2.png" id="3_je48c"]
+[ext_resource type="Texture2D" uid="uid://c4nmx2p7qtwoi" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_3.png" id="4_vkye0"]
+[ext_resource type="Texture2D" uid="uid://kdelblintki2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_4.png" id="5_0y1ge"]
+[ext_resource type="Texture2D" uid="uid://bd8uvwgrh7vf5" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_A_Com_Folhas_5.png" id="6_end6o"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nalpu"]
 resource_name = "M_Arvore_C"
@@ -143,6 +143,8 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_iah6h")
 
 [node name="Arvore_C" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="Arvore_C" type="MeshInstance3D" parent="." unique_id=1680108364]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 2.2683249, 0)

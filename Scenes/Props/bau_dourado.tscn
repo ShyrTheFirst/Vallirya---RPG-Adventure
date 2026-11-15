@@ -1,19 +1,17 @@
 [gd_scene format=4 uid="uid://bc47lvccea0ki"]
 
-[ext_resource type="Texture2D" uid="uid://dna0hel5b82cv" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_0.png" id="1_dv8nc"]
-[ext_resource type="Texture2D" uid="uid://70kv0y2gue04" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_1.png" id="2_7kxm0"]
-[ext_resource type="Texture2D" uid="uid://b22qlug50ep71" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_4.png" id="3_3uth8"]
-[ext_resource type="Texture2D" uid="uid://m8qk0pbiphjj" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_5.png" id="4_yyh75"]
-[ext_resource type="Texture2D" uid="uid://cg4r5qxk282ut" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_8.png" id="5_ibuac"]
-[ext_resource type="Texture2D" uid="uid://d075m82n33vex" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_9.png" id="6_ae02f"]
-[ext_resource type="Texture2D" uid="uid://bteewkh61p7re" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_12.png" id="7_82di3"]
-[ext_resource type="Texture2D" uid="uid://cfcku4wlmm715" path="res://Assets/Pacote Modular Vallirya - Objetos/Bau_Dourado_13.png" id="8_x402j"]
+[ext_resource type="Texture2D" uid="uid://dna0hel5b82cv" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_0.png" id="1_dv8nc"]
+[ext_resource type="Texture2D" uid="uid://70kv0y2gue04" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_1.png" id="2_7kxm0"]
+[ext_resource type="Texture2D" uid="uid://b22qlug50ep71" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_4.png" id="3_3uth8"]
+[ext_resource type="Texture2D" uid="uid://m8qk0pbiphjj" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_5.png" id="4_yyh75"]
+[ext_resource type="Texture2D" uid="uid://cg4r5qxk282ut" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_8.png" id="5_ibuac"]
+[ext_resource type="Texture2D" uid="uid://d075m82n33vex" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_9.png" id="6_ae02f"]
+[ext_resource type="Texture2D" uid="uid://bteewkh61p7re" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_12.png" id="7_82di3"]
+[ext_resource type="Texture2D" uid="uid://cfcku4wlmm715" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Dourado_13.png" id="8_x402j"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="9_7kxm0"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
 size = Vector3(1, 0.5880127, 0.5454712)
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
-radius = 1.1701429
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fela5"]
 resource_name = "M_BaseBau"
@@ -205,16 +203,19 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_s7b7x")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_3uth8"]
+radius = 1.0377144
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_yyh75"]
+viewport_path = NodePath("InteractionPrompt/SubViewport")
+
 [node name="Bau_Dourado" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=660681549]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32269287, 0.020355225)
 shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="PlayerDetector" type="Area3D" parent="." unique_id=1271682701]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerDetector" unique_id=2066669710]
-shape = SubResource("SphereShape3D_g4v7s")
 
 [node name="Bau_Inferior" type="MeshInstance3D" parent="." unique_id=2059128067]
 transform = Transform3D(203.7154, 0, 0, 0, -1.1920929e-05, 139.43735, 0, -99.99999, -1.6622229e-05, 0, 0, 0)
@@ -231,3 +232,39 @@ mesh = SubResource("ArrayMesh_wcdem")
 [node name="Bau_metais" type="MeshInstance3D" parent="." unique_id=1091475215]
 transform = Transform3D(203.7154, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)
 mesh = SubResource("ArrayMesh_6u6uk")
+
+[node name="InteractionArea" type="Area3D" parent="." unique_id=2024266131]
+collision_layer = 2
+collision_mask = 9
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=1854481391]
+shape = SubResource("SphereShape3D_3uth8")
+
+[node name="InteractionPrompt" type="Sprite3D" parent="." unique_id=1961271881]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3890772, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_yyh75")
+
+[node name="SubViewport" type="SubViewport" parent="InteractionPrompt" unique_id=430096776]
+transparent_bg = true
+size = Vector2i(50, 30)
+
+[node name="Label" type="Label" parent="InteractionPrompt/SubViewport" unique_id=1014451166]
+custom_maximum_size = Vector2(50, 50)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.5
+offset_top = -13.5
+offset_right = 7.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+theme = ExtResource("9_7kxm0")
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1

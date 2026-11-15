@@ -11,6 +11,8 @@ var item_id = -1
 var is_collected: bool = false
 @onready var collected_audio: AudioStreamPlayer3D = $CollectedAudio
 
+@onready var item_drop_effect: ItemDropEffect = $ItemDropEffect
+
 func _ready() -> void:
 	linear_damp = 2.5
 	angular_damp = 4.0
@@ -28,7 +30,7 @@ func setup(new_item_data: ItemData) -> void:
 	item_data = new_item_data
 	if item_data:
 		item_id = item_data.id if "id" in item_data else -1
-	
+	item_drop_effect.setup_rarity(item_data.rarity)
 	update_mesh_visual()
 
 func update_mesh_visual() -> void:
@@ -77,10 +79,12 @@ func update_collision_shape(visual_node: Node3D) -> void:
 			collision_shape.shape = default_box
 
 func _on_body_entered(body: Node3D) -> void:
+	print("Quem ta entrando: ", body)
 	if is_collected or not is_instance_valid(body):
 		return
 
 	if body.is_in_group("Player"):
+		print("E o player aqui, ne?")
 		if not item_data:
 			return
 			

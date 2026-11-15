@@ -10,6 +10,8 @@ enum WeaponType { NONE, SWORD, STAFF, AXE }
 @export var item_type: ItemType = ItemType.MISC
 @export var rarity: Rarity = Rarity.COMMON
 @export var weapon_type: WeaponType = WeaponType.NONE
+@export var level : int = 1
+@export_flags("Activated", "Not Activated") var active_legendary
 @export_multiline var description: String = ""
 @export var mesh_scene: PackedScene
 @export var sell_price: int = 10

@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://jf2y8qjpmdgf"]
 
-[ext_resource type="Texture2D" uid="uid://c7gkxeamc061r" path="res://Assets/Pacote Modular Vallirya - Objetos/Grama_Pantanosa_0.png" id="1_ilweh"]
-[ext_resource type="Texture2D" uid="uid://y8umha4u5shv" path="res://Assets/Pacote Modular Vallirya - Objetos/Grama_Pantanosa_1.png" id="2_0x33v"]
+[ext_resource type="Texture2D" uid="uid://c7gkxeamc061r" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Grama_Pantanosa_0.png" id="1_ilweh"]
+[ext_resource type="Texture2D" uid="uid://y8umha4u5shv" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Grama_Pantanosa_1.png" id="2_0x33v"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rsfp4"]
 resource_name = "M_Grama"
@@ -51,6 +51,17 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_o5ft1")
 
-[node name="Grama_Pantanosa" type="MeshInstance3D" unique_id=118641576]
-transform = Transform3D(30.875523, 0, 0, 0, -1.1920924e-05, 99.99997, 0, -99.99997, -1.1920924e-05, 0, 0, 0)
+[sub_resource type="BoxShape3D" id="BoxShape3D_ilweh"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Grama_Pantanosa" type="RigidBody3D" unique_id=589299423]
+collision_layer = 2
+mass = 500.0
+
+[node name="Grama_Pantanosa" type="MeshInstance3D" parent="." unique_id=118641576]
+transform = Transform3D(30.875523, 0, 0, 0, -4.3711375e-06, 99.99997, 0, -99.99997, -4.3711375e-06, 0, 0, 0)
 mesh = SubResource("ArrayMesh_1qbip")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1814915822]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.050956488, 0)
+shape = SubResource("BoxShape3D_ilweh")

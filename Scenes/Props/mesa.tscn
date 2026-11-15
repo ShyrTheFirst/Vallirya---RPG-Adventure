@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://kcfbtuyqo7xw"]
 
-[ext_resource type="Texture2D" uid="uid://c1a2ald18b2pi" path="res://Assets/Pacote Modular Vallirya - Objetos/Mesa_0.png" id="1_h1q2k"]
-[ext_resource type="Texture2D" uid="uid://dbswhtys1yr3f" path="res://Assets/Pacote Modular Vallirya - Objetos/Mesa_1.png" id="2_c8i4r"]
+[ext_resource type="Texture2D" uid="uid://c1a2ald18b2pi" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Mesa_0.png" id="1_h1q2k"]
+[ext_resource type="Texture2D" uid="uid://dbswhtys1yr3f" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Mesa_1.png" id="2_c8i4r"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_23ale"]
 resource_name = "M_MesaMadeira"
@@ -55,6 +55,8 @@ shadow_mesh = SubResource("ArrayMesh_r3o4v")
 size = Vector3(0.0098927505, 0.015000001, 0.00601767)
 
 [node name="Mesa" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="Mesa" type="MeshInstance3D" parent="." unique_id=1847954428]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)

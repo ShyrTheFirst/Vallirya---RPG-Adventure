@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://bshxk0ocsxtf5"]
 
-[ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://Assets/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="1_814fh"]
-[ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://Assets/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="2_r34ta"]
+[ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="1_814fh"]
+[ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="2_r34ta"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4bsqr"]
 resource_name = "M_TroncoMadeira"
@@ -55,6 +55,8 @@ shadow_mesh = SubResource("ArrayMesh_3ywg2")
 size = Vector3(0.004991148, 0.0072960616, 0.01007889)
 
 [node name="TroncoMadeira" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="TroncoMadeira" type="MeshInstance3D" parent="." unique_id=807526725]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)

@@ -179,6 +179,8 @@ shadow_mesh = SubResource("ArrayMesh_1cykm")
 size = Vector3(0.0025, 0.0025532385, 0.041175902)
 
 [node name="PosteLuz" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="Corrente_PosteDeLuz" type="MeshInstance3D" parent="." unique_id=364580444]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)

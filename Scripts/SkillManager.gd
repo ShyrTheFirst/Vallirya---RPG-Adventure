@@ -28,6 +28,12 @@ var pending_skill_data: SkillData = null
 var active_spell_decal: Node3D = null
 var spell_decal_scene = preload("res://Scenes/SpellDecal.tscn")
 
+# Dicionário que guarda o nível atual de cada skill desbloquada (skill_id -> int)
+var skill_levels: Dictionary = {}
+
+# Dicionário temporário para alteração de níveis antes de confirmar (skill_id -> int temporário)
+var temp_skill_levels: Dictionary = {}
+
 func _ready() -> void:
 	if not player:
 		player = get_tree().current_scene.find_child("Player", true, false)
@@ -120,35 +126,78 @@ func select_skill_for_purchase(skill_id: String) -> void:
 		pending_purchase_skill_id = skill_id
 		print("[SKILL TREE] Skill selecionada para compra (Pendente): ", skill_id)
 
-func confirm_skill_purchase() -> void:
-	if pending_purchase_skill_id == "":
-		print("[SKILL TREE] Nenhuma habilidade foi selecionada para compra!")
+func get_skill_level(skill_id: String) -> int:
+	if temp_skill_levels.has(skill_id):
+		return temp_skill_levels[skill_id]
+	return skill_levels.get(skill_id, 1) if unlocked_skills.has(skill_id) else 0
+
+func increase_skill_temp_level(skill_id: String) -> void:
+	if not unlocked_skills.has(skill_id):
 		return
-		
-	if pending_skill_points <= 0:
-		print("[SKILL TREE] Pontos de Habilidade insuficientes! Suba de nível para ganhar pontos.")
-		return
-		
-	var skill_id = pending_purchase_skill_id
-	var state = get_skill_state(skill_id)
 	
-	if state == "Disponivel" or state == "Pendente":
-		unlocked_skills.append(skill_id)
+	var current_lvl = get_skill_level(skill_id)
+	var skill_data: SkillData = available_skills.get(skill_id, null)
+	if not skill_data:
+		return
+		
+	if current_lvl < skill_data.max_level and pending_skill_points > 0:
+		if not temp_skill_levels.has(skill_id):
+			temp_skill_levels[skill_id] = current_lvl
+		temp_skill_levels[skill_id] += 1
 		pending_skill_points -= 1
 		spent_skill_points += 1
-		pending_purchase_skill_id = ""
-		print("[SKILL TREE] Habilidade comprada com sucesso: ", skill_id)
 		refresh_tree_display()
+
+func decrease_skill_temp_level(skill_id: String) -> void:
+	if not temp_skill_levels.has(skill_id):
+		return
 		
-		if is_instance_valid(skill_tree_window) and skill_tree_window.has_method("refresh_tree_display"):
-			skill_tree_window.refresh_tree_display()
-	else:
-		print("[SKILL TREE] Não é possível comprar esta skill. Estado atual: ", state)
+	var base_lvl = skill_levels.get(skill_id, 1)
+	if temp_skill_levels[skill_id] > base_lvl:
+		temp_skill_levels[skill_id] -= 1
+		pending_skill_points += 1
+		spent_skill_points -= 1
+		
+		# Se voltou ao nível base, remove do dicionário temporário
+		if temp_skill_levels[skill_id] == base_lvl:
+			temp_skill_levels.erase(skill_id)
+			
+		refresh_tree_display()
+
+func confirm_skill_purchase() -> void:
+	# 1. Se houver uma skill pendente de aquisição nova (Laranja)
+	if pending_purchase_skill_id != "":
+		if pending_skill_points <= 0:
+			player.send_message_HUD("Sem pontos suficientes", Color.RED)
+			return
+			
+		var skill_id = pending_purchase_skill_id
+		var state = get_skill_state(skill_id)
+		
+		if state == "Disponivel" or state == "Pendente":
+			unlocked_skills.append(skill_id)
+			skill_levels[skill_id] = 1 # Inicia no nível 1
+			pending_skill_points -= 1
+			spent_skill_points += 1
+			pending_purchase_skill_id = ""
+			player.send_message_HUD("Habilidade aprendida!", Color.WEB_GREEN)
+
+	# 2. ConSOLIDA todos os níveis temporários alterados com os botões + / -
+	for s_id in temp_skill_levels.keys():
+		skill_levels[s_id] = temp_skill_levels[s_id]
+	temp_skill_levels.clear()
+
+	print("[SKILL TREE] Alterações de habilidades confirmadas e salvas com sucesso!")
+	player.send_message_HUD("Alterações salvas!", Color.GOLD)
+	refresh_tree_display()
+	if is_instance_valid(skill_tree_window) and skill_tree_window.has_method("refresh_tree_display"):
+		skill_tree_window.refresh_tree_display()
 
 # --- PERSISTÊNCIA (SALVAR E CARREGAR) ---
 func get_save_data() -> Dictionary:
 	return {
 		"unlocked_skills": unlocked_skills,
+		"skill_levels": skill_levels,
 		"spent_skill_points": spent_skill_points,
 		"pending_skill_points": pending_skill_points
 	}
@@ -156,6 +205,11 @@ func get_save_data() -> Dictionary:
 func load_saved_data(saved_data: Dictionary) -> void:
 	if saved_data.has("unlocked_skills"):
 		unlocked_skills = Array(saved_data["unlocked_skills"], TYPE_STRING, "", null)
+	if saved_data.has("skill_levels"):
+		var raw_levels = saved_data["skill_levels"] as Dictionary
+		skill_levels.clear()
+		for k in raw_levels.keys():
+			skill_levels[str(k)] = int(raw_levels[k])
 	if saved_data.has("spent_skill_points"):
 		spent_skill_points = int(saved_data["spent_skill_points"])
 	if saved_data.has("pending_skill_points"):
@@ -266,10 +320,29 @@ func create_skill_tree_ui() -> void:
 	for s_id in available_skills:
 		var skill_data: SkillData = available_skills[s_id]
 		var state = get_skill_state(s_id)
+		var is_unlocked = unlocked_skills.has(s_id)
+		var current_lvl = get_skill_level(s_id)
+		var calculated_damage = skill_data.damage + ((current_lvl - 1) * skill_data.damage_per_level)
+		var next_level_damage = skill_data.damage + (current_lvl * skill_data.damage_per_level)
+		
+		var skill_card_vbox = VBoxContainer.new()
+		skill_card_vbox.custom_minimum_size = Vector2(90, 110)
+		skill_card_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 
 		var slot_btn = Button.new()
 		slot_btn.custom_minimum_size = Vector2(80, 80)
-		slot_btn.tooltip_text = "%s\nMana: %d | CD: %.1fs\nEstado: %s" % [skill_data.skill_name, skill_data.mana_cost, skill_data.cooldown, state]
+		slot_btn.tooltip_text = "%s (Nv. %d/%d)\nDescrição: %s\nMana: %d | CD: %.1fs\nDano Atual: %d (Próx. Nv: %d)\nEfeito: %s\nEstado: %s" % [
+			skill_data.skill_name, 
+			current_lvl, 
+			skill_data.max_level, 
+			skill_data.description, 
+			skill_data.mana_cost, 
+			skill_data.cooldown, 
+			calculated_damage, 
+			next_level_damage,
+			skill_data.effect_type.capitalize(),
+			state
+		]
 
 		var style = StyleBoxFlat.new()
 		style.bg_color = Color(0.15, 0.15, 0.18, 0.9)
@@ -291,7 +364,6 @@ func create_skill_tree_ui() -> void:
 		slot_btn.add_theme_stylebox_override("normal", style)
 
 		if skill_data.icon:
-			# MarginContainer interno para dar espaço para a borda do botão aparecer
 			var margin = MarginContainer.new()
 			margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 			margin.add_theme_constant_override("margin_left", 6)
@@ -311,15 +383,44 @@ func create_skill_tree_ui() -> void:
 			slot_btn.text = skill_data.skill_name
 
 		slot_btn.pressed.connect(func():
-			if state == "Habilitada":
+			if is_unlocked:
 				open_skill_shortcut_menu(skill_data, slot_btn)
-				print("[SKILL TREE] Skill já adquirida. Pronto para cascata de atalho.")
 			else:
 				select_skill_for_purchase(s_id)
 				refresh_tree_display()
 		)
+		skill_card_vbox.add_child(slot_btn)
 
-		grid.add_child(slot_btn)
+		# --- SE A HABILIDADE JÁ ESTIVER DESBLOQUEADA, EXIBE OS BOTÕES + / - E O NÍVEL ---
+		if is_unlocked:
+			var level_ctrl_hbox = HBoxContainer.new()
+			level_ctrl_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+			level_ctrl_hbox.add_theme_constant_override("separation", 4)
+
+			var btn_minus = Button.new()
+			btn_minus.text = "-"
+			btn_minus.custom_minimum_size = Vector2(22, 22)
+			btn_minus.pressed.connect(func():
+				decrease_skill_temp_level(s_id)
+			)
+			level_ctrl_hbox.add_child(btn_minus)
+
+			var lvl_lbl = Label.new()
+			lvl_lbl.text = "Nv.%d" % current_lvl
+			lvl_lbl.add_theme_font_size_override("font_size", 11)
+			level_ctrl_hbox.add_child(lvl_lbl)
+
+			var btn_plus = Button.new()
+			btn_plus.text = "+"
+			btn_plus.custom_minimum_size = Vector2(22, 22)
+			btn_plus.pressed.connect(func():
+				increase_skill_temp_level(s_id)
+			)
+			level_ctrl_hbox.add_child(btn_plus)
+
+			skill_card_vbox.add_child(level_ctrl_hbox)
+
+		grid.add_child(skill_card_vbox)
 
 	# --- RODAPÉ ---
 	var footer_hbox = HBoxContainer.new()
@@ -350,21 +451,25 @@ func try_cast(skill_data: SkillData) -> void:
 		return
 
 	if not unlocked_skills.has(skill_data.id):
+		player.send_message_HUD("Habilidade nao disponvel", Color.RED)
 		print("[MAGIA] Você ainda não aprendeu a habilidade: ", skill_data.skill_name)
 		return
 
 	var remaining_cd = skill_cooldowns.get(skill_data.id, 0.0)
 	if remaining_cd > 0.0:
+		player.send_message_HUD("Habilidade em recarga", Color.RED)
 		print("[MAGIA] Habilidade em recarga! Aguarde %.1f segundos." % remaining_cd)
 		return
 
 	if skill_data.requires_staff:
 		var weapon: ItemData = player.equipped_items.get("weapon", null)
 		if not weapon or weapon.weapon_type != ItemData.WeaponType.STAFF:
+			player.send_message_HUD("Requer Cajado Equipado!", Color.RED)
 			print("[MAGIA] Você precisa de um Cajado equipado para lançar %s!" % skill_data.skill_name)
 			return
 
 	if player.mana < skill_data.mana_cost:
+		player.send_message_HUD("Sem mana suficiente", Color.RED)
 		print("[MAGIA] Mana insuficiente!")
 		return
 	
@@ -420,23 +525,36 @@ func cancel_targeting() -> void:
 		active_spell_decal = null
 		
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	player.send_message_HUD("Magia cancelada", Color.RED)
 	print("[MAGIA] Lançamento cancelado pelo jogador.")
 	is_targeting_spell = false
 
 func execute_spell(skill_data: SkillData, target_position: Vector3) -> void:
 	player.mana -= skill_data.mana_cost
+	if player.mana_bar:
+		player.mana_bar.max_value = player.max_mana
+		player.mana_bar.value = player.mana
 	skill_cooldowns[skill_data.id] = skill_data.cooldown
-	print("[MAGIA] Executando %s nas coordenadas %s" % [skill_data.skill_name, str(target_position)])
+	
+	var current_lvl = get_skill_level(skill_data.id)
+	var final_damage = skill_data.damage + ((current_lvl - 1) * skill_data.damage_per_level) + player.magic_damage
+	var effect_type = skill_data.effect_type if "effect_type" in skill_data else ""
+	
+	print("[MAGIA] Executando %s (Nível %d) com dano %d nas coordenadas %s" % [skill_data.skill_name, current_lvl, final_damage, str(target_position)])
 
+	# --- INSTANCIA A CENA DA MAGIA SE ELA TIVER SIDO CONFIGURADA ---
+	if skill_data.spell_scene:
+		var spell_instance = skill_data.spell_scene.instantiate()
+		if spell_instance.has_method("setup"):
+			spell_instance.setup(final_damage, effect_type, player)
+		get_tree().current_scene.add_child(spell_instance)
+		spell_instance.global_position = target_position
+		
 	if skill_data.animation_name != "" and player.has_method("play_spell_animation"):
 		player.play_spell_animation(skill_data.animation_name)
 	
 	if skill_data.id == "Cura":
-		player.magic_heal(skill_data.damage)
-	else:
-		var dmg = skill_data.damage if "damage" in skill_data else 40
-		var eff = skill_data.effect_type if "effect_type" in skill_data else "queimadura"
-		apply_aoe_damage(target_position, 3.0, dmg, eff)
+		player.magic_heal(final_damage)
 		
 	player.update_hud_display()
 
@@ -446,9 +564,15 @@ func apply_aoe_damage(center: Vector3, radius: float, damage: int, effect: Strin
 		if is_instance_valid(m) and not m.is_dead:
 			var dist = (m.global_position - center).length()
 			if dist <= radius:
+				# 1. Aplica o dano principal
 				if m.has_method("take_damage"):
 					m.take_damage(damage, player)
-				print("[COMBAT] Monstro atingido pela magia! Efeito aplicado: ", effect)
+				
+				# 2. Aplica o efeito colateral (Ex: Queimadura, Lentidão) se o monstro tiver o método
+				if effect != "" and m.has_method("apply_status_effect"):
+					m.apply_status_effect(effect, damage * 0.2, 3.0) # Efeito dura 3 segundos com dano periódico baseado no ataque
+					
+				print("[COMBAT] Monstro atingido pela magia! Dano: %d | Efeito: %s" % [damage, effect])
 
 # Exibe o menu em cascata (PopupMenu) para escolher o atalho (1 a 5) da skill já desbloqueada
 func open_skill_shortcut_menu(skill_data: SkillData, button_node: Control) -> void:

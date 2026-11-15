@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://v1ogh1rb7r50"]
 
-[ext_resource type="Texture2D" uid="uid://c6bnx87lcxdex" path="res://Assets/Pacote Modular Vallirya - Objetos/MesaPentagrama_0.png" id="1_b1fsq"]
-[ext_resource type="Texture2D" uid="uid://dnxs24cxbfolw" path="res://Assets/Pacote Modular Vallirya - Objetos/MesaPentagrama_1.png" id="2_qinf4"]
-[ext_resource type="Texture2D" uid="uid://gyb2tyn1u4se" path="res://Assets/Pacote Modular Vallirya - Objetos/MesaPentagrama_2.png" id="3_t8a3s"]
+[ext_resource type="Texture2D" uid="uid://c6bnx87lcxdex" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_0.png" id="1_b1fsq"]
+[ext_resource type="Texture2D" uid="uid://dnxs24cxbfolw" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_1.png" id="2_qinf4"]
+[ext_resource type="Texture2D" uid="uid://gyb2tyn1u4se" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_2.png" id="3_t8a3s"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nted5"]
 size = Vector3(0.0098927505, 0.015000001, 0.00601767)
@@ -98,6 +98,8 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_6lxyv")
 
 [node name="MesaPentagrama" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=153938188]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0.0036829617, 0.2728995, -0.008969972)

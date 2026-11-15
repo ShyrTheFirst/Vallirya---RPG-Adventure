@@ -1,9 +1,9 @@
 [gd_scene format=4 uid="uid://blji6d76uc5x5"]
 
-[ext_resource type="Texture2D" uid="uid://cblar8x28fat5" path="res://Assets/Pacote Modular Vallirya - Objetos/Cama_0.png" id="1_d40qt"]
-[ext_resource type="Texture2D" uid="uid://l8f5x65k47t4" path="res://Assets/Pacote Modular Vallirya - Objetos/Cama_1.png" id="2_h4i4p"]
-[ext_resource type="Texture2D" uid="uid://ditbg4caguvaj" path="res://Assets/Pacote Modular Vallirya - Objetos/Cama_4.png" id="3_hiscg"]
-[ext_resource type="Texture2D" uid="uid://dr3la88ofr1md" path="res://Assets/Pacote Modular Vallirya - Objetos/Cama_5.png" id="4_ugxcl"]
+[ext_resource type="Texture2D" uid="uid://cblar8x28fat5" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Cama_0.png" id="1_d40qt"]
+[ext_resource type="Texture2D" uid="uid://l8f5x65k47t4" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Cama_1.png" id="2_h4i4p"]
+[ext_resource type="Texture2D" uid="uid://ditbg4caguvaj" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Cama_4.png" id="3_hiscg"]
+[ext_resource type="Texture2D" uid="uid://dr3la88ofr1md" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Cama_5.png" id="4_ugxcl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yf5fn"]
 size = Vector3(2, 0.15, 1.2)
@@ -131,6 +131,8 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_njkji")
 
 [node name="Cama" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=847843518]
 shape = SubResource("BoxShape3D_yf5fn")

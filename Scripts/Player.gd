@@ -10,6 +10,18 @@ extends CharacterBody3D
 var spell_cast_lockout: float = 0.0
 
 @onready var skill_manager = $SkillManager
+@onready var equipment_manager: EquipmentManager = $EquipmentManager
+
+# --- SISTEMA DE STATUS E EFEITOS ---
+var active_player_status: String = ""
+var player_status_timer: float = 0.0
+var player_status_tick: float = 0.0
+var player_status_damage: int = 0
+var base_player_speed: float = 5.5
+@onready var venom_effect: GPUParticles3D = $VenomEffect
+@onready var fire_effect: GPUParticles3D = $FireEffect
+@onready var frost_effect: GPUParticles3D = $FrostEffect
+
 
 # Identificação e Atributos Base
 var player_name: String = "Aventureiro"
@@ -51,6 +63,8 @@ var ui_dialogue_text_label: Label = null
 var ui_dialogue_close_btn: Button = null
 var ui_quest_panel: PanelContainer = null
 var ui_quest_list_container: VBoxContainer = null
+var ui_mastery_panel: PanelContainer = null
+var ui_mastery_list_container: VBoxContainer = null
 
 
 # --- EQUIPAMENTOS ATIVOS ---
@@ -160,7 +174,10 @@ var active_equipment_slot: String = ""
 @onready var right_hand_bone: BoneAttachment3D = get_node_or_null("Personagem (IK)/Armature/Skeleton3D/RightHand")
 @onready var torch_light: OmniLight3D = $TorchLight
 
-
+# --- CONTROLE DE REGENERAÇÃO E COMBATE ---
+var out_of_combat_timer: float = 0.0
+const COMBAT_COOLDOWN_DURATION: float = 10.0 # 10 segundos sem combate para regenerar
+var regen_tick_timer: float = 0.0
 
 func _init() -> void:
 	inventory_items.resize(INVENTORY_CAPACITY)
@@ -180,6 +197,7 @@ func _ready() -> void:
 
 	hp = max_hp
 	mana = max_mana
+	base_player_speed = speed
 
 	if player_info_sprite and sub_viewport:
 		player_info_sprite.texture = sub_viewport.get_texture()
@@ -250,6 +268,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			close_dialogue_window()
 			get_viewport().set_input_as_handled()
 			return
+	
+	if event is InputEventKey and event.pressed and event.keycode == KEY_K:
+		toggle_mastery_window()
 
 	if event is InputEventKey and event.pressed and (event.keycode == KEY_CTRL):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -275,6 +296,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func try_cast_spell(skill_id: SkillData) -> void:
 	if skill_manager:
 		skill_manager.try_cast(skill_id)
+		
 
 func try_perform_local_attack() -> void:
 	if spell_cast_lockout > 0.0 or (skill_manager and skill_manager.is_targeting_spell):
@@ -349,6 +371,16 @@ func _physics_process(delta: float) -> void:
 		combo_reset_timer -= delta
 		if combo_reset_timer <= 0.0:
 			combo_step = 1
+	
+	# Controla o tempo fora de combate
+	if out_of_combat_timer > 0.0:
+		out_of_combat_timer -= delta
+	else:
+		# Fora de combate! Aplica a regeneração natural a cada 1 segundo
+		regen_tick_timer += delta
+		if regen_tick_timer >= 1.0:
+			regen_tick_timer = 0.0
+			apply_natural_regeneration()
 
 	if is_dead:
 		return
@@ -370,13 +402,27 @@ func _physics_process(delta: float) -> void:
 	velocity.z = world_dir.z * speed
 
 	move_and_slide()
+	
+	# Atualiza status negativos no player
+	if active_player_status != "":
+		player_status_timer -= delta
+		player_status_tick -= delta
+		if player_status_tick <= 0.0:
+			player_status_tick = 1.0
+			hp = max(0, hp - player_status_damage)
+			show_damage_effect(player_status_damage, hp)
+			if hp <= 0:
+				# Dispara a lógica de morte existente no player
+				pass
+		if player_status_timer <= 0.0:
+			remove_player_status()
 
 func update_client_visuals(delta: float) -> void:
 	if not anim_tree or not anim_tree.active or is_dead:
 		return
 
 	var move_vec = Input.get_vector("Esquerda", "Direita", "Frente", "Costas")
-	var is_moving: bool = move_vec.length() > 0.1
+	var is_moving: bool = move_vec.length() > 0.1 and is_on_floor()
 
 	var target_state: String = "state_1" if is_moving else "state_0"
 	if current_locomotion_state != target_state:
@@ -496,6 +542,7 @@ func take_damage(amount: int) -> void:
 
 	hp = max(0, hp - final_dmg)
 	show_damage_effect(final_dmg, hp)
+	trigger_combat_state()
 
 	if hp <= 0:
 		is_dead = true
@@ -940,6 +987,38 @@ func setup_local_hud() -> void:
 	ui_quest_list_container.custom_minimum_size = Vector2(300, 300)
 	ui_quest_list_container.add_theme_constant_override("separation", 10)
 	q_scroll.add_child(ui_quest_list_container)
+	
+	# 9. PAINEL DE MAESTRIA DE PROFISSÕES (Atalho K)
+	ui_mastery_panel = PanelContainer.new()
+	ui_mastery_panel.custom_minimum_size = Vector2(360, 400)
+	ui_mastery_panel.visible = false
+	if custom_theme: ui_mastery_panel.theme = custom_theme
+	hud_layer.add_child(ui_mastery_panel)
+	
+	ui_mastery_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	ui_mastery_panel.offset_left = -180
+	ui_mastery_panel.offset_right = 180
+	ui_mastery_panel.offset_top = -200
+	ui_mastery_panel.offset_bottom = 200
+
+	var m_box = VBoxContainer.new()
+	m_box.add_theme_constant_override("separation", 8)
+	ui_mastery_panel.add_child(m_box)
+
+	var m_title = Label.new()
+	m_title.text = "--- MAESTRIA DE OFÍCIOS ---"
+	m_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	m_title.modulate = Color(1.0, 0.85, 0.3)
+	m_box.add_child(m_title)
+
+	var m_scroll = ScrollContainer.new()
+	m_scroll.custom_minimum_size = Vector2(340, 330)
+	m_box.add_child(m_scroll)
+
+	ui_mastery_list_container = VBoxContainer.new()
+	ui_mastery_list_container.custom_minimum_size = Vector2(320, 320)
+	ui_mastery_list_container.add_theme_constant_override("separation", 10)
+	m_scroll.add_child(ui_mastery_list_container)
 
 	update_hud_display()
 	populate_inventory_ui()
@@ -1555,9 +1634,11 @@ func load_player_save(username: String) -> void:
 	stat_int = int(stats.get("int", 5))
 	
 	if hud_ref and json_data.has("equipped_skills"):
-		print(json_data.get("equipped_potions", {}))
 		if skill_manager:
 			hud_ref.load_saved_data(json_data.get("equipped_skills", {}), json_data.get("equipped_potions", {}), skill_manager.available_skills)
+		
+	if json_data.has("equipment_data") and equipment_manager:
+		equipment_manager.load_saved_data(json_data["equipment_data"])
 
 	var inv_data = json_data.get("inventory", []) as Array
 	inventory_items.clear()
@@ -1692,7 +1773,8 @@ func save_player_account() -> void:
 		"completed_quests": completed_quests,
 		"equipped_skills": hud_ref.equipped_skill_slots if hud_ref else {},
 		"equipped_potions": hud_ref.equipped_potion_items if hud_ref else {},
-		"skills_data": skill_manager.get_save_data() if skill_manager else {}
+		"skills_data": skill_manager.get_save_data() if skill_manager else {},
+		"equipment_data": equipment_manager.get_save_data() if equipment_manager else {}
 	}
 	print("HUD : ", hud_ref)
 	print("pocoes : ", hud_ref.equipped_potion_items)
@@ -1902,3 +1984,163 @@ func play_spell_animation(anim_name: String) -> void:
 	if anim_tree:
 		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 		print("[PLAYER] Executando animação de magia: ", anim_name)
+
+func send_message_HUD(message : String, color : Color):
+	hud_ref.show_floating_message(message, color)
+
+func toggle_mastery_window() -> void:
+	if not ui_mastery_panel:
+		return
+	
+	var is_visible = not ui_mastery_panel.visible
+	ui_mastery_panel.visible = is_visible
+	
+	if is_visible:
+		populate_mastery_ui()
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		if not (ui_inventory_panel and ui_inventory_panel.visible) and not (ui_attr_panel and ui_attr_panel.visible):
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func populate_mastery_ui() -> void:
+	if not ui_mastery_list_container:
+		return
+
+	for child in ui_mastery_list_container.get_children():
+		child.queue_free()
+
+	var craft_manager = get_node_or_null("/root/CraftManager")
+	if not craft_manager or not "equipment_progress" in craft_manager:
+		var lbl_err = Label.new()
+		lbl_err.text = "Dados de maestria indisponíveis."
+		ui_mastery_list_container.add_child(lbl_err)
+		return
+
+	var progress_data = craft_manager.equipment_progress as Dictionary
+
+	for eq_type in progress_data.keys():
+		var type_box = VBoxContainer.new()
+		type_box.add_theme_constant_override("separation", 4)
+		
+		# Título da Categoria (Ex: Armadura, Elmo, Bota, etc.)
+		var type_title = Label.new()
+		type_title.text = "🛠️ Categoria: %s" % eq_type.capitalize()
+		type_title.add_theme_font_size_override("font_size", 13)
+		type_title.modulate = Color(0.4, 0.9, 1.0)
+		type_box.add_child(type_title)
+
+		var levels_dict = progress_data[eq_type] as Dictionary
+		for lvl in range(1, 11):
+			if levels_dict.has(lvl):
+				var info = levels_dict[lvl]
+				var crafted = int(info.get("total_crafted", 0))
+				var mastery = int(info.get("mastery_exp", 0))
+				
+				var row_lbl = Label.new()
+				var status_text = ""
+				
+				if crafted >= 10:
+					status_text = "Nível %d: [CONCLUÍDO] (Especialista XP: %d)" % [lvl, mastery]
+					row_lbl.modulate = Color(0.3, 1.0, 0.4)
+				else:
+					status_text = "Nível %d: %d / 10 crafts" % [lvl, crafted]
+					row_lbl.modulate = Color(0.9, 0.9, 0.9)
+					
+				row_lbl.text = "   • " + status_text
+				row_lbl.add_theme_font_size_override("font_size", 11)
+				type_box.add_child(row_lbl)
+
+		var sep = HSeparator.new()
+		ui_mastery_list_container.add_child(type_box)
+		ui_mastery_list_container.add_child(sep)
+
+# --- SISTEMA DE COLETA (GATHERING) ---
+func gathering(item_data: ItemData, anim_name: String) -> void:
+	if is_dead or not item_data:
+		return
+
+	# 1. Reproduz a animação informada pelo prop (ex: abaixar, minerar, colher)
+	if attacks_playback and anim_name != "":
+		attacks_playback.start(anim_name)
+	
+	if anim_tree and anim_name != "":
+		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+	# 2. Toca um som de coleta (se houver um AudioStreamPlayer dedicado ou reaproveitando o de acerto/passos)
+	play_gathering_sound()
+
+	# 3. Adiciona o item coletado ao inventário do player
+	var added = add_item_to_inventory(item_data, 1)
+	if added:
+		print("[GATHERING] Item coletado com sucesso: %s" % item_data.name)
+		send_message_HUD("Coletado: %s" % item_data.name, Color(0.4, 1.0, 0.4))
+	else:
+		print("[GATHERING] Inventário cheio!")
+		send_message_HUD("Inventário Cheio!", Color.RED)
+
+func play_gathering_sound() -> void:
+	# Você pode criar um nó AudioStreamPlayer3D chamado 'GatherAudio' no Player, 
+	# ou usar o hit_audio / step_audio como fallback seguro:
+	var gather_audio = get_node_or_null("GatherAudio") as AudioStreamPlayer3D
+	if gather_audio and gather_audio.stream:
+		gather_audio.pitch_scale = randf_range(0.9, 1.1)
+		gather_audio.play()
+	elif hit_audio and hit_audio.stream:
+		hit_audio.pitch_scale = 0.7
+		hit_audio.play()
+
+func apply_status_effect(effect_type: String, total_damage: int, duration: float) -> void:
+	active_player_status = effect_type.to_lower()
+	player_status_timer = duration
+	player_status_tick = 1.0
+	
+	# Distribui o dano em até 3 segundos (ou na duração informada)
+	var effective_duration = min(duration, 3.0)
+	player_status_damage = max(1, int(total_damage / effective_duration))
+	
+	match active_player_status:
+		"envenenamento":
+			send_message_HUD("Você foi envenenado!", Color.GREEN)
+			venom_effect.emiting = true
+		"queimadura":
+			send_message_HUD("Você está queimando!", Color.RED)
+			fire_effect.emiting = true
+		"congelamento", "lentidao":
+			speed = base_player_speed * 0.6
+			send_message_HUD("Velocidade reduzida!", Color.BLUE)
+			frost_effect.emiting = true
+
+func remove_player_status() -> void:
+	match active_player_status:
+		"congelamento", "lentidao":
+			speed = base_player_speed
+			frost_effect.emiting = false
+		"queimadura":
+			fire_effect.emiting = false
+		"envenenamento":
+			venom_effect.emiting = false
+	active_player_status = ""
+
+func apply_natural_regeneration() -> void:
+	if is_dead:
+		return
+		
+	var hp_gain = int(max_hp * 0.05) # 5% do HP total
+	var mana_gain = int(max_mana * 0.05) # 5% da Mana total
+	
+	if hp < max_hp:
+		hp = min(max_hp, hp + hp_gain)
+		if health_bar:
+			health_bar.max_value = max_hp
+			health_bar.value = hp
+		
+	if mana < max_mana:
+		mana = min(max_mana, mana + mana_gain)
+		if mana_bar:
+			mana_bar.max_value = max_mana
+			mana_bar.value = mana
+
+func trigger_combat_state() -> void:
+	# Chamado sempre que o player toma dano ou realiza uma ação ofensiva
+	out_of_combat_timer = COMBAT_COOLDOWN_DURATION
+	regen_tick_timer = 0.0

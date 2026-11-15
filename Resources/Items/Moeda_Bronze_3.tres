@@ -7,6 +7,7 @@
 script = ExtResource("1_6t7n4")
 id = "Moeda_Cobre_3"
 name = "3 Moedas de Cobre"
+active_legendary = null
 description = "Tres moedas de cobre usada para comprar itens."
 mesh_scene = ExtResource("1_ub8rx")
 sell_price = 3

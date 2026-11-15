@@ -177,6 +177,8 @@ radius = 1.1757057
 viewport_path = NodePath("InteractionPrompt/SubViewport")
 
 [node name="QuadroAvisos" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 script = ExtResource("1_kxw8q")
 
 [node name="QuadroDeAvisos" type="MeshInstance3D" parent="." unique_id=2055309970]
@@ -188,6 +190,8 @@ transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1
 shape = SubResource("BoxShape3D_cgeuk")
 
 [node name="InteractionArea" type="Area3D" parent="." unique_id=1736256615]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=1667311269]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0719942, 0)

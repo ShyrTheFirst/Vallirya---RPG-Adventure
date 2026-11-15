@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://7njec0wmkeq3"]
 
-[ext_resource type="Texture2D" uid="uid://cfeb4tqwub0nx" path="res://Assets/Pacote Modular Vallirya - Objetos/Grama_Desertica_0.png" id="1_s6ys2"]
-[ext_resource type="Texture2D" uid="uid://hyop7aosq2fa" path="res://Assets/Pacote Modular Vallirya - Objetos/Grama_Desertica_1.png" id="2_rubrk"]
+[ext_resource type="Texture2D" uid="uid://cfeb4tqwub0nx" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Grama_Desertica_0.png" id="1_s6ys2"]
+[ext_resource type="Texture2D" uid="uid://hyop7aosq2fa" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Grama_Desertica_1.png" id="2_rubrk"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8iaxs"]
 resource_name = "M_Grama"
@@ -51,6 +51,17 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_hitr7")
 
-[node name="Grama_Desertica" type="MeshInstance3D" unique_id=1175596312]
-transform = Transform3D(1, 0, 0, 0, 1.0000002, 1.4210855e-14, 0, -1.4210855e-14, 1.0000002, 0, 0, 0)
+[sub_resource type="BoxShape3D" id="BoxShape3D_s6ys2"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Grama_Desertica" type="RigidBody3D" unique_id=657710022]
+collision_layer = 2
+mass = 500.0
+
+[node name="Grama_Desertica" type="MeshInstance3D" parent="." unique_id=1175596312]
+transform = Transform3D(30.876, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 0, 0, 0)
 mesh = SubResource("ArrayMesh_nny3q")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2111838063]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.050956488, 0)
+shape = SubResource("BoxShape3D_s6ys2")

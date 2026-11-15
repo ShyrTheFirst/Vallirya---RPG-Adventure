@@ -33,7 +33,9 @@ func apply_rarity_effects() -> void:
 func execute_attack(target: CharacterBody3D, range_dist: float) -> void:
 	perform_cleave_attack(range_dist)
 	
-	# A aranha tem apenas 1 ataque principal (Ataque 1)
+	if attack_effect != "" and effect_damage_percent != 0.0:
+		effect_to_player(target, attack_effect, effect_damage_percent)
+
 	var anim_name = "Armature|Ataque 1"
 	play_spider_attack(anim_name)
 
@@ -41,7 +43,6 @@ func play_spider_attack(anim_name: String) -> void:
 	# 1. Dispara a animação na StateMachine de combos (que é o que realmente toca o ataque)
 	if attacks_playback:
 		attacks_playback.start(anim_name)
-		
 	# 2. Se o seu AnimationTree realmente usa o OneShot, chamamos direto sem o 'has_parameter'
 	if anim_tree:
 		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)

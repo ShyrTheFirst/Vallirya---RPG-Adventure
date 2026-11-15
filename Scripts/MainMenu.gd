@@ -126,14 +126,14 @@ func _on_btn_new_character_pressed() -> void:
 		print("[MENU] Já existe um personagem com este nome!")
 		return
 
-	# Cria um arquivo de save inicial básico em JSON para o novo herói
+	# 1. Cria o arquivo de save padrão para o novo herói
 	_create_new_character_save(char_name)
 	
-	# Limpa o campo e atualiza a lista
-	line_edit_username.text = ""
-	refresh_character_list()
+	# 2. Avisa o LevelManager que este é um NOVO JOGO (para nascer no SpawnPoint padrão)
+	LevelManager.is_new_game = true
 	
-	print("[MENU] Novo personagem criado com sucesso: ", char_name)
+	# 3. Inicia o jogo diretamente com o novo personagem!
+	_launch_game_with_character(char_name)
 
 # Gera a estrutura inicial do arquivo JSON de save para o novo herói
 func _create_new_character_save(char_name: String) -> void:
@@ -148,8 +148,12 @@ func _create_new_character_save(char_name: String) -> void:
 		"equipment": {},
 		"weapon_mesh_path": "",
 		"last_position": { "x": 0, "y": 1, "z": 0 },
-		"active_quests": {},
-		"completed_quests": []
+		"client_active_quests": {},
+		"completed_quests": [],
+		"equipped_skills": {},
+		"equipped_potions": {},
+		"skills_data": {},
+		"equipment_data": {}
 	}
 
 	var file = FileAccess.open(ACCOUNTS_DIR + char_name + ".json", FileAccess.WRITE)
@@ -160,10 +164,11 @@ func _create_new_character_save(char_name: String) -> void:
 func _launch_game_with_character(char_name: String) -> void:
 	print("[MENU] Iniciando o jogo com o herói: ", char_name)
 	
-	# Salva o nome escolhido
+	# Salva o nome escolhido no gerenciador
 	LevelManager.current_player_name = char_name
+	LevelManager.is_new_game = false
 	
-	# Abre a cena Main. O próprio script da Main vai cuidar de puxar o mapa.
+	# Abre a cena Main
 	get_tree().change_scene_to_packed(main_game_scene)
 
 func _random_select_bgm():

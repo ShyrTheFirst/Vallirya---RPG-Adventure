@@ -28,9 +28,9 @@
 [ext_resource type="PackedScene" uid="uid://dxuvjxn7i6cmt" path="res://Scenes/NPCs/npc_valkor.tscn" id="24_d3ars"]
 [ext_resource type="PackedScene" uid="uid://58yfc58ogy4d" path="res://Scenes/Props/poste_luz.tscn" id="31_mfh7x"]
 [ext_resource type="PackedScene" uid="uid://dbi1b5myivpu8" path="res://Scenes/casa_normal_ardosia.tscn" id="36_d2jk0"]
+[ext_resource type="PackedScene" uid="uid://dk8e685nb8ew7" path="res://Scenes/Props/MesaDeCriacao.tscn" id="36_pfy1j"]
 [ext_resource type="PackedScene" uid="uid://fn76k3ifu4r5" path="res://Scenes/Props/bau_simples.tscn" id="39_bbwj2"]
 [ext_resource type="PackedScene" uid="uid://kcfbtuyqo7xw" path="res://Scenes/Props/mesa.tscn" id="39_uvb3s"]
-[ext_resource type="PackedScene" uid="uid://blji6d76uc5x5" path="res://Scenes/Props/cama.tscn" id="40_crxrm"]
 [ext_resource type="PackedScene" uid="uid://kb2snerb4wjd" path="res://Scenes/Props/cadeira.tscn" id="40_ivfu3"]
 [ext_resource type="PackedScene" uid="uid://x1tg1b5gfeuc" path="res://Scenes/Props/bigorna_basica.tscn" id="41_fq1sc"]
 [ext_resource type="PackedScene" uid="uid://dw3tdthgpo1bv" path="res://Scenes/casa_sobrado_ardosia.tscn" id="51_irs1d"]
@@ -275,6 +275,7 @@ transform = Transform3D(148.50471, 0, 0, 0, -1.7703142e-05, 148.5047, 0, -148.50
 mesh = SubResource("ArrayMesh_pm0ng")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MapaInicial/Ilha_01_A" unique_id=844215256]
+collision_mask = 31
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MapaInicial/Ilha_01_A/StaticBody3D" unique_id=683071740]
 shape = SubResource("ConcavePolygonShape3D_op4cu")
@@ -284,6 +285,7 @@ transform = Transform3D(148.50471, 0, 0, 0, -1.7703142e-05, 148.5047, 0, -148.50
 mesh = SubResource("ArrayMesh_o8v5y")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MapaInicial/Ilha_01_B" unique_id=898471676]
+collision_mask = 31
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MapaInicial/Ilha_01_B/StaticBody3D" unique_id=1231691029]
 shape = SubResource("ConcavePolygonShape3D_8l3nt")
@@ -293,6 +295,7 @@ transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1
 mesh = SubResource("ArrayMesh_x44qc")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MapaInicial/Ilha_01_Plato" unique_id=498954185]
+collision_mask = 31
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MapaInicial/Ilha_01_Plato/StaticBody3D" unique_id=413020047]
 shape = SubResource("ConcavePolygonShape3D_kwl8l")
@@ -304,6 +307,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.62664, 0, -34.026398)
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("3_b5aes"), ExtResource("4_w0bku")])
 spawn_count = 150
+respawn_cooldown = 60.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PropSpawnAreas/Trees_A" unique_id=586176493]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5131836, 0)
@@ -329,6 +333,8 @@ shape = SubResource("CylinderShape3D_qrjxm")
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("5_0ao37"), ExtResource("6_d3ars"), ExtResource("7_l11rc")])
 spawn_count = 100
+enable_respawn = false
+respawn_cooldown = 60.0
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=1488957725]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.62664, 0.5131836, -94.587845)
@@ -354,6 +360,10 @@ shape = SubResource("CylinderShape3D_44qgb")
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("8_w86vl")])
 spawn_count = 1000
+snap_to_ground = false
+allow_random_rotation = false
+enable_respawn = false
+respawn_cooldown = 0.0
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Gramas" unique_id=1235133778]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.066687, 0.5131836, -41.676315)
@@ -367,6 +377,8 @@ shape = SubResource("CylinderShape3D_vcow6")
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("9_33kev")])
 spawn_count = 250
+allow_random_rotation = false
+enable_respawn = false
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Arbustos" unique_id=1610073403]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.423931, 0.5131836, -24.185974)
@@ -392,6 +404,7 @@ shape = SubResource("CylinderShape3D_421jm")
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("10_g01fq"), ExtResource("11_0bcf6")])
 spawn_count = 150
+respawn_cooldown = 60.0
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Trees_C" unique_id=1840299466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.128963, 0.5131836, -112.72133)
@@ -429,6 +442,8 @@ shape = SubResource("CylinderShape3D_r37ai")
 script = ExtResource("2_7yo87")
 prop_scenes = Array[PackedScene]([ExtResource("12_y1bqn")])
 spawn_count = 100
+allow_random_rotation = false
+respawn_cooldown = 60.0
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Galhos" unique_id=1266539327]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.992157, 0.5131836, -49.42203)
@@ -533,6 +548,9 @@ shape = SubResource("BoxShape3D_h0n6w")
 
 [node name="PropsContainer" type="Node3D" parent="." unique_id=1441444937]
 
+[node name="MesaCriacao" parent="PropsContainer" unique_id=631328931 instance=ExtResource("36_pfy1j")]
+transform = Transform3D(-0.50000006, 0, 0.8660254, 0, 1, 0, -0.8660254, 0, -0.50000006, -52.102734, 0.02109468, 10.788015)
+
 [node name="QuadroAvisos" parent="PropsContainer" unique_id=36560846 instance=ExtResource("22_644y4")]
 transform = Transform3D(-0.88844645, 0, 0.45898032, 0, 1, 0, -0.45898032, 0, -0.88844645, -104.920074, 22.210325, -4.078043)
 
@@ -558,16 +576,13 @@ transform = Transform3D(-0.96592563, 0, -0.2588189, 0, 1, 0, 0.2588189, 0, -0.96
 transform = Transform3D(1.0430813e-07, 0, 0.99999976, 0, 1, 0, -0.99999976, 0, 1.0430813e-07, -54.64316, 0, 17.9715)
 
 [node name="Mesa" parent="PropsContainer" unique_id=806113420 instance=ExtResource("39_uvb3s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52.69109, 0.02798085, 19.29125)
-
-[node name="Cama" parent="PropsContainer" unique_id=817413941 instance=ExtResource("40_crxrm")]
-transform = Transform3D(0, 0, 1.0000001, 0, 1, 0, -1.0000001, 0, 0, -56.276646, 0.06679547, 19.39513)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.73843, 0.02798085, 8.649401)
 
 [node name="Bau_Simples" parent="PropsContainer" unique_id=188952271 instance=ExtResource("39_bbwj2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.3645, -3.8146973e-06, 20.270697)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.41184, -3.8146973e-06, 9.628847)
 
 [node name="Cadeira" parent="PropsContainer" unique_id=1434615183 instance=ExtResource("40_ivfu3")]
-transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -53.451103, 0.014021201, 19.237787)
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -57.498444, 0.014021201, 8.595938)
 
 [node name="Bigorna_Basica" parent="PropsContainer" unique_id=1695242169 instance=ExtResource("41_fq1sc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.159325, 0.7546889, 10.5486965)

@@ -8,9 +8,25 @@ extends CharacterBody3D
 @export var base_attack_range: float = 1.5
 @export var mesh_base_y: float = -1.28
 @export var health_bar_height: float = 1.8
+@export var attack_effect : String = ""
+@export var effect_damage_percent : float = 0.8
 
 @export_category("Sistema de Loot / Drops")
 @export var drop_table: Array[MonsterDrop] = []
+
+@export_category("Configuração de Respawn")
+@export var respawn_time: float = 10.0 # Tempo em segundos para o monstro renascer (padrão 10s)
+
+# --- SISTEMA DE STATUS E EFEITOS ---
+var active_status: String = "" # "queimadura", "congelamento", "envenenamento", etc.
+var status_timer: float = 0.0
+var status_tick_timer: float = 0.0
+var status_damage_per_tick: int = 0
+var original_speed: float = 3.0
+var flash_timer: float = 0.0
+@onready var fire_effect: GPUParticles3D = $FireEffect
+@onready var venom_effect: GPUParticles3D = $VenomEffect
+@onready var frost_effect: GPUParticles3D = $FrostEffect
 
 # Estados da Inteligência Artificial
 enum State { IDLE, PATROL, CHASE, ATTACK, RETURN }
@@ -53,6 +69,7 @@ func _ready() -> void:
 		spawn_origin = global_position
 
 	apply_rarity_effects()
+	original_speed = speed
 
 	if health_bar_sprite and sub_viewport:
 		health_bar_sprite.texture = sub_viewport.get_texture()
@@ -124,6 +141,7 @@ func _physics_process(delta: float) -> void:
 	update_ai_state(delta)
 	update_animations()
 	move_and_slide()
+	update_status_effects(delta)
 
 # --- MÁQUINA DE ESTADOS DA IA ---
 func update_ai_state(delta: float) -> void:
@@ -313,6 +331,7 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 
 	hp = max(0, hp - amount)
 	show_damage_effect(amount, hp)
+	#play_hit_reaction() ##### Ativar aqui quando eu tiver a animaçao criada nos monstros!!!
 
 	if hp <= 0:
 		is_dead = true
@@ -336,7 +355,7 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 
 		rpc_despawn()
 
-		get_tree().create_timer(3.5).timeout.connect(func():
+		get_tree().create_timer(respawn_time).timeout.connect(func():
 			var world = get_tree().current_scene
 			var new_pos = spawn_origin
 			var new_lvl = level
@@ -373,6 +392,13 @@ func show_damage_effect(amount: int, current_hp: int) -> void:
 		if dmg_lbl.has_method("setup"): dmg_lbl.setup(amount, Color(1.0, 0.2, 0.2))
 
 func rpc_despawn() -> void:
+	##### Preciso executar a animaçao primeiro e DEPOIS apagar o monstro.  ###############################################################################################
+	#####Preciso considerar tempo de anim + tempo aparecendo morto ###############################################################################################
+	#if attacks_playback:
+		#attacks_playback.start("Armature|Morte")
+	#if anim_tree:
+		#anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+	#await get_tree().create_timer(1.0).timeout
 	visible = false
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
@@ -386,6 +412,8 @@ func rpc_respawn(pos: Vector3, new_hp: int, new_max_hp: int, new_lvl: int, new_r
 	visible = true
 	if collision_shape:
 		collision_shape.set_deferred("disabled", false)
+	
+	clear_status_effects()
 	update_display()
 
 func _roll_loot_drops() -> void:
@@ -406,3 +434,91 @@ func _roll_loot_drops() -> void:
 					item_instance.global_position = drop_pos
 					if item_instance.has_method("setup"):
 						item_instance.setup(item_res)
+
+func update_status_effects(delta: float) -> void:
+	if active_status != "":
+		status_timer -= delta
+		status_tick_timer -= delta
+		
+		# Dispara dano periódico (Tick a Tick) para queimadura ou veneno
+		if status_tick_timer <= 0.0 and (active_status == "queimadura" or active_status == "envenenamento"):
+			status_tick_timer = 1.0 # Tica a cada 1 segundo
+			take_damage(status_damage_per_tick, current_target_player)
+			
+		# Quando o tempo do efeito acaba, remove o status
+		if status_timer <= 0.0:
+			remove_status_effect()
+
+	# Lógica visual para fazer o monstro piscar a cor correspondente
+	if flash_timer > 0.0:
+		flash_timer -= delta
+		if flash_timer <= 0.0:
+			set_monster_effect("") # Retorna ao normal
+
+func apply_status_effect(effect_type: String, damage_amount: float, duration: float) -> void:
+	active_status = effect_type.to_lower()
+	status_timer = duration
+	status_tick_timer = 1.0
+	status_damage_per_tick = max(1, int(damage_amount / duration)) # Distribui o dano ao longo do tempo
+	
+	match active_status:
+		"queimadura":
+			flash_timer = duration
+			set_monster_effect(active_status)
+		"congelamento", "lentidao", "cansaço", "lento":
+			speed = original_speed * 0.5 # Reduz a velocidade pela metade
+			flash_timer = duration
+			set_monster_effect(active_status)
+		"envenenamento":
+			flash_timer = duration
+			set_monster_effect(active_status)
+
+func remove_status_effect() -> void:
+	match active_status:
+		"congelamento", "lentidao", "cansaço", "lento":
+			speed = original_speed # Restaura a velocidade normal
+			
+	active_status = ""
+	set_monster_effect("")
+
+func set_monster_effect(status : String) -> void:
+	match status :
+		"queimadura": 
+			fire_effect.emitting = true
+		"congelamento", "lentidao", "cansaço", "lento": 
+			frost_effect.emitting = true
+		"envenenamento": 
+			venom_effect.emitting = true
+		_: 
+			fire_effect.emitting = false
+			frost_effect.emitting = false
+			venom_effect.emitting = false
+	pass #aqui vou ativar o efeito de dano por tempo
+
+# Função dedicada a limpar completamente qualquer efeito pendente
+func clear_status_effects() -> void:
+	active_status = ""
+	status_timer = 0.0
+	status_tick_timer = 0.0
+	status_damage_per_tick = 0
+	flash_timer = 0.0
+	
+	# Restaura a velocidade original caso ele tenha renascido com lentidão
+	speed = original_speed
+	
+	# Retorna a cor normal da malha 3D
+	set_monster_effect("")
+	
+func effect_to_player(target: CharacterBody3D, effect_type : String, damage_percent : float):
+		if is_instance_valid(target) and target.has_method("apply_status_effect"):
+			var poison_damage = int(attack_damage * damage_percent) # 80% do dano do ataque distribuído em veneno
+			target.apply_status_effect(effect_type, poison_damage, 3.0)
+
+func play_hit_reaction() -> void:
+	if current_state == State.ATTACK:
+		return 
+
+	if attacks_playback:
+		attacks_playback.start("Armature|Recebendo Dano")
+	if anim_tree:
+		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)

@@ -1,9 +1,9 @@
 [gd_scene format=4 uid="uid://bshp5tjia3576"]
 
-[ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://Assets/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="1_3eo02"]
-[ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://Assets/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="2_mt3as"]
-[ext_resource type="Texture2D" uid="uid://b4mvp38xle2gf" path="res://Assets/Pacote Modular Vallirya - Objetos/Bigorna_Avançada_0.png" id="3_cr6r1"]
-[ext_resource type="Texture2D" uid="uid://dr6j55ixms2bg" path="res://Assets/Pacote Modular Vallirya - Objetos/Bigorna_Avançada_1.png" id="4_c7bqo"]
+[ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="1_3eo02"]
+[ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="2_mt3as"]
+[ext_resource type="Texture2D" uid="uid://b4mvp38xle2gf" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Avançada_0.png" id="3_cr6r1"]
+[ext_resource type="Texture2D" uid="uid://dr6j55ixms2bg" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Avançada_1.png" id="4_c7bqo"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g4v7s"]
 radius = 0.3
@@ -107,6 +107,8 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_s7ank")
 
 [node name="Bigorna_Avançada" type="StaticBody3D" unique_id=36560846]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1461790309]
 shape = SubResource("CapsuleShape3D_g4v7s")
@@ -116,6 +118,8 @@ transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1
 mesh = SubResource("ArrayMesh_2mvd3")
 
 [node name="Area3D" type="Area3D" parent="." unique_id=1074788105]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1322500223]
 shape = SubResource("SphereShape3D_yf5fn")

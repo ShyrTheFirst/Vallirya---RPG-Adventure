@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dx5ap08h6cn3e" path="res://Scripts/WorldItem.gd" id="1_ji1af"]
 [ext_resource type="AudioStream" uid="uid://durt51e5mci5r" path="res://ASSETS/SFX/Pickup_Gold_00.mp3" id="2_2dbi4"]
+[ext_resource type="Script" uid="uid://c0652qk2jkp0a" path="res://Scripts/ItemDropEffect.gd" id="3_ctlli"]
+[ext_resource type="Shader" uid="uid://oi5m7628lven" path="res://ASSETS/VFX/Shaders/AuraWave.gdshader" id="4_ais02"]
+[ext_resource type="TubeTrailMesh" uid="uid://cody4qddgw135" path="res://ASSETS/VFX/TubeTrail.tres" id="4_e7yvy"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_8kmmi"]
 radius = 0.2734667
@@ -9,7 +12,74 @@ radius = 0.2734667
 [sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
 radius = 0.52538484
 
+[sub_resource type="Gradient" id="Gradient_e7yvy"]
+offsets = PackedFloat32Array(0.33606556, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_bepy2"]
+gradient = SubResource("Gradient_e7yvy")
+
+[sub_resource type="Curve" id="Curve_ctlli"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.49324328, 1), 1.2791699, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qk8my"]
+curve = SubResource("Curve_ctlli")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e7yvy"]
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 3.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_qk8my")
+color_ramp = SubResource("GradientTexture1D_bepy2")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_g4v7s"]
+top_radius = 0.6
+height = 0.20771484
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ctlli"]
+render_priority = 0
+shader = ExtResource("4_ais02")
+shader_parameter/aura_color = Color(0.14117648, 0.4509804, 0, 1)
+shader_parameter/emission_intensity = 1.0000000475
+shader_parameter/wave_speed = 5.0
+shader_parameter/wave_height = 0.10000000475
+
+[sub_resource type="Curve" id="Curve_ais02"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_bepy2"]
+curve = SubResource("Curve_ais02")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ngqwk"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 0.5
+initial_velocity_max = 1.5
+gravity = Vector3(0, 0.5, 0)
+scale_min = 0.049999997
+scale_max = 0.19999999
+scale_curve = SubResource("CurveTexture_bepy2")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xsmv2"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_y2lw3"]
+material = SubResource("StandardMaterial3D_xsmv2")
+radius = 0.1
+height = 0.2
+
 [node name="Drop" type="RigidBody3D" unique_id=1278382499]
+collision_layer = 2
+collision_mask = 9
 script = ExtResource("1_ji1af")
 
 [node name="Forma" type="CollisionShape3D" parent="." unique_id=2114165397]
@@ -19,6 +89,8 @@ shape = SubResource("SphereShape3D_8kmmi")
 [node name="ItemPlace" type="Node3D" parent="." unique_id=973478826]
 
 [node name="Area3D" type="Area3D" parent="." unique_id=1857554370]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1923073275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46400005, 0)
@@ -30,3 +102,25 @@ stream = ExtResource("2_2dbi4")
 max_distance = 50.0
 max_polyphony = 2
 bus = &"World SFX"
+
+[node name="ItemDropEffect" type="Node3D" parent="." unique_id=522523647]
+script = ExtResource("3_ctlli")
+
+[node name="BeamParticles" type="GPUParticles3D" parent="ItemDropEffect" unique_id=1934169918]
+amount = 3
+lifetime = 0.09999999999999999
+process_material = SubResource("ParticleProcessMaterial_e7yvy")
+draw_pass_1 = ExtResource("4_e7yvy")
+
+[node name="BaseRingMesh" type="MeshInstance3D" parent="ItemDropEffect" unique_id=1558422743]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13257846, 0)
+mesh = SubResource("CylinderMesh_g4v7s")
+surface_material_override/0 = SubResource("ShaderMaterial_ctlli")
+
+[node name="Sparkles" type="GPUParticles3D" parent="ItemDropEffect" unique_id=1416993349]
+amount = 20
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_ngqwk")
+draw_pass_1 = SubResource("SphereMesh_y2lw3")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_body_entered"]

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cn6lny7g2yvym"
+path="res://.godot/imported/Rock Meteor Swarm 2.ogg-d600c82f46f1ba7733872cc942b8da82.oggvorbisstr"
+
+[deps]
+
+source_file="res://ASSETS/SFX/Skills/Rock Meteor Swarm 2.ogg"
+dest_files=["res://.godot/imported/Rock Meteor Swarm 2.ogg-d600c82f46f1ba7733872cc942b8da82.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

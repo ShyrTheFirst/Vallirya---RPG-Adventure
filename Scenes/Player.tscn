@@ -5,16 +5,20 @@
 [ext_resource type="AudioStream" uid="uid://espjqmh8sqhk" path="res://ASSETS/SFX/Sword Attack 1.wav" id="3_gntrk"]
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="4_1iu4k"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="5_m0x7a"]
+[ext_resource type="AudioStream" uid="uid://durt51e5mci5r" path="res://ASSETS/SFX/Pickup_Gold_00.mp3" id="13_1iu4k"]
 [ext_resource type="Script" uid="uid://cqsffnwvjo0q2" path="res://Scripts/SkillManager.gd" id="13_miouo"]
 [ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="14_lslt6"]
+[ext_resource type="AudioStream" uid="uid://d3ktj3c8kfxf4" path="res://ASSETS/SFX/Gathering/gather_from_ground.wav" id="14_m0x7a"]
 [ext_resource type="Resource" uid="uid://dkoex0vaiyys5" path="res://Resources/Skills/Bola_de_Fogo.tres" id="15_ulo2v"]
 [ext_resource type="Resource" uid="uid://c7rjgnpg5d4ui" path="res://Resources/Skills/Cura.tres" id="16_1iu4k"]
 [ext_resource type="Resource" uid="uid://ce1bisc62sx10" path="res://Resources/Skills/Meteoro.tres" id="17_m0x7a"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="18_8flut"]
 [ext_resource type="StyleBox" uid="uid://d2q0hfvlmass8" path="res://ASSETS/VFX/Themes/background_progress_bar.tres" id="18_qidb7"]
+[ext_resource type="Script" uid="uid://digm4c2cy4038" path="res://Scripts/EquipmentManager.gd" id="18_ulo2v"]
 [ext_resource type="StyleBox" uid="uid://h12ndbr2278k" path="res://ASSETS/VFX/Themes/fill_progress_bar_HP.tres" id="19_70hv0"]
 [ext_resource type="AudioStream" uid="uid://djdxpluqs8cnj" path="res://ASSETS/SFX/Dirt Walk 1.wav" id="20_m0x7a"]
 [ext_resource type="PackedScene" uid="uid://b5ir7y7v6jccw" path="res://Scenes/VFX/slash.tscn" id="21_5v66d"]
+[ext_resource type="Shader" uid="uid://nijwjn130dv7" path="res://ASSETS/VFX/Shaders/Bola_De_Fogo.gdshader" id="21_x63xi"]
 [ext_resource type="Shader" uid="uid://b4xlhp6xp8g6d" path="res://Scenes/VFX/LevelUp.gdshader" id="22_i2e8t"]
 [ext_resource type="AudioStream" uid="uid://b3xjkp36dyynb" path="res://ASSETS/SFX/Jingle_Achievement_00.wav" id="22_x63xi"]
 
@@ -6435,7 +6439,142 @@ height = 4.0
 cap_top = false
 cap_bottom = false
 
+[sub_resource type="Curve" id="Curve_i2e8t"]
+_data = [Vector2(0, 0), 0.0, 4.751203, 0, 0, Vector2(1, 0.516854), -2.5463488, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_tbm5p"]
+curve = SubResource("Curve_i2e8t")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qidb7"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 2, 0)
+scale_min = 0.0
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_tbm5p")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xw773"]
+render_priority = 0
+shader = ExtResource("21_x63xi")
+shader_parameter/core_color = Color(0, 1.6507456, 0.11677393, 1)
+shader_parameter/edge_color = Color(0, 0.30943933, 0, 1)
+shader_parameter/emission_intensity = 4.00000019
+shader_parameter/speed = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_70hv0"]
+material = SubResource("ShaderMaterial_xw773")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="Curve" id="Curve_5v66d"]
+_data = [Vector2(0, 0), 0.0, 0.6730875, 0, 0, Vector2(1, 1), -1.446019, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_x63xi"]
+curve = SubResource("Curve_5v66d")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_i2e8t"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 9.8, 0)
+scale_min = 0.0
+scale_max = 0.7
+scale_curve = SubResource("CurveTexture_x63xi")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_70hv0"]
+render_priority = 0
+shader = ExtResource("21_x63xi")
+shader_parameter/core_color = Color(3, 1.2, 0.1, 1)
+shader_parameter/edge_color = Color(1, 0.2, 0, 1)
+shader_parameter/emission_intensity = 4.00000019
+shader_parameter/speed = 1.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_8flut"]
+material = SubResource("ShaderMaterial_70hv0")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="Curve" id="Curve_u7x0b"]
+_data = [Vector2(0, 0), 0.0, 4.751203, 0, 0, Vector2(0.16216218, 1), -1.1432583, -1.1432583, 0, 0, Vector2(1, 0), -2.5463488, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_utwlt"]
+curve = SubResource("Curve_u7x0b")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kih0c"]
+emission_shape_scale = Vector3(0.5, 1.5, 1)
+emission_shape = 1
+emission_sphere_radius = 1.0
+gravity = Vector3(0, -1, 0)
+scale_min = 0.0
+scale_max = 0.79999995
+scale_curve = SubResource("CurveTexture_utwlt")
+
+[sub_resource type="Shader" id="Shader_lyrkg"]
+code = "shader_type spatial;
+render_mode unshaded, blend_add; // O blend_add dá o efeito luminoso de fogo mágico
+
+uniform vec3 core_color : source_color = vec3(3.0, 1.2, 0.1); // Núcleo brilhante (Amarelo/Branco)
+uniform vec3 edge_color : source_color = vec3(1.0, 0.2, 0.0); // Bordas do fogo (Laranja/Vermelho)
+uniform float emission_intensity : hint_range(0.0, 5.0) = 2.0;
+uniform float speed : hint_range(0.1, 5.0) = 1.5;
+
+// Função simples de ruído para dar o aspecto orgânico de chamas se movendo
+float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float noise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+void fragment() {
+    // Coordenadas UV distorcidas pelo tempo para simular o fogo subindo e tremeluzindo
+    vec2 uv = UV;
+    uv.y += TIME * speed; // Faz o fogo \"subir\" pela esfera
+    
+    // Aplicação de camadas de ruído para criar as línguas de chamas
+    float n = noise(uv * 6.0 + vec2(0.0, TIME * 0.5));
+    n += noise(uv * 12.0 - vec2(0.0, TIME * 1.0)) * 0.5;
+    
+    // Gradiente baseado na distância do centro da UV para arredondar a esfera
+    float dist = length(UV - vec2(0.5)) * 2.0;
+    float fire_mask = 1.0 - smoothstep(0.0, 1.0, dist);
+    
+    // Modula a máscara com o ruído gerado para criar recortes orgânicos nas chamas
+    float final_mask = clamp(fire_mask * (n + 0.3), 0.0, 1.0);
+    
+    // Mistura as cores do núcleo e da borda com base na intensidade do ruído
+    vec3 final_color = mix(edge_color, core_color, final_mask) * emission_intensity;
+    
+    ALBEDO = final_color;
+    ALPHA = final_mask; // As bordas ficam transparentes suavemente
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c43xd"]
+render_priority = 0
+shader = SubResource("Shader_lyrkg")
+shader_parameter/core_color = Color(0, 1.5796229, 2.9996202, 1)
+shader_parameter/edge_color = Color(0, 0.19966345, 1, 1)
+shader_parameter/emission_intensity = 4.00000019
+shader_parameter/speed = 1.5
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_avx33"]
+material = SubResource("ShaderMaterial_c43xd")
+radius = 0.1
+height = 0.4
+
 [node name="Player" type="CharacterBody3D" unique_id=1422835273 groups=["Player"]]
+collision_layer = 8
+collision_mask = 7
 script = ExtResource("1_rpqav")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1542969828]
@@ -6893,14 +7032,6 @@ parameters/attack_shot/active = false
 parameters/attack_shot/internal_active = false
 parameters/attack_shot/request = 0
 
-[node name="HitAudio" type="AudioStreamPlayer3D" parent="AnimationTree" unique_id=946765115]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0042511225, 0)
-stream = ExtResource("2_kyqiw")
-unit_size = 5.0
-max_distance = 20.0
-max_polyphony = 2
-bus = &"Enemy Player SFX"
-
 [node name="LevelUpBeam" type="MeshInstance3D" parent="." unique_id=1157104825]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 visible = false
@@ -6909,6 +7040,20 @@ mesh = SubResource("CylinderMesh_i2e8t")
 
 [node name="LevelUpAudio" type="AudioStreamPlayer3D" parent="." unique_id=603785046]
 stream = ExtResource("22_x63xi")
+unit_size = 5.0
+max_distance = 25.0
+max_polyphony = 2
+bus = &"Enemy Player SFX"
+
+[node name="CraftLevelUp" type="AudioStreamPlayer3D" parent="." unique_id=1943062806]
+stream = ExtResource("13_1iu4k")
+unit_size = 5.0
+max_distance = 25.0
+max_polyphony = 2
+bus = &"Enemy Player SFX"
+
+[node name="GatherAudio" type="AudioStreamPlayer3D" parent="." unique_id=2055749547]
+stream = ExtResource("14_m0x7a")
 unit_size = 5.0
 max_distance = 25.0
 max_polyphony = 2
@@ -6923,3 +7068,29 @@ light_energy = 1.5
 script = ExtResource("13_miouo")
 player = NodePath("..")
 register_skills = Array[ExtResource("14_lslt6")]([ExtResource("15_ulo2v"), ExtResource("16_1iu4k"), ExtResource("17_m0x7a")])
+
+[node name="EquipmentManager" type="Node3D" parent="." unique_id=1880890824]
+script = ExtResource("18_ulo2v")
+
+[node name="VenomEffect" type="GPUParticles3D" parent="." unique_id=1543887762]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.004481852, 0)
+emitting = false
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_qidb7")
+draw_pass_1 = SubResource("SphereMesh_70hv0")
+
+[node name="FireEffect" type="GPUParticles3D" parent="." unique_id=1152871585]
+emitting = false
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_i2e8t")
+draw_pass_1 = SubResource("SphereMesh_8flut")
+
+[node name="FrostEffect" type="GPUParticles3D" parent="." unique_id=1542516578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.63808554, 0)
+emitting = false
+lifetime = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_kih0c")
+draw_pass_1 = SubResource("CapsuleMesh_avx33")
