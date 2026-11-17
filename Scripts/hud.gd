@@ -8,6 +8,13 @@ extends Control
 @export var skill_button: Button
 @export var maestria_button: Button
 
+@export_group("Boss HUD")
+@export var boss_bar_container: Control
+@export var boss_name_label: Label
+@export var boss_health_bar: ProgressBar
+
+var current_tracked_boss: Node3D = null
+
 var potion_cooldown_timer: float = 0.0
 const POTION_COOLDOWN_DURATION: float = 1.5 # Segundos de espera entre poções
 
@@ -510,3 +517,19 @@ func show_floating_message(msg: String, text_color: Color = Color.RED) -> void:
 	
 	# Remove o nó da memória quando a animação terminar
 	tween.chain().tween_callback(floating_lbl.queue_free)
+
+func show_or_update_boss_hud(boss: Node3D, boss_title: String, current_hp: int, max_hp: int) -> void:
+	current_tracked_boss = boss
+	if boss_bar_container:
+		boss_bar_container.visible = true
+	if boss_name_label:
+		boss_name_label.text = boss_title
+	if boss_health_bar:
+		boss_health_bar.max_value = max_hp
+		boss_health_bar.value = current_hp
+
+func hide_boss_hud(boss: Node3D) -> void:
+	if current_tracked_boss == boss:
+		current_tracked_boss = null
+		if boss_bar_container:
+			boss_bar_container.visible = false

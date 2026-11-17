@@ -191,7 +191,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme = ExtResource("4_pbw6q")
 
-[node name="HUD" type="Control" parent="." unique_id=611354852 node_paths=PackedStringArray("inventory_button", "status_button", "quest_button", "skill_button", "maestria_button")]
+[node name="HUD" type="Control" parent="." unique_id=611354852 node_paths=PackedStringArray("inventory_button", "status_button", "quest_button", "skill_button", "maestria_button", "boss_bar_container", "boss_name_label", "boss_health_bar")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -205,6 +205,9 @@ status_button = NodePath("TopRightMenu/Status")
 quest_button = NodePath("TopRightMenu/Quests")
 skill_button = NodePath("TopRightMenu/Skills")
 maestria_button = NodePath("TopRightMenu/Maestrias")
+boss_bar_container = NodePath("BossBarContainer")
+boss_name_label = NodePath("BossBarContainer/BossNameLabel")
+boss_health_bar = NodePath("BossBarContainer/BossHealthBar")
 
 [node name="TopRightMenu" type="HBoxContainer" parent="HUD" unique_id=104225955]
 layout_mode = 1
@@ -299,6 +302,34 @@ layout_mode = 2
 
 [node name="SkillBar" type="HBoxContainer" parent="HUD/BottomCenterBar" unique_id=1911069513]
 layout_mode = 2
+
+[node name="BossBarContainer" type="VBoxContainer" parent="HUD" unique_id=1429801869]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = 38.0
+offset_right = 250.0
+offset_bottom = 119.0
+grow_horizontal = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="BossNameLabel" type="Label" parent="HUD/BossBarContainer" unique_id=663727760]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme = ExtResource("4_pbw6q")
+text = "BOSS NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BossHealthBar" type="ProgressBar" parent="HUD/BossBarContainer" unique_id=2001446728]
+custom_minimum_size = Vector2(500, 50)
+layout_mode = 2
+theme = ExtResource("4_pbw6q")
+step = 1.0
+value = 50.0
 
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnSave" to="UI/MenuJogo" method="_on_btn_save_pressed"]
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnQuit" to="UI/MenuJogo" method="_on_btn_quit_pressed"]

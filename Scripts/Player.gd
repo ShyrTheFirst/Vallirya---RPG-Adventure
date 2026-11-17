@@ -80,6 +80,18 @@ var current_weapon_mesh_path: String = ""
 const INVENTORY_CAPACITY: int = 32
 var inventory_items: Array = []
 
+# UI do Baú e Coleta
+var ui_chest_panel: PanelContainer = null
+var ui_chest_list_vbox: VBoxContainer = null
+var active_chest_ref: Node3D = null
+
+@export_category("Ferramentas de Coleta (Meshes)")
+@export var axe_tool_mesh: PackedScene # Arraste a cena/mesh do Machado de Lenhador aqui no Inspetor!
+@export var pickaxe_tool_mesh: PackedScene # Arraste a cena/mesh da Picareta aqui no Inspetor!
+@export var gather_cooldown_duration: float = 30.0 # Tempo de espera (30s) entre coletas
+var gather_cooldown_timer: float = 0.0
+var is_gathering_locked: bool = false
+
 # Progressão
 var player_level: int = 1
 var current_xp: int = 0
@@ -362,6 +374,8 @@ func _process(delta: float) -> void:
 	check_torch_status(delta)
 	if spell_cast_lockout > 0.0:
 		spell_cast_lockout -= delta
+	if gather_cooldown_timer > 0.0:
+		gather_cooldown_timer -= delta
 
 func _physics_process(delta: float) -> void:
 	if attack_timer > 0.0:
@@ -818,6 +832,14 @@ func setup_local_hud() -> void:
 	ui_inv_grid.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(ui_inv_grid)
 
+	# --- NOVO: BOTÃO DE REORGANIZAR INVENTÁRIO ---
+	var btn_sort_inv = Button.new()
+	btn_sort_inv.text = "🔄 Reorganizar Itens"
+	btn_sort_inv.custom_minimum_size = Vector2(0, 28)
+	btn_sort_inv.focus_mode = Control.FOCUS_NONE
+	btn_sort_inv.pressed.connect(sort_and_compact_inventory)
+	inv_box.add_child(btn_sort_inv)
+
 	# 5. PAINEL DE EQUIPAMENTOS
 	ui_equipment_panel = PanelContainer.new()
 	ui_equipment_panel.custom_minimum_size = Vector2(320, 150)
@@ -1019,6 +1041,52 @@ func setup_local_hud() -> void:
 	ui_mastery_list_container.custom_minimum_size = Vector2(320, 320)
 	ui_mastery_list_container.add_theme_constant_override("separation", 10)
 	m_scroll.add_child(ui_mastery_list_container)
+	
+	# 10. MINI-UI DE SAQUE DO BAÚ
+	ui_chest_panel = PanelContainer.new()
+	ui_chest_panel.custom_minimum_size = Vector2(300, 260)
+	ui_chest_panel.visible = false
+	if custom_theme: ui_chest_panel.theme = custom_theme
+	hud_layer.add_child(ui_chest_panel)
+	ui_chest_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	ui_chest_panel.offset_left = -150
+	ui_chest_panel.offset_right = 150
+	ui_chest_panel.offset_top = -130
+	ui_chest_panel.offset_bottom = 130
+
+	var c_vbox = VBoxContainer.new()
+	c_vbox.add_theme_constant_override("separation", 8)
+	ui_chest_panel.add_child(c_vbox)
+
+	var c_title = Label.new()
+	c_title.text = "--- CONTEÚDO DO BAÚ ---"
+	c_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	c_title.modulate = Color(1.0, 0.85, 0.3)
+	c_vbox.add_child(c_title)
+
+	var c_scroll = ScrollContainer.new()
+	c_scroll.custom_minimum_size = Vector2(280, 170)
+	c_vbox.add_child(c_scroll)
+
+	ui_chest_list_vbox = VBoxContainer.new()
+	ui_chest_list_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ui_chest_list_vbox.add_theme_constant_override("separation", 6)
+	c_scroll.add_child(ui_chest_list_vbox)
+
+	var c_btn_hbox = HBoxContainer.new()
+	c_btn_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	c_btn_hbox.add_theme_constant_override("separation", 12)
+	c_vbox.add_child(c_btn_hbox)
+
+	var btn_take_all = Button.new()
+	btn_take_all.text = "Pegar Tudo"
+	btn_take_all.pressed.connect(_on_chest_take_all_pressed)
+	c_btn_hbox.add_child(btn_take_all)
+
+	var btn_close_chest = Button.new()
+	btn_close_chest.text = "Fechar"
+	btn_close_chest.pressed.connect(close_chest_loot_window)
+	c_btn_hbox.add_child(btn_close_chest)
 
 	update_hud_display()
 	populate_inventory_ui()
@@ -1535,8 +1603,8 @@ func update_hud_display() -> void:
 	ui_btn_vit.disabled = not can_spend
 	ui_btn_int.disabled = not can_spend
 
-func update_hand_visual(mesh_scene: PackedScene, Scale : Vector3 = Vector3(0.01, 0.01, 0.01)) -> void:
-	
+# No Player.gd, atualize a função update_hand_visual:
+func update_hand_visual(mesh_scene: PackedScene, custom_scale: Vector3 = Vector3(0.01, 0.01, 0.01), keep_scene_transform: bool = false) -> void:
 	if not right_hand_bone:
 		return
 
@@ -1546,9 +1614,11 @@ func update_hand_visual(mesh_scene: PackedScene, Scale : Vector3 = Vector3(0.01,
 	if mesh_scene:
 		var item_instance = mesh_scene.instantiate()
 		right_hand_bone.add_child(item_instance)
-		item_instance.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
-		item_instance.scale = Scale
-		item_instance.position = Vector3.ZERO
+		
+		item_instance.scale = custom_scale
+		if not keep_scene_transform:
+			item_instance.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
+			item_instance.position = Vector3.ZERO
 
 func discard_item(slot_idx: int) -> void:
 	print("[DIAGNÓSTICO DESCARTAR] Tentando descartar do slot: ", slot_idx)
@@ -1622,10 +1692,20 @@ func load_player_save(username: String) -> void:
 	current_xp = int(json_data.get("current_xp", 0))
 	required_xp = int(json_data.get("required_xp", 100))
 	unspent_points = int(json_data.get("unspent_points", 0))
-	
+
 	var pos_data = json_data.get("last_position", null)
 	if pos_data is Dictionary:
 		global_position = Vector3(pos_data.get("x", 0), pos_data.get("y", 1), pos_data.get("z", 0))
+		velocity = Vector3.ZERO
+	
+	var saved_map = json_data.get("current_map", "ilha_inicial")
+	var lm = get_node_or_null("/root/LevelManager")
+	if not lm and get_tree().current_scene:
+		lm = get_tree().current_scene.find_child("LevelManager", true, false)
+	
+	# Carrega o mapa salvo se ainda não houver mapa instanciado na cena OU se for diferente do atual
+	if lm and (not is_instance_valid(lm.current_map_instance) or lm.current_map_key != saved_map):
+		lm.load_map_into_container(saved_map, "SpawnPoint", lm.is_new_game)
 
 	var stats = json_data.get("stats", {}) as Dictionary
 	stat_str = int(stats.get("str", 5))
@@ -1678,8 +1758,22 @@ func load_player_save(username: String) -> void:
 		if w_item and w_item.mesh_scene:
 			current_weapon_mesh_path = w_item.mesh_scene.resource_path
 
-	client_active_quests = json_data.get("client_active_quests", [])
-	completed_quests = json_data.get("completed_quests", [])
+	var raw_active = json_data.get("client_active_quests", [])
+	if raw_active is Array:
+		client_active_quests = raw_active
+	elif raw_active is Dictionary:
+		# Se veio salvo como Dicionário (ex: {}), converte os valores para Array ou limpa
+		client_active_quests = raw_active.values()
+	else:
+		client_active_quests = []
+
+	var raw_completed = json_data.get("completed_quests", [])
+	if raw_completed is Array:
+		completed_quests = raw_completed
+	elif raw_completed is Dictionary:
+		completed_quests = raw_completed.keys()
+	else:
+		completed_quests = []
 	
 	active_quests.clear()
 	for q in client_active_quests:
@@ -1748,6 +1842,10 @@ func save_player_account() -> void:
 		else:
 			serialized_equipment[slot_key] = ""
 
+	var lm = get_node_or_null("/root/LevelManager")
+	if not lm and get_tree().current_scene:
+		lm = get_tree().current_scene.find_child("LevelManager", true, false)
+
 	var account_data = {
 		"username": player_name,
 		"password_hash": existing_pass_hash,
@@ -1774,7 +1872,8 @@ func save_player_account() -> void:
 		"equipped_skills": hud_ref.equipped_skill_slots if hud_ref else {},
 		"equipped_potions": hud_ref.equipped_potion_items if hud_ref else {},
 		"skills_data": skill_manager.get_save_data() if skill_manager else {},
-		"equipment_data": equipment_manager.get_save_data() if equipment_manager else {}
+		"equipment_data": equipment_manager.get_save_data() if equipment_manager else {},
+		"current_map": lm.current_map_key if lm else "ilha_inicial"
 	}
 	print("HUD : ", hud_ref)
 	print("pocoes : ", hud_ref.equipped_potion_items)
@@ -2054,29 +2153,66 @@ func populate_mastery_ui() -> void:
 		ui_mastery_list_container.add_child(type_box)
 		ui_mastery_list_container.add_child(sep)
 
-# --- SISTEMA DE COLETA (GATHERING) ---
-func gathering(item_data: ItemData, anim_name: String) -> void:
+# --- SISTEMA DE COLETA (GATHERING) COM FERRAMENTA NA MÃO E COOLDOWN ---
+func gathering(item_data: ItemData, anim_name: String, tool_type: String = "auto", anim_duration: float = 0.5) -> bool:
 	if is_dead or not item_data:
-		return
+		return false
 
-	# 1. Reproduz a animação informada pelo prop (ex: abaixar, minerar, colher)
+	# 1. Trava Anti-Spam: Verifica se já está coletando ou se o cooldown (ex: 30s) ainda está rodando
+	if is_gathering_locked or gather_cooldown_timer > 0.0:
+		var wait_seconds = int(ceil(gather_cooldown_timer))
+		send_message_HUD("Aguarde %ds para coletar novamente!" % wait_seconds, Color(1.0, 0.6, 0.2))
+		return false
+
+	is_gathering_locked = true
+	gather_cooldown_timer = gather_cooldown_duration # Inicia a trava de 30 segundos!
+
+	# 2. Coloca o Machado ou Picareta na mão (igual à poção em play_drink_animation)
+	var tool_mesh: PackedScene = null
+	var anim_lower = anim_name.to_lower()
+	
+	if tool_type == "axe" or (tool_type == "auto" and ("arvore" in anim_lower or "lenha" in anim_lower or "cortar" in anim_lower or "machado" in anim_lower)):
+		tool_mesh = axe_tool_mesh
+	elif tool_type == "pickaxe" or (tool_type == "auto" and ("minerar" in anim_lower or "pedra" in anim_lower or "picareta" in anim_lower or "minerio" in anim_lower)):
+		tool_mesh = pickaxe_tool_mesh
+
+	if tool_mesh:
+		# Ajuste a escala Vector3(0.01, 0.01, 0.01) se o modelo da sua ferramenta for maior/menor
+		update_hand_visual(tool_mesh, Vector3(0.01, 0.01, 0.01), true)
+
+	# 3. Reproduz a animação de coleta
 	if attacks_playback and anim_name != "":
 		attacks_playback.start(anim_name)
-	
 	if anim_tree and anim_name != "":
 		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 
-	# 2. Toca um som de coleta (se houver um AudioStreamPlayer dedicado ou reaproveitando o de acerto/passos)
 	play_gathering_sound()
 
-	# 3. Adiciona o item coletado ao inventário do player
-	var added = add_item_to_inventory(item_data, 1)
-	if added:
-		print("[GATHERING] Item coletado com sucesso: %s" % item_data.name)
-		send_message_HUD("Coletado: %s" % item_data.name, Color(0.4, 1.0, 0.4))
-	else:
-		print("[GATHERING] Inventário cheio!")
-		send_message_HUD("Inventário Cheio!", Color.RED)
+	# 4. Aguarda a animação da ferramenta terminar para entregar o item e devolver a arma original!
+	get_tree().create_timer(anim_duration).timeout.connect(func():
+		is_gathering_locked = false
+		if is_dead:
+			return
+
+		# Devolve a arma equipada original para a mão direita
+		var active_weapon: ItemData = equipped_items.get("weapon", null)
+		if active_weapon and active_weapon.mesh_scene:
+			update_hand_visual(active_weapon.mesh_scene)
+		else:
+			update_hand_visual(null)
+
+		# Entrega o item no inventário no fim da animação
+		var added = add_item_to_inventory(item_data, 1)
+		if added:
+			print("[GATHERING] Item coletado com sucesso: %s" % item_data.name)
+			send_message_HUD("Coletado: %s" % item_data.name, Color(0.4, 1.0, 0.4))
+			save_player_account()
+		else:
+			print("[GATHERING] Inventário cheio!")
+			send_message_HUD("Inventário Cheio!", Color.RED)
+	)
+
+	return true
 
 func play_gathering_sound() -> void:
 	# Você pode criar um nó AudioStreamPlayer3D chamado 'GatherAudio' no Player, 
@@ -2144,3 +2280,124 @@ func trigger_combat_state() -> void:
 	# Chamado sempre que o player toma dano ou realiza uma ação ofensiva
 	out_of_combat_timer = COMBAT_COOLDOWN_DURATION
 	regen_tick_timer = 0.0
+
+# --- FUNÇÃO DE REORGANIZAR E COMPACTAR O INVENTÁRIO ---
+func sort_and_compact_inventory() -> void:
+	var valid_entries: Array = []
+
+	# 1. Junta pilhas de itens iguais que sejam stackáveis
+	for i in range(INVENTORY_CAPACITY):
+		var slot = inventory_items[i]
+		if slot != null and slot is Dictionary and slot.get("item") is ItemData:
+			var item: ItemData = slot["item"]
+			var amt: int = int(slot.get("amount", 1))
+
+			if item.is_stackable:
+				for existing in valid_entries:
+					if existing["item"].id == item.id and existing["amount"] < item.max_stack:
+						var space = item.max_stack - existing["amount"]
+						var transfer = min(amt, space)
+						existing["amount"] += transfer
+						amt -= transfer
+						if amt <= 0:
+							break
+			if amt > 0:
+				valid_entries.append({"item": item, "amount": amt})
+
+	# 2. Ordena por Tipo de Item e depois por Ordem Alfabética
+	valid_entries.sort_custom(func(a, b):
+		if a["item"].item_type != b["item"].item_type:
+			return a["item"].item_type < b["item"].item_type
+		return a["item"].name < b["item"].name
+	)
+
+	# 3. Reescreve os 32 slots sem buracos vazios no meio
+	inventory_items.clear()
+	inventory_items.resize(INVENTORY_CAPACITY)
+	for i in range(valid_entries.size()):
+		inventory_items[i] = valid_entries[i]
+
+	update_inventory_display()
+	save_player_account()
+	send_message_HUD("Inventário reorganizado!", Color(0.4, 0.9, 1.0))
+
+# --- FUNÇÕES DA MINI-UI DO BAÚ ---
+func open_chest_loot_window(chest: Node3D) -> void:
+	if not ui_chest_panel:
+		return
+	active_chest_ref = chest
+	ui_chest_panel.visible = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_refresh_chest_ui()
+
+func close_chest_loot_window() -> void:
+	if ui_chest_panel:
+		ui_chest_panel.visible = false
+	active_chest_ref = null
+	if not (ui_inventory_panel and ui_inventory_panel.visible) and not (ui_attr_panel and ui_attr_panel.visible):
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _refresh_chest_ui() -> void:
+	if not ui_chest_list_vbox or not is_instance_valid(active_chest_ref):
+		return
+
+	for child in ui_chest_list_vbox.get_children():
+		child.queue_free()
+
+	var loot_list: Array = active_chest_ref.current_loot
+	if loot_list.is_empty():
+		close_chest_loot_window()
+		if active_chest_ref.interaction_prompt:
+			active_chest_ref.interaction_prompt.visible = false
+		return
+
+	for i in range(loot_list.size()):
+		var entry = loot_list[i]
+		var item: ItemData = entry["item"]
+		var amt: int = entry["amount"]
+
+		var row = HBoxContainer.new()
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+		var lbl = Label.new()
+		lbl.text = "%s (x%d)" % [item.name, amt] if amt > 1 else item.name
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(lbl)
+
+		var btn_take = Button.new()
+		btn_take.text = "Pegar"
+		var idx = i
+		btn_take.pressed.connect(func(): _take_chest_item(idx))
+		row.add_child(btn_take)
+
+		ui_chest_list_vbox.add_child(row)
+
+func _take_chest_item(idx: int) -> void:
+	if not is_instance_valid(active_chest_ref):
+		return
+	var loot_list: Array = active_chest_ref.current_loot
+	if idx < 0 or idx >= loot_list.size():
+		return
+
+	var entry = loot_list[idx]
+	if add_item_to_inventory(entry["item"], entry["amount"]):
+		send_message_HUD("Obtido: %s (x%d)" % [entry["item"].name, entry["amount"]], Color(0.4, 1.0, 0.4))
+		loot_list.remove_at(idx)
+		save_player_account()
+		_refresh_chest_ui()
+	else:
+		send_message_HUD("Inventário Cheio!", Color.RED)
+
+func _on_chest_take_all_pressed() -> void:
+	if not is_instance_valid(active_chest_ref):
+		return
+	var loot_list: Array = active_chest_ref.current_loot
+	for i in range(loot_list.size() - 1, -1, -1):
+		var entry = loot_list[i]
+		if add_item_to_inventory(entry["item"], entry["amount"]):
+			loot_list.remove_at(i)
+		else:
+			send_message_HUD("Inventário Cheio!", Color.RED)
+			break
+	save_player_account()
+	_refresh_chest_ui()

@@ -5,6 +5,8 @@ extends CharacterBody3D
 @export var monster_name: String = "Criatura"
 @export var speed: float = 3.0
 @export var leash_radius: float = 10.0
+@export var aggro_range: float = 8.0 # Distância para detectar o player (Padrão: 8m)
+@export var max_chase_distance: float = 14.0 # Distância máxima entre monstro e player antes de desistir (Padrão: 14m)
 @export var base_attack_range: float = 1.5
 @export var mesh_base_y: float = -1.28
 @export var health_bar_height: float = 1.8
@@ -31,6 +33,7 @@ var flash_timer: float = 0.0
 # Estados da Inteligência Artificial
 enum State { IDLE, PATROL, CHASE, ATTACK, RETURN }
 var current_state: State = State.IDLE
+var current_anim_state: String = ""
 
 var level: int = 1
 var rarity: String = "Normal"
@@ -162,14 +165,14 @@ func update_ai_state(delta: float) -> void:
 		current_target_player = null
 
 	# Se tomou dano ou o player está dentro do raio de aggro (ex: 8 metros)
-	if not is_instance_valid(current_target_player) and nearest_player and min_dist <= 8.0:
-		if global_position.distance_to(spawn_origin) < (leash_radius + 4.0):
+	if not is_instance_valid(current_target_player) and nearest_player and min_dist <= aggro_range:
+		if global_position.distance_to(spawn_origin) < (leash_radius):
 			current_target_player = nearest_player
 			current_state = State.CHASE
 
 	# Se o alvo fugiu para muito longe do spawn original, ativa o estado de Retorno
 	if is_instance_valid(current_target_player):
-		if global_position.distance_to(spawn_origin) > (leash_radius + 6.0) or global_position.distance_to(current_target_player.global_position) > 14.0:
+		if global_position.distance_to(spawn_origin) > (leash_radius + 6.0) or global_position.distance_to(current_target_player.global_position) > max_chase_distance:
 			reset_combat_state()
 			current_state = State.RETURN
 
@@ -259,6 +262,10 @@ func update_ai_state(delta: float) -> void:
 				current_state = State.RETURN
 
 		State.RETURN:
+			if is_instance_valid(current_target_player) and global_position.distance_to(spawn_origin) <= leash_radius:
+				current_state = State.CHASE
+				return
+
 			nav_agent.target_position = spawn_origin
 			var dist_to_spawn = global_position.distance_to(spawn_origin)
 			
@@ -289,15 +296,26 @@ func _pick_new_patrol_destination() -> void:
 	var target_pos = spawn_origin + offset
 	nav_agent.target_position = target_pos
 
+func is_busy_in_combat() -> bool:
+	return false
+
+# Atualize a update_animations() no MonsterBase.gd:
 func update_animations() -> void:
 	if not anim_tree or not anim_tree.active or is_dead: return
-	var is_moving: bool = velocity.length() > 0.1 and current_state != State.ATTACK
-	var target_state: String = "state_1" if is_moving else "state_0"
+	
+	var busy: bool = is_busy_in_combat()
+	var is_moving: bool = velocity.length() > 0.1 and current_state != State.ATTACK and not busy
+	var in_combat: bool = is_instance_valid(current_target_player) and (current_state == State.CHASE or current_state == State.ATTACK or busy)
+	
+	var target_state: String = "state_0" # Parado Relaxado (Fora de combate)
+	if is_moving:
+		target_state = "state_1" # Andando
+	elif in_combat:
+		target_state = "state_2" # Parado em Combate (Pronto pra luta)
+		
 	if current_anim_state != target_state:
 		current_anim_state = target_state
 		anim_tree.set("parameters/locomotion/transition_request", target_state)
-
-var current_anim_state: String = ""
 
 # Funções virtuais para sobrescrever nas subclasses (Orc, Aranha, etc.)
 func execute_attack(target: CharacterBody3D, range_dist: float) -> void:

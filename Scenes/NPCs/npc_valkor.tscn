@@ -6234,6 +6234,8 @@ viewport_path = NodePath("NameSprite/SubViewport")
 viewport_path = NodePath("InteractionPrompt/SubViewport")
 
 [node name="NPCValkor" type="CharacterBody3D" unique_id=224469840]
+collision_layer = 2
+collision_mask = 9
 script = ExtResource("1_dop3h")
 first_quest = ExtResource("2_6jhx2")
 second_quest = ExtResource("3_o7lnf")
@@ -6587,6 +6589,8 @@ libraries/ = SubResource("AnimationLibrary_aocw3")
 autoplay = &"Armature|Parado"
 
 [node name="InteractionArea" type="Area3D" parent="." unique_id=2002303305]
+collision_layer = 2
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=1788419296]
 shape = SubResource("SphereShape3D_g4v7s")

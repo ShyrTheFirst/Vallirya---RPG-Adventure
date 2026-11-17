@@ -9,10 +9,10 @@ extends Node3D
 
 @export_category("Configuração de Respawn")
 @export var enable_respawn: bool = true
-@export var respawn_cooldown: float = 30.0 # Segundos para nascer um novo item após destruído
+@export var respawn_cooldown: float = 30.0
 
 @export_category("Configuração de Mineração Opcional")
-@export var forced_mineral_index: int = -1 # Se for -1, escolhe aleatório. Se for 0+, força aquele minério nas pedras deste spawner.
+@export var forced_mineral_index: int = -1
 
 @onready var collision_shapes: Array[CollisionShape3D] = []
 var active_spawned_props: int = 0
@@ -22,6 +22,9 @@ func _ready() -> void:
 		if child is CollisionShape3D:
 			collision_shapes.append(child)
 			
+	# Aguarda o frame de física para garantir que o chão do novo mapa já esteja ativo no PhysicsServer3D!
+	await get_tree().physics_frame
+	await get_tree().physics_frame
 	start_spawning()
 
 func start_spawning() -> void:
@@ -46,17 +49,19 @@ func spawn_single_prop() -> void:
 
 	var prop_instance = selected_scene.instantiate()
 	if prop_instance:
-		# Se for uma MiningRock e houver um índice de minério forçado no spawner, repassa para ela
 		if prop_instance is MiningRock and forced_mineral_index >= 0:
 			prop_instance.forced_mineral_index = forced_mineral_index
 
-		# Passa a referência do spawner para gerenciar o respawn
 		if "spawner_reference" in prop_instance:
 			prop_instance.spawner_reference = self
 
+		# Preserva a rotação X e Z original da cena (ex: -90 graus da grama) e gira apenas o Y
+		var original_rot: Vector3 = prop_instance.rotation
+		var final_rot := Vector3(original_rot.x, rand_rot_y, original_rot.z)
+
 		get_parent().call_deferred("add_child", prop_instance)
 		prop_instance.set_deferred("global_position", spawn_pos - Vector3(0, height_offset, 0))
-		prop_instance.set_deferred("rotation", Vector3(0, rand_rot_y, 0))
+		prop_instance.set_deferred("rotation", final_rot)
 		
 		active_spawned_props += 1
 
@@ -107,6 +112,10 @@ func get_ground_position(pos: Vector3) -> Vector3:
 	var ray_target = pos - Vector3(0, 50.0, 0)
 
 	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_target)
+	# Ignora áreas (como o InteractionArea do portal ou zonas de aggro) para bater só em chão sólido
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	
 	var result = space_state.intersect_ray(query)
 
 	if result and result.has("position"):
@@ -117,6 +126,8 @@ func get_ground_position(pos: Vector3) -> Vector3:
 func _bake_navigation_mesh() -> void:
 	await get_tree().create_timer(0.5).timeout
 	var root_scene = get_tree().current_scene
+	if not root_scene:
+		return
 	var nav_region = root_scene.find_child("NavigationRegion3D", true, false)
 	if nav_region and nav_region is NavigationRegion3D:
 		nav_region.bake_navigation_mesh()

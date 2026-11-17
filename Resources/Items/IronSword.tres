@@ -9,6 +9,7 @@ id = "Iron_sword"
 name = "Espada de Ferro"
 item_type = 0
 weapon_type = 1
+active_legendary = null
 description = "Uma espada simples de metal."
 mesh_scene = ExtResource("1_qox1j")
 inventory_rotation = Vector3(30, 30, 0)

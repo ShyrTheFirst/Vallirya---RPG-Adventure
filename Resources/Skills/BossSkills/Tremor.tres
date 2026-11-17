@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BossSkillData" format=3 uid="uid://cg2o5otvbpd5n"]
+
+[ext_resource type="Script" uid="uid://cxtryt8hip3dn" path="res://Scripts/BossSkillData.gd" id="1_r3lan"]
+[ext_resource type="PackedScene" uid="uid://uoy2ttkccdcg" path="res://Scenes/Skills/Tremor.tscn" id="2_4whre"]
+
+[resource]
+script = ExtResource("1_r3lan")
+skill_name = "Tremor Sísmico"
+cast_time = 0.3
+cooldown = 10.0
+animation_name = "Armature|Tremor"
+area_size = Vector2(4.5, 4.5)
+forward_offset = 6.0
+vfx_scene = ExtResource("2_4whre")
+metadata/_custom_type_script = "uid://cxtryt8hip3dn"

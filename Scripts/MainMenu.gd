@@ -67,19 +67,19 @@ func _create_character_row(char_name: String, char_level: int) -> void:
 	hbox.custom_minimum_size = Vector2(0, 40)
 	hbox.add_theme_constant_override("separation", 10)
 
-	# Botão principal para selecionar o personagem e jogar
+	# Botão principal para selecionar o personagem existente e jogar (new_game = false)
 	var btn_play = Button.new()
-	btn_play.text = "⚔️ %s [Nv. %d]" % [char_name, char_level]
+	btn_play.text = "%s [Nv. %d]" % [char_name, char_level]
 	btn_play.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	btn_play.focus_mode = Control.FOCUS_NONE
 	btn_play.pressed.connect(func():
-		_launch_game_with_character(char_name)
+		_launch_game_with_character(char_name, false)
 	)
 	hbox.add_child(btn_play)
 
 	# Botão de excluir save (Lixeira / Deletar)
 	var btn_delete = Button.new()
-	btn_delete.text = " 🗑️ Excluir "
+	btn_delete.text = " 🗑️ "
 	btn_delete.modulate = Color(1.0, 0.4, 0.4)
 	btn_delete.focus_mode = Control.FOCUS_NONE
 	btn_delete.pressed.connect(func():
@@ -97,16 +97,14 @@ func _delete_character_save(char_name: String) -> void:
 		print("[MENU] Save do personagem '%s' excluído com sucesso." % char_name)
 		refresh_character_list()
 
-# Cria um botão na interface para cada personagem encontrado
 func _create_character_list_button(char_name: String) -> void:
 	var btn = Button.new()
-	btn.text = "🎮 " + char_name
+	btn.text = char_name
 	btn.custom_minimum_size = Vector2(0, 40)
 	btn.focus_mode = Control.FOCUS_NONE
 	
-	# Ao clicar no botão do personagem, inicia o jogo carregando este save
 	btn.pressed.connect(func():
-		_launch_game_with_character(char_name)
+		_launch_game_with_character(char_name, false)
 	)
 	
 	character_list_container.add_child(btn)
@@ -129,11 +127,8 @@ func _on_btn_new_character_pressed() -> void:
 	# 1. Cria o arquivo de save padrão para o novo herói
 	_create_new_character_save(char_name)
 	
-	# 2. Avisa o LevelManager que este é um NOVO JOGO (para nascer no SpawnPoint padrão)
-	LevelManager.is_new_game = true
-	
-	# 3. Inicia o jogo diretamente com o novo personagem!
-	_launch_game_with_character(char_name)
+	# 2. Inicia o jogo avisando que é um NOVO JOGO (new_game = true)
+	_launch_game_with_character(char_name, true)
 
 # Gera a estrutura inicial do arquivo JSON de save para o novo herói
 func _create_new_character_save(char_name: String) -> void:
@@ -147,8 +142,9 @@ func _create_new_character_save(char_name: String) -> void:
 		"inventory": [],
 		"equipment": {},
 		"weapon_mesh_path": "",
+		"current_map": "ilha_inicial",
 		"last_position": { "x": 0, "y": 1, "z": 0 },
-		"client_active_quests": {},
+		"client_active_quests": [],
 		"completed_quests": [],
 		"equipped_skills": {},
 		"equipped_potions": {},
@@ -161,30 +157,29 @@ func _create_new_character_save(char_name: String) -> void:
 		file.store_string(JSON.stringify(default_data, "\t"))
 		file.close()
 
-func _launch_game_with_character(char_name: String) -> void:
-	print("[MENU] Iniciando o jogo com o herói: ", char_name)
+func _launch_game_with_character(char_name: String, new_game: bool = false) -> void:
+	print("[MENU] Iniciando o jogo com o herói: ", char_name, " | Novo Jogo: ", new_game)
 	
-	# Salva o nome escolhido no gerenciador
+	# Salva o nome escolhido e se é novo jogo no gerenciador
 	LevelManager.current_player_name = char_name
-	LevelManager.is_new_game = false
+	LevelManager.is_new_game = new_game
 	
 	# Abre a cena Main
 	get_tree().change_scene_to_packed(main_game_scene)
 
-func _random_select_bgm():
+func _random_select_bgm() -> void:
 	var bgm_list = [
-	"res://ASSETS/SFX/Fantasy Ambient Music/1. Moonspire.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/2. Winds of Valor.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/3. Darkwood Path.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/4. Frostbound.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/5. Emberlight.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/6. Silverbrook.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/7. Mystic Grove.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/8. Throne of Storms.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/9. Sorrow’s Edge.mp3",
-	"res://ASSETS/SFX/Fantasy Ambient Music/10. Elven Dawn.mp3"
+		"res://ASSETS/SFX/Fantasy Ambient Music/1. Moonspire.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/2. Winds of Valor.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/3. Darkwood Path.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/4. Frostbound.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/5. Emberlight.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/6. Silverbrook.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/7. Mystic Grove.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/8. Throne of Storms.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/9. Sorrow’s Edge.mp3",
+		"res://ASSETS/SFX/Fantasy Ambient Music/10. Elven Dawn.mp3"
 	]
 	var pick_bgm = bgm_list.pick_random()
 	bgm_player.stream = load(pick_bgm)
 	bgm_player.play()
-	
