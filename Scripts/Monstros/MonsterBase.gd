@@ -13,6 +13,17 @@ extends CharacterBody3D
 @export var attack_effect : String = ""
 @export var effect_damage_percent : float = 0.8
 
+@export_category("Arquétipo e Balanceamento")
+### REGRAS DE BALANCEAMENTO PARA NOVOS MONSTROS:
+### 1. Orçamento de Poder (Regra dos 3.0): A soma (hp_factor + atk_factor + def_factor) de um monstro comum deve ficar próxima de 3.0.
+###    Ex: Goblin (0.7 + 0.75 + 0.4 = 1.85, compensado por speed alta) | Orc (1.4 + 1.0 + 1.6 = 4.0, compensado por speed baixa e cooldown alto).
+### 2. Cadência vs Dano: Monstros rápidos (speed > 3.8 ou attack_cooldown_base < 1.0s) não devem ter atk_factor > 0.85.
+### 3. Regra dos +5 Níveis: Um monstro 5 níveis acima do player deve exigir atenção, poções ou esquiva (~10-15s de combate).
+@export var hp_factor: float = 1.0
+@export var atk_factor: float = 1.0
+@export var def_factor: float = 1.0
+@export var attack_cooldown_base: float = 1.2
+
 @export_category("Sistema de Loot / Drops")
 @export var drop_table: Array[MonsterDrop] = []
 
@@ -40,6 +51,7 @@ var rarity: String = "Normal"
 var max_hp: int = 50
 var hp: int = 50
 var attack_damage: int = 10
+var defense: int = 0
 
 var is_dead: bool = false
 var spawn_origin: Vector3 = Vector3.ZERO
@@ -112,15 +124,16 @@ func setup_stats(new_level: int, new_rarity: String) -> void:
 
 	match rarity:
 		"Épico":
-			hp_mult = 5.0
-			dmg_mult = 3.2
-		"Raro":
-			hp_mult = 2.8
+			hp_mult = 3.5
 			dmg_mult = 2.2
+		"Raro":
+			hp_mult = 2.2
+			dmg_mult = 1.6
 
-	max_hp = int((40 + level * 15) * hp_mult)
+	max_hp = int((45 + level * 16 + pow(level, 1.25) * 3) * hp_mult * hp_factor)
 	hp = max_hp
-	attack_damage = int((8 + level * 3) * dmg_mult)
+	attack_damage = int((9 + level * 3.5) * dmg_mult * atk_factor)
+	defense = int((level * 0.8) * def_factor)
 	
 	apply_rarity_effects()
 	update_display()
@@ -348,8 +361,12 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 		current_target_player = attacker
 		current_state = State.CHASE
 
-	hp = max(0, hp - amount)
-	show_damage_effect(amount, hp)
+	var min_dmg: int = max(1, int(amount * 0.20))
+	var mitigated_dmg: int = amount - int(defense * 0.5)
+	var final_dmg: int = max(min_dmg, mitigated_dmg)
+
+	hp = max(0, hp - final_dmg)
+	show_damage_effect(final_dmg, hp)
 	#play_hit_reaction() ##### Ativar aqui quando eu tiver a animaçao criada nos monstros!!!
 
 	if hp <= 0:

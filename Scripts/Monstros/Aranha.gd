@@ -2,7 +2,11 @@ extends MonsterBase
 
 func _ready() -> void:
 	monster_name = "Aranha"
-	speed = 4.8
+	speed = 3.2
+	hp_factor = 0.9
+	atk_factor = 1.35
+	def_factor = 0.8
+	attack_cooldown_base = 1.8
 	base_attack_range = 5.1
 	mesh_base_y = 0
 	health_bar_height = 1.5

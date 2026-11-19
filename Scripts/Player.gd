@@ -236,7 +236,7 @@ func _ready() -> void:
 
 func recalculate_derived_stats() -> void:
 	# Reseta os bônus derivados para calcular do zero com base nos atributos base + equipamentos
-	var base_atk = stat_str * 2 # Exemplo do seu cálculo de força
+	var base_atk = 8 + int(stat_str * 0.5)
 	var base_def = stat_vit * 1
 	
 	var eq_atk = 0
@@ -253,7 +253,9 @@ func recalculate_derived_stats() -> void:
 			eq_mana += int(eq_item.bonus_mana)
 
 	attack_damage = base_atk + eq_atk
+	magic_damage = 10 + int(stat_int * 1.5)
 	defense = base_def + eq_def
+	evasion = min(35.0, 5.0 + (stat_agi * 0.4))
 	max_hp = 100 + (stat_vit * 10) + eq_hp
 	max_mana = 100 + (stat_int * 10) + eq_mana
 

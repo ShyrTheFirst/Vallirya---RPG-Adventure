@@ -12,5 +12,5 @@ description = "Poçao que recupera 1500 HP"
 mesh_scene = ExtResource("1_a8wm6")
 sell_price = 1000
 inventory_scale = Vector3(0.5, 0.5, 0.5)
-bonus_hp = 1500
+bonus_hp = 300
 metadata/_custom_type_script = "uid://eaep86qi61ki"

@@ -131,8 +131,10 @@ func _check_hud_proximity() -> void:
 
 func _set_boss_hud_visible(show_bar: bool) -> void:
 	is_showing_on_hud = show_bar
-	var hud = get_tree().get_first_node_in_group("Player").hud_ref
-	if not hud: return
+	var player_node: Node = get_tree().get_first_node_in_group("Player")
+	if not player_node or not ("hud_ref" in player_node) or not player_node.hud_ref:
+		return
+	var hud = player_node.hud_ref
 	
 	if show_bar and hud.has_method("show_or_update_boss_hud"):
 		var title = "[Nv. %d] %s" % [level, monster_name]

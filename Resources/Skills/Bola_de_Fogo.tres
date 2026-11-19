@@ -20,6 +20,5 @@ script = ExtResource("1_y4386")
 requires_staff = false
 icon = SubResource("NoiseTexture2D_y4386")
 spell_scene = ExtResource("2_n48h1")
-max_level = 50
-damage_per_level = 40
+damage_per_level = 20
 metadata/_custom_type_script = "uid://w0obpvkma68s"

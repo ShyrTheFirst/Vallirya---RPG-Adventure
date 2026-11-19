@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_r3lan")
 skill_name = "Tremor Sísmico"
-cast_time = 0.3
+cast_time = 1.5
 cooldown = 10.0
 animation_name = "Armature|Tremor"
 area_size = Vector2(4.5, 4.5)

@@ -6,7 +6,11 @@ var flank_direction: int = 1
 
 func _ready() -> void:
 	monster_name = "Goblin Errante"
-	speed = 3.8
+	speed = 4.2
+	hp_factor = 0.7
+	atk_factor = 0.75
+	def_factor = 0.4
+	attack_cooldown_base = 0.8
 	base_attack_range = 1.2
 	mesh_base_y = 0
 	health_bar_height = 1.5

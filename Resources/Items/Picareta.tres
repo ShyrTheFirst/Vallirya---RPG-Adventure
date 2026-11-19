@@ -7,8 +7,8 @@
 script = ExtResource("1_f1vgl")
 id = "Picareta_coleta"
 name = "Picareta de Minerador"
-item_type = 0
-weapon_type = 1
+item_type = 6
+weapon_type = 0
 active_legendary = null
 description = "Picareta simples para coletar minerios"
 mesh_scene = ExtResource("1_ifkpl")

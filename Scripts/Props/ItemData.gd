@@ -2,7 +2,7 @@ class_name ItemData
 extends Resource
 
 enum Rarity { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY }
-enum ItemType { WEAPON, ARMOR, HELM, BOOTS, CONSUMABLE, MISC }
+enum ItemType { WEAPON, ARMOR, HELM, BOOTS, CONSUMABLE, MISC, TOOL }
 enum WeaponType { NONE, SWORD, STAFF, AXE }
 
 @export var id: String = ""

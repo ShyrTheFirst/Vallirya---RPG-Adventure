@@ -2,7 +2,11 @@ extends MonsterBase
 
 func _ready() -> void:
 	monster_name = "Orc Guerreiro"
-	speed = 2.8
+	speed = 2.4
+	hp_factor = 1.4
+	atk_factor = 1.0
+	def_factor = 1.6
+	attack_cooldown_base = 1.6
 	base_attack_range = 1.4
 	mesh_base_y = -1.28
 	health_bar_height = 1.8

@@ -11,5 +11,5 @@ item_type = 4
 description = "Poçao que recupera 1500 MP"
 mesh_scene = ExtResource("1_8pswv")
 sell_price = 1000
-bonus_mana = 1500
+bonus_mana = 300
 metadata/_custom_type_script = "uid://eaep86qi61ki"

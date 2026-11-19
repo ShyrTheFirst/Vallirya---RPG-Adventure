@@ -93,7 +93,10 @@ func trigger_telegraph(skill: BossSkillData, caster: Node3D, target: Node3D = nu
 					if angle_to_player > (skill.cone_angle * 0.5):
 						continue
 						
-			body.take_damage(int(skill.damage))
+			var final_dmg: int = int(skill.damage)
+			if is_instance_valid(caster) and "attack_damage" in caster:
+				final_dmg = int(max(skill.damage, caster.attack_damage * 1.4))
+			body.take_damage(final_dmg)
 			
 	# 6. Instancia o VFX do golpe
 	if skill.vfx_scene:

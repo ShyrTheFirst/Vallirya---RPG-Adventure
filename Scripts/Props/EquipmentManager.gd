@@ -29,7 +29,7 @@ func equip_item(slot_name: String, item_data: ItemData) -> void:
 		return
 		
 	equipped_items[slot_name] = item_data
-	print("[EQUIPMENT] Item equipado no slot [%s]: %s" % [slot_name, item_data.item_name if item_data else "Vazio"])
+	print("[EQUIPMENT] Item equipado no slot [%s]: %s" % [slot_name, item_data.name if item_data else "Vazio"])
 	
 	# Recalcula todos os atributos e bônus passivos
 	recalculate_equipment_stats()
@@ -61,18 +61,20 @@ func recalculate_equipment_stats() -> void:
 			
 		match slot:
 			"armor":
-				bonus_defense += item.stat_bonus
+				bonus_defense += item.bonus_defense
+				bonus_max_hp += item.bonus_hp
 			"helmet":
-				bonus_max_hp += item.stat_bonus
+				bonus_defense += item.bonus_defense
+				bonus_max_hp += item.bonus_hp
 			"boots":
-				# Bota pode dar mana ou velocidade, mas vamos somar no HP/Defesa ou customizar se necessário
-				pass
+				bonus_defense += item.bonus_defense
+				bonus_max_hp += item.bonus_hp
 			"weapon":
 				# Valida se a arma é um Cajado para aplicar Ataque Mágico, senão Ataque Físico
-				if item.has_method("is_staff") or (item.has("weapon_type") and item.weapon_type == ItemData.WeaponType.STAFF):
-					bonus_magic_attack += item.stat_bonus
+				if item.has_method("is_staff") or (item.weapon_type == ItemData.WeaponType.STAFF):
+					bonus_magic_attack += item.bonus_attack
 				else:
-					bonus_physical_attack += item.stat_bonus
+					bonus_physical_attack += item.bonus_attack
 
 	# 2. Verifica se há um Bônus de Conjunto (Full Set) ativo
 	var set_status = check_full_set_bonus()
@@ -84,10 +86,10 @@ func recalculate_equipment_stats() -> void:
 		var set_attack = 0
 		
 		match rarity:
-			"epico":
+			ItemData.Rarity.EPIC:
 				set_hp = 500 + (level * 250)
 				set_attack = 100 + (level * 25)
-			"lendario":
+			ItemData.Rarity.LEGENDARY:
 				set_hp = 1000 + (level * 500)
 				set_attack = 250 + (level * 50)
 				
@@ -99,8 +101,9 @@ func recalculate_equipment_stats() -> void:
 		else:
 			bonus_physical_attack += set_attack
 			
+		var rarity_name: String = ItemData.Rarity.keys()[rarity] if rarity >= 0 and rarity < ItemData.Rarity.size() else "DESCONHECIDA"
 		print("[FULL SET] Conjunto %s (Nv.%d) ativo! HP Bônus: +%d | Ataque Bônus: +%d (%s)" % [
-			rarity.capitalize(), level, set_hp, set_attack, "Mágico" if is_staff_equipped else "Físico"
+			rarity_name.capitalize(), level, set_hp, set_attack, "Mágico" if is_staff_equipped else "Físico"
 		])
 
 	# 3. Atualiza os stats diretamente no Player
@@ -121,12 +124,12 @@ func check_full_set_bonus() -> Dictionary:
 			
 	var first_item: ItemData = equipped_items["armor"]
 	var target_rarity = first_item.rarity
-	var target_level = first_item.item_level
+	var target_level = first_item.level
 	
 	for slot in required_slots:
 		var current_item: ItemData = equipped_items[slot]
-		if current_item.rarity != target_rarity or current_item.item_level != target_level:
-			return {"has_set": false, "rarity": "", "level": 0}
+		if current_item.rarity != target_rarity or current_item.level != target_level:
+			return {"has_set": false, "rarity": -1, "level": 0}
 			
 	return {
 		"has_set": true,
