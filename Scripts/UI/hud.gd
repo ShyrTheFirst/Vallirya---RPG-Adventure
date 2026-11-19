@@ -7,6 +7,7 @@ extends Control
 @export var quest_button: Button
 @export var skill_button: Button
 @export var maestria_button: Button
+@export var estatistica_button: Button
 
 @export_group("Boss HUD")
 @export var boss_bar_container: Control
@@ -101,6 +102,12 @@ func setup_menu_buttons() -> void:
 		maestria_button.pressed.connect(func():
 			if is_instance_valid(player_ref) and player_ref.has_method("toggle_mastery_window"):
 				player_ref.toggle_mastery_window()
+		)
+	
+	if estatistica_button:
+		estatistica_button.pressed.connect(func():
+			if is_instance_valid(player_ref) and player_ref.has_method("toggle_achievements_window"):
+				player_ref.toggle_achievements_window()
 		)
 
 # --- GERAÇÃO VISUAL DA BARRA DE AÇÃO E HABILIDADES POR CÓDIGO ---

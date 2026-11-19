@@ -242,10 +242,6 @@ bus = &"BGM"
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1597552966]
 navigation_mesh = SubResource("NavigationMesh_g4v7s")
 
-[node name="PortalCircular" parent="." unique_id=777447821 instance=ExtResource("22_3o7fq")]
-transform = Transform3D(-0.5000001, 0, 0.8660253, 0, 1, 0, -0.8660253, 0, -0.5000001, 36.382034, -0.56907725, 112.49319)
-target_spawn_point = "PortalPoint"
-
 [node name="CloudZone" type="Node3D" parent="." unique_id=219171195]
 
 [node name="Clouds" parent="CloudZone" unique_id=542398175 instance=ExtResource("23_hc7ot")]
@@ -615,3 +611,9 @@ script = ExtResource("24_cme63")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CloudZone/FallZone" unique_id=30833620]
 shape = SubResource("BoxShape3D_v04r7")
+
+[node name="PortalsContainer" type="Node3D" parent="." unique_id=288983120]
+
+[node name="PortalCircular" parent="PortalsContainer" unique_id=777447821 instance=ExtResource("22_3o7fq")]
+transform = Transform3D(-0.5000001, 0, 0.8660253, 0, 1, 0, -0.8660253, 0, -0.5000001, 36.382034, -0.56907725, 112.49319)
+target_spawn_point = "PortalPoint"

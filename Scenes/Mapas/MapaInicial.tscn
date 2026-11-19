@@ -664,9 +664,6 @@ bus = &"BGM"
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1597552966]
 navigation_mesh = SubResource("NavigationMesh_g4v7s")
 
-[node name="PortalCircular" parent="." unique_id=1137120539 instance=ExtResource("37_dy84j")]
-transform = Transform3D(-0.9659258, 0, -0.25881895, 0, 1, 0, 0.25881895, 0, -0.9659258, 54.513054, -0.55360293, -66.06448)
-
 [node name="CloudZone" type="Node3D" parent="." unique_id=16208284]
 
 [node name="Clouds" parent="CloudZone" unique_id=542398175 instance=ExtResource("38_scunc")]
@@ -1036,3 +1033,8 @@ script = ExtResource("39_lr88i")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CloudZone/FallZone" unique_id=747521760]
 shape = SubResource("BoxShape3D_yf5fn")
+
+[node name="PortalsContainer" type="Node3D" parent="." unique_id=1232632442]
+
+[node name="PortalCircular" parent="PortalsContainer" unique_id=1137120539 instance=ExtResource("37_dy84j")]
+transform = Transform3D(-0.9659258, 0, -0.25881895, 0, 1, 0, 0.25881895, 0, -0.9659258, 54.513054, -0.55360293, -66.06448)

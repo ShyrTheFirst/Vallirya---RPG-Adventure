@@ -1,8 +1,12 @@
 [gd_scene format=4 uid="uid://v1ogh1rb7r50"]
 
 [ext_resource type="Texture2D" uid="uid://c6bnx87lcxdex" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_0.png" id="1_b1fsq"]
+[ext_resource type="Script" uid="uid://cveebpu5mk63t" path="res://Scripts/Props/CraftingStation.gd" id="1_bpbt5"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_nsoou"]
 [ext_resource type="Texture2D" uid="uid://dnxs24cxbfolw" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_1.png" id="2_qinf4"]
+[ext_resource type="Resource" uid="uid://dw7c32u240fcx" path="res://Resources/Items/Crafts/HP_poçao_pequena.tres" id="3_nry71"]
 [ext_resource type="Texture2D" uid="uid://gyb2tyn1u4se" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_2.png" id="3_t8a3s"]
+[ext_resource type="Resource" uid="uid://cn2dahrre3xf5" path="res://Resources/Items/Crafts/MP_poçao_pequena.tres" id="4_eaxnq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nted5"]
 size = Vector3(0.0098927505, 0.015000001, 0.00601767)
@@ -100,6 +104,9 @@ shadow_mesh = SubResource("ArrayMesh_6lxyv")
 [node name="MesaPentagrama" type="StaticBody3D" unique_id=36560846]
 collision_layer = 2
 collision_mask = 9
+script = ExtResource("1_bpbt5")
+station_name = "Mesa de Alquimia"
+station_recipes = Array[ExtResource("2_nsoou")]([ExtResource("3_nry71"), ExtResource("4_eaxnq")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=153938188]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0.0036829617, 0.2728995, -0.008969972)

@@ -131,7 +131,11 @@ func show_npc_message(npc_title: String, message_text: String, button_text: Stri
 	
 	if name_lbl: name_lbl.text = npc_title
 	if text_lbl: text_lbl.text = message_text
-	if btn_close: btn_close.text = button_text
+	if btn_close:
+		if not button_text.contains("('T')"):
+			btn_close.text = "%s ('T')" % button_text
+		else:
+			btn_close.text = button_text
 
 # Exibe a parte de baixo E o painel central de aceitar/recusar quest
 func show_npc_quest_offer(npc_title: String, message_text: String, quest_data: QuestData) -> void:

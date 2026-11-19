@@ -493,15 +493,6 @@ bus = &"BGM"
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1597552966]
 navigation_mesh = SubResource("NavigationMesh_g4v7s")
 
-[node name="PortalCircular" parent="." unique_id=777447821 instance=ExtResource("22_bidf8")]
-transform = Transform3D(-0.9659258, 0, -0.25881913, 0, 1, 0, 0.25881913, 0, -0.9659258, 203.38203, -0.56907725, -50.506813)
-target_map_key = "ilha_inicial"
-target_spawn_point = "PortalPoint"
-
-[node name="PortalCircular2" parent="." unique_id=713852720 instance=ExtResource("22_bidf8")]
-transform = Transform3D(5.9604645e-08, 0, -1, 0, 1, 0, 1, 0, 5.9604645e-08, -5.6179657, -0.56907725, -235.5068)
-target_map_key = "BossGolem"
-
 [node name="CloudZone" type="Node3D" parent="." unique_id=219171195]
 
 [node name="Clouds" parent="CloudZone" unique_id=542398175 instance=ExtResource("23_ye1yd")]
@@ -871,3 +862,16 @@ script = ExtResource("24_gjwwt")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CloudZone/FallZone" unique_id=30833620]
 shape = SubResource("BoxShape3D_v04r7")
+
+[node name="PortalsContainer" type="Node3D" parent="." unique_id=1756406598]
+
+[node name="PortalCircular" parent="PortalsContainer" unique_id=777447821 instance=ExtResource("22_bidf8")]
+transform = Transform3D(-0.9659258, 0, -0.25881913, 0, 1, 0, 0.25881913, 0, -0.9659258, 203.38203, -0.56907725, -50.506813)
+target_map_key = "ilha_inicial"
+target_spawn_point = "PortalPoint"
+
+[node name="PortalCircular2" parent="PortalsContainer" unique_id=713852720 instance=ExtResource("22_bidf8")]
+transform = Transform3D(5.9604645e-08, 0, -1, 0, 1, 0, 1, 0, 5.9604645e-08, -5.6179657, -0.56907725, -235.5068)
+target_map_key = "BossGolem"
+core_color = Color(0.9785015, 0.71463716, 0.4457335, 1)
+swirl_color = Color(0.9804042, 0.40863404, 0.2716998, 1)

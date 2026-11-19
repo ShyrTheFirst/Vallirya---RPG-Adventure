@@ -3,7 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://dbur81wwtjr1r" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Basica_0.png" id="1_cog4y"]
 [ext_resource type="Script" uid="uid://cveebpu5mk63t" path="res://Scripts/Props/CraftingStation.gd" id="1_dgfhy"]
 [ext_resource type="Texture2D" uid="uid://csv0o1ac83s6s" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Basica_1.png" id="2_0pymb"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_5och2"]
 [ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="3_dgfhy"]
+[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/Crafts/Espada_latao.tres" id="3_xt60p"]
 [ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="4_uc7fs"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="5_0pymb"]
 
@@ -115,6 +117,8 @@ viewport_path = NodePath("InteractionPrompt/SubViewport")
 collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_dgfhy")
+station_name = "Bigorna"
+station_recipes = Array[ExtResource("2_5och2")]([ExtResource("3_xt60p")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1461790309]
 shape = SubResource("CapsuleShape3D_g4v7s")

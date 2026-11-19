@@ -5,7 +5,9 @@ extends Node3D
 @export var spawn_count: int = 15
 @export var height_offset: float = 0.0
 @export var snap_to_ground: bool = true 
-@export var allow_random_rotation: bool = true 
+@export var allow_random_rotation: bool = true
+@export var min_spacing: float = 2.5
+@export var max_spawn_attempts: int = 15
 
 @export_category("Configuração de Respawn")
 @export var enable_respawn: bool = true
@@ -16,6 +18,7 @@ extends Node3D
 
 @onready var collision_shapes: Array[CollisionShape3D] = []
 var active_spawned_props: int = 0
+var spawned_positions: Array[Vector3] = []
 
 func _ready() -> void:
 	for child in get_children():
@@ -41,11 +44,31 @@ func spawn_single_prop() -> void:
 	if not selected_scene:
 		return
 
-	var spawn_pos = get_random_point_in_area()
-	var rand_rot_y = randf_range(0.0, TAU) if allow_random_rotation else 0.0
+	var spawn_pos: Vector3 = Vector3.ZERO
+	var found_valid_pos: bool = false
 
-	if snap_to_ground:
-		spawn_pos = get_ground_position(spawn_pos)
+	for attempt in range(max_spawn_attempts):
+		var candidate = get_random_point_in_area()
+		if snap_to_ground:
+			candidate = get_ground_position(candidate)
+
+		var too_close: bool = false
+		for existing_pos in spawned_positions:
+			var dist_xz: float = Vector2(candidate.x - existing_pos.x, candidate.z - existing_pos.z).length()
+			if dist_xz < min_spacing:
+				too_close = true
+				break
+
+		if not too_close:
+			spawn_pos = candidate
+			found_valid_pos = true
+			break
+
+	if not found_valid_pos:
+		return
+
+	spawned_positions.append(spawn_pos)
+	var rand_rot_y = randf_range(0.0, TAU) if allow_random_rotation else 0.0
 
 	var prop_instance = selected_scene.instantiate()
 	if prop_instance:

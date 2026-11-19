@@ -99,6 +99,17 @@ var current_xp: int = 0
 var required_xp: int = 100
 var unspent_points: int = 0
 
+# --- SISTEMA DE CONQUISTAS E ESTATÍSTICAS (Expansível) ---
+const SAVE_ENCRYPTION_KEY: String = "Vallirya_2026_Secure_Save_Key_#91"
+var achievements_stats: Dictionary = {
+	"total_monsters_killed": 0,
+	"monsters_killed_by_id": {},
+	"side_quests_completed": 0,
+	"main_story_progress": 0,
+	"total_items_collected": 0,
+	"items_collected_by_id": {}
+}
+
 var is_dead: bool = false
 
 # Inputs e combo
@@ -264,6 +275,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("Correr"):
 		is_running = not is_running
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_J:
+			toggle_achievements_window()
 
 	if skill_manager and skill_manager.is_targeting_spell:
 		if event is InputEventMouseButton and event.pressed:
@@ -1092,6 +1106,11 @@ func setup_local_hud() -> void:
 func add_item_to_inventory(item: ItemData, quantity: int = 1) -> bool:
 	if not item or quantity <= 0:
 		return false
+	register_item_collected(item.id if item.id != "" else item.name, quantity)
+	if item.id in ["Moeda_Bronze_1", "Moeda_Prata_1"]:
+		call_deferred("_convert_inventory_coins")
+	if not item or quantity <= 0:
+		return false
 
 	var remaining = quantity
 
@@ -1647,22 +1666,62 @@ func toggle_quest_window() -> void:
 		if (not ui_attr_panel or not ui_attr_panel.visible) and (not ui_inventory_panel or not ui_inventory_panel.visible):
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
+func _read_json_encrypted(file_path: String) -> Variant:
+	if not FileAccess.file_exists(file_path):
+		return null
+	var file = FileAccess.open_encrypted_with_pass(file_path, FileAccess.READ, SAVE_ENCRYPTION_KEY)
+	if file:
+		var parsed = JSON.parse_string(file.get_as_text())
+		file.close()
+		if parsed is Dictionary:
+			return parsed
+	# Fallback para saves antigos não criptografados
+	var plain_file = FileAccess.open(file_path, FileAccess.READ)
+	if plain_file:
+		var parsed_plain = JSON.parse_string(plain_file.get_as_text())
+		plain_file.close()
+		return parsed_plain
+	return null
+
+func _write_json_encrypted(file_path: String, data: Dictionary) -> void:
+	var write_file = FileAccess.open_encrypted_with_pass(file_path, FileAccess.WRITE, SAVE_ENCRYPTION_KEY)
+	if write_file:
+		write_file.store_string(JSON.stringify(data))
+		write_file.close()
+
+func register_monster_kill(monster_id: String) -> void:
+	achievements_stats["total_monsters_killed"] = int(achievements_stats.get("total_monsters_killed", 0)) + 1
+	var by_id: Dictionary = achievements_stats.get("monsters_killed_by_id", {})
+	by_id[monster_id] = int(by_id.get(monster_id, 0)) + 1
+	achievements_stats["monsters_killed_by_id"] = by_id
+
+func register_item_collected(item_id: String, quantity: int = 1) -> void:
+	if item_id == "" or quantity <= 0:
+		return
+	achievements_stats["total_items_collected"] = int(achievements_stats.get("total_items_collected", 0)) + quantity
+	var by_id: Dictionary = achievements_stats.get("items_collected_by_id", {})
+	by_id[item_id] = int(by_id.get(item_id, 0)) + quantity
+	achievements_stats["items_collected_by_id"] = by_id
+
+func register_quest_completed(quest_id: String, is_main_story: bool = false) -> void:
+	if is_main_story:
+		achievements_stats["main_story_progress"] = int(achievements_stats.get("main_story_progress", 0)) + 1
+	else:
+		achievements_stats["side_quests_completed"] = int(achievements_stats.get("side_quests_completed", 0)) + 1
+
 func load_player_save(username: String) -> void:
 	player_name = username
 	var file_path = "user://accounts/" + username + ".json"
 
-	if not FileAccess.file_exists(file_path):
-		return
-
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	if not file:
-		return
-
-	var json_data = JSON.parse_string(file.get_as_text())
-	file.close()
-
+	var json_data = _read_json_encrypted(file_path)
 	if not json_data is Dictionary:
 		return
+
+	var loaded_stats = json_data.get("achievements_stats", {})
+	if loaded_stats is Dictionary:
+		for key in achievements_stats.keys():
+			if loaded_stats.has(key):
+				achievements_stats[key] = loaded_stats[key]
 
 	player_level = int(json_data.get("level", 1))
 	current_xp = int(json_data.get("current_xp", 0))
@@ -1848,12 +1907,9 @@ func save_player_account() -> void:
 	var existing_pass_hash = ""
 
 	if FileAccess.file_exists(file_path):
-		var read_file = FileAccess.open(file_path, FileAccess.READ)
-		if read_file:
-			var old_data = JSON.parse_string(read_file.get_as_text())
-			read_file.close()
-			if old_data is Dictionary:
-				existing_pass_hash = old_data.get("password_hash", "")
+		var old_data = _read_json_encrypted(file_path)
+		if old_data is Dictionary:
+			existing_pass_hash = old_data.get("password_hash", "")
 
 	var serialized_inventory: Array = []
 	for slot in inventory_items:
@@ -1950,13 +2006,11 @@ func save_player_account() -> void:
 		"skills_data": skill_manager.get_save_data() if skill_manager else {},
 		"equipment_data": equipment_manager.get_save_data() if equipment_manager else {},
 		"current_map": lm.current_map_key if lm else "ilha_inicial",
-		"warehouse": serialized_warehouse
+		"warehouse": serialized_warehouse,
+		"achievements_stats": achievements_stats
 	}
 
-	var write_file = FileAccess.open(file_path, FileAccess.WRITE)
-	if write_file:
-		write_file.store_string(JSON.stringify(account_data, "\t"))
-		write_file.close()
+	_write_json_encrypted(file_path, account_data)
 
 func update_quest_tracker_ui() -> void:
 	if not ui_quest_list_vbox or not ui_quest_tracker:
@@ -2472,3 +2526,88 @@ func _on_chest_take_all_pressed() -> void:
 			break
 	save_player_account()
 	_refresh_chest_ui()
+
+var ui_achievements_panel: PanelContainer = null
+var ui_achievements_label: RichTextLabel = null
+
+func _apply_standard_window_style(panel: PanelContainer) -> void:
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.08, 0.11, 0.94)
+	style.border_color = Color(0.75, 0.60, 0.28, 0.9)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(8)
+	panel.add_theme_stylebox_override("panel", style)
+
+func toggle_achievements_window() -> void:
+	if not ui_achievements_panel:
+		ui_achievements_panel = PanelContainer.new()
+		ui_achievements_panel.custom_minimum_size = Vector2(440, 380)
+		_apply_standard_window_style(ui_achievements_panel)
+		var margin = MarginContainer.new()
+		margin.add_theme_constant_override("margin_left", 16)
+		margin.add_theme_constant_override("margin_right", 16)
+		margin.add_theme_constant_override("margin_top", 14)
+		margin.add_theme_constant_override("margin_bottom", 14)
+		var vbox = VBoxContainer.new()
+		vbox.add_theme_constant_override("separation", 10)
+		var title = Label.new()
+		title.text = "Conquistas e Estatísticas (J)"
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		title.modulate = Color(1.0, 0.85, 0.35)
+		vbox.add_child(title)
+		ui_achievements_label = RichTextLabel.new()
+		ui_achievements_label.bbcode_enabled = true
+		ui_achievements_label.fit_content = true
+		ui_achievements_label.custom_minimum_size = Vector2(400, 300)
+		vbox.add_child(ui_achievements_label)
+		margin.add_child(vbox)
+		ui_achievements_panel.add_child(margin)
+		if hud_ref:
+			hud_ref.add_child(ui_achievements_panel)
+		else:
+			get_tree().current_scene.add_child(ui_achievements_panel)
+		ui_achievements_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_KEEP_SIZE)
+		ui_achievements_panel.visible = false
+
+	ui_achievements_panel.visible = not ui_achievements_panel.visible
+	if ui_achievements_panel.visible:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		var txt: String = "[b]Monstros Derrotados (Total):[/b] %d\n" % int(achievements_stats.get("total_monsters_killed", 0))
+		var m_by_id: Dictionary = achievements_stats.get("monsters_killed_by_id", {})
+		for m_id in m_by_id.keys():
+			txt += "  - %s: %d\n" % [m_id, int(m_by_id[m_id])]
+		txt += "\n[b]Quests Secundárias Completas:[/b] %d\n" % int(achievements_stats.get("side_quests_completed", 0))
+		txt += "[b]Progresso História Principal:[/b] %d\n" % int(achievements_stats.get("main_story_progress", 0))
+		txt += "\n[b]Itens Coletados (Total):[/b] %d\n" % int(achievements_stats.get("total_items_collected", 0))
+		var i_by_id: Dictionary = achievements_stats.get("items_collected_by_id", {})
+		for i_id in i_by_id.keys():
+			txt += "  - %s: %d\n" % [i_id, int(i_by_id[i_id])]
+		ui_achievements_label.text = txt
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _convert_inventory_coins() -> void:
+	_convert_coin_tier("Moeda_Bronze_1", "res://Resources/Items/Moeda_Prata_1.tres")
+	_convert_coin_tier("Moeda_Prata_1", "res://Resources/Items/Moeda_Ouro_1.tres")
+
+func _convert_coin_tier(source_id: String, target_path: String) -> void:
+	var total: int = 0
+	for slot in inventory_items:
+		if slot is Dictionary and slot.get("item") is ItemData and slot["item"].id == source_id:
+			total += int(slot.get("quantity", 0))
+	if total < 100:
+		return
+	var to_add: int = total / 100
+	var remainder: int = total % 100
+	var kept_remainder: bool = false
+	for i in range(inventory_items.size()):
+		var slot = inventory_items[i]
+		if slot is Dictionary and slot.get("item") is ItemData and slot["item"].id == source_id:
+			if not kept_remainder and remainder > 0:
+				slot["quantity"] = remainder
+				kept_remainder = true
+			else:
+				inventory_items[i] = null
+	var target_item: ItemData = load(target_path)
+	if target_item and to_add > 0:
+		add_item_to_inventory(target_item, to_add)

@@ -6944,6 +6944,31 @@ transform = Transform3D(-0.929947, -0.08244103, 0.35833228, -0.2187759, 0.907324
 bone_name = "Hand L"
 bone_idx = 18
 
+[node name="Head" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=1801288612]
+transform = Transform3D(1, 1.0913935e-11, -1.18802745e-11, 3.808509e-12, -1.1920927e-07, -0.9999998, -1.094303e-11, 0.9999998, -1.2201447e-07, 1.7742248e-13, -1.5582893e-09, 0.0071476046)
+bone_name = "Head"
+bone_idx = 13
+
+[node name="Chest" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=162701365]
+transform = Transform3D(1, 1.0913935e-11, 2.3840668e-07, 2.3842233e-07, -1.1920927e-07, -0.9999998, -1.091394e-11, 0.9999998, -1.2201447e-07, 1.3591038e-13, -1.1048983e-09, 0.003344286)
+bone_name = "Chest"
+bone_idx = 11
+
+[node name="Torso" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=490735454]
+transform = Transform3D(1, 1.0913935e-11, 2.3840667e-07, 2.3842233e-07, -1.1920927e-07, -0.9999998, -1.091394e-11, 0.9999998, -1.2201447e-07, 9.4323665e-14, -6.5064837e-10, -0.00046623824)
+bone_name = "Torso"
+bone_idx = 10
+
+[node name="LeftFeet" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=537015666]
+transform = Transform3D(4.452384e-05, -5.8729616e-05, -1.0000032, 0.1533463, 0.98819274, -5.2980835e-05, 0.9881734, -0.15333812, 5.484555e-05, -0.0016231076, 0.0003521424, -0.0070088357)
+bone_name = "Feet L"
+bone_idx = 30
+
+[node name="RightFeet" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=1755008581]
+transform = Transform3D(4.3971646e-05, 5.9735372e-05, 1.0000058, -0.1533451, 0.9881894, -5.2197596e-05, -0.9881738, -0.15333821, 5.4978573e-05, 0.0015829428, 0.0003522306, -0.007008837)
+bone_name = "Feet R"
+bone_idx = 35
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Personagem (IK)" unique_id=1049801844]
 libraries/ = SubResource("AnimationLibrary_wxoq4")
 

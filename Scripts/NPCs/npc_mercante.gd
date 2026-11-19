@@ -322,7 +322,7 @@ func populate_buy_grid(grid: GridContainer) -> void:
 		center_box.add_child(icon_btn)
 
 		var price_lbl = Label.new()
-		price_lbl.text = "%d Bronze" % item.sell_price
+		price_lbl.text = _format_currency(item.sell_price)
 		price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		price_lbl.add_theme_font_size_override("font_size", 11)
 
@@ -400,7 +400,7 @@ func populate_sell_grid(grid: GridContainer) -> void:
 
 		var sell_value = max(1, int(item.sell_price * 0.75))
 		var price_lbl = Label.new()
-		price_lbl.text = "Vender: %d Bronze" % sell_value
+		price_lbl.text = "Vender: %s" % _format_currency(sell_value)
 		price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		price_lbl.add_theme_font_size_override("font_size", 11)
 		price_lbl.modulate = Color(1.0, 0.85, 0.3)
@@ -637,3 +637,16 @@ func format_bronze_to_text(total_bronze: int) -> String:
 	var silver = int(rem / 100)
 	var bronze = rem % 100
 	return "%d Ouro | %d Prata | %d Bronze" % [gold, silver, bronze]
+
+func _format_currency(total_bronze: int) -> String:
+	var gold: int = total_bronze / 10000
+	var silver: int = (total_bronze % 10000) / 100
+	var bronze: int = total_bronze % 100
+	var parts: Array[String] = []
+	if gold > 0:
+		parts.append("%d Ouro" % gold)
+	if silver > 0:
+		parts.append("%d Prata" % silver)
+	if bronze > 0 or parts.is_empty():
+		parts.append("%d Bronze" % bronze)
+	return " ".join(parts)

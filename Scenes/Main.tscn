@@ -9,10 +9,37 @@
 [ext_resource type="Script" uid="uid://cbga4vb4e1bbn" path="res://Scripts/UI/VolumeControl.gd" id="5_pbw6q"]
 [ext_resource type="Script" uid="uid://bjjby0yx6jddh" path="res://Scripts/UI/hud.gd" id="8_vy5pj"]
 [ext_resource type="Texture2D" uid="uid://xgfaltqinryh" path="res://ASSETS/Icones/backpack.png" id="9_4kpch"]
+[ext_resource type="Theme" uid="uid://dinpu4vxfm5do" path="res://ASSETS/VFX/Themes/ValliryaTheme.tres" id="10_1p5hy"]
 [ext_resource type="Texture2D" uid="uid://b3q15e7qw8htu" path="res://ASSETS/Icones/attack-gauge.png" id="10_grg3l"]
-[ext_resource type="Texture2D" uid="uid://c5xx502anyjd3" path="res://ASSETS/Icones/open-book.png" id="11_frkhe"]
 [ext_resource type="Texture2D" uid="uid://cwhl5hrpb4etv" path="res://ASSETS/Icones/spell-book.png" id="12_grg3l"]
-[ext_resource type="Texture2D" uid="uid://cbps85d3owmp3" path="res://ASSETS/Icones/stone-crafting.png" id="13_frkhe"]
+[ext_resource type="Texture2D" uid="uid://b15yfauulcxiu" path="res://ASSETS/Icones/conqueror.png" id="12_h1m7h"]
+[ext_resource type="Texture2D" uid="uid://4y50s2vkxxdx" path="res://ASSETS/Icones/sword-smithing.png" id="14_h1m7h"]
+[ext_resource type="Texture2D" uid="uid://5gyrbjw0kymh" path="res://ASSETS/Icones/treasure-map.png" id="16_erwvk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1m7h"]
+bg_color = Color(0.616379, 0.29748532, 0.25766784, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25234422, 0.2116872, 0.17033288, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_erwvk"]
+bg_color = Color(0.8406308, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frkhe"]
 bg_color = Color(0.4972428, 0.4245502, 0.3581229, 1)
@@ -206,7 +233,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme = ExtResource("4_pbw6q")
 
-[node name="HUD" type="Control" parent="." unique_id=611354852 node_paths=PackedStringArray("inventory_button", "status_button", "quest_button", "skill_button", "maestria_button", "boss_bar_container", "boss_name_label", "boss_health_bar")]
+[node name="HUD" type="Control" parent="." unique_id=611354852 node_paths=PackedStringArray("inventory_button", "status_button", "quest_button", "skill_button", "maestria_button", "estatistica_button", "boss_bar_container", "boss_name_label", "boss_health_bar")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -220,6 +247,7 @@ status_button = NodePath("TopRightMenu/Status")
 quest_button = NodePath("TopRightMenu/Quests")
 skill_button = NodePath("TopRightMenu/Skills")
 maestria_button = NodePath("TopRightMenu/Maestrias")
+estatistica_button = NodePath("TopRightMenu/Estatisticas")
 boss_bar_container = NodePath("BossBarContainer")
 boss_name_label = NodePath("BossBarContainer/BossNameLabel")
 boss_health_bar = NodePath("BossBarContainer/BossHealthBar")
@@ -248,6 +276,17 @@ offset_right = 64.0
 offset_bottom = 64.0
 texture = ExtResource("9_4kpch")
 
+[node name="Label" type="Label" parent="HUD/TopRightMenu/Inventory" unique_id=1042383870]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 43.0
+offset_right = 55.0
+offset_bottom = 63.0
+theme = ExtResource("10_1p5hy")
+text = "I"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Status" type="Button" parent="HUD/TopRightMenu" unique_id=1996865498]
 custom_minimum_size = Vector2(64, 64)
 custom_maximum_size = Vector2(64, 64)
@@ -260,6 +299,17 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("10_grg3l")
 
+[node name="Label" type="Label" parent="HUD/TopRightMenu/Status" unique_id=1529178222]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 43.0
+offset_right = 55.0
+offset_bottom = 63.0
+theme = ExtResource("10_1p5hy")
+text = "C"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Quests" type="Button" parent="HUD/TopRightMenu" unique_id=744495545]
 custom_minimum_size = Vector2(64, 64)
 custom_maximum_size = Vector2(64, 64)
@@ -270,7 +320,18 @@ custom_maximum_size = Vector2(64, 64)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
-texture = ExtResource("11_frkhe")
+texture = ExtResource("16_erwvk")
+
+[node name="Label" type="Label" parent="HUD/TopRightMenu/Quests" unique_id=906855161]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 43.0
+offset_right = 55.0
+offset_bottom = 63.0
+theme = ExtResource("10_1p5hy")
+text = "Q"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Skills" type="Button" parent="HUD/TopRightMenu" unique_id=2087408291]
 custom_minimum_size = Vector2(64, 64)
@@ -284,6 +345,17 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("12_grg3l")
 
+[node name="Label" type="Label" parent="HUD/TopRightMenu/Skills" unique_id=1030469167]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 43.0
+offset_right = 55.0
+offset_bottom = 63.0
+theme = ExtResource("10_1p5hy")
+text = "B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Maestrias" type="Button" parent="HUD/TopRightMenu" unique_id=1691283123]
 custom_minimum_size = Vector2(64, 64)
 custom_maximum_size = Vector2(64, 64)
@@ -294,7 +366,41 @@ custom_maximum_size = Vector2(64, 64)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
-texture = ExtResource("13_frkhe")
+texture = ExtResource("14_h1m7h")
+
+[node name="Label" type="Label" parent="HUD/TopRightMenu/Maestrias" unique_id=1696571216]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 43.0
+offset_right = 55.0
+offset_bottom = 63.0
+theme = ExtResource("10_1p5hy")
+text = "K"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Estatisticas" type="Button" parent="HUD/TopRightMenu" unique_id=953525875]
+custom_minimum_size = Vector2(64, 64)
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/TopRightMenu/Estatisticas" unique_id=845915633]
+custom_maximum_size = Vector2(64, 64)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("12_h1m7h")
+
+[node name="Label" type="Label" parent="HUD/TopRightMenu/Estatisticas" unique_id=485457640]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 43.0
+offset_right = 55.0
+offset_bottom = 63.0
+theme = ExtResource("10_1p5hy")
+text = "J"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BottomCenterBar" type="HBoxContainer" parent="HUD" unique_id=614414236]
 layout_mode = 1
@@ -343,6 +449,8 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(500, 50)
 layout_mode = 2
 theme = ExtResource("4_pbw6q")
+theme_override_styles/background = SubResource("StyleBoxFlat_h1m7h")
+theme_override_styles/fill = SubResource("StyleBoxFlat_erwvk")
 step = 1.0
 value = 50.0
 
@@ -411,6 +519,14 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Label7" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=1834550590]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'J' - Estatisticas e conquistas"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label8" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=1351731297]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 text = "'Ctrl' - Liberar/Travar camera"

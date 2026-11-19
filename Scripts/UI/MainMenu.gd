@@ -51,10 +51,14 @@ func refresh_character_list() -> void:
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
+const SAVE_ENCRYPTION_KEY: String = "Vallirya_2026_Secure_Save_Key_#91"
+
 func _get_character_level(char_name: String) -> int:
 	var file_path = ACCOUNTS_DIR + char_name + ".json"
 	if FileAccess.file_exists(file_path):
-		var file = FileAccess.open(file_path, FileAccess.READ)
+		var file = FileAccess.open_encrypted_with_pass(file_path, FileAccess.READ, SAVE_ENCRYPTION_KEY)
+		if not file:
+			file = FileAccess.open(file_path, FileAccess.READ)
 		if file:
 			var data = JSON.parse_string(file.get_as_text())
 			file.close()
@@ -168,9 +172,9 @@ func _create_new_character_save(char_name: String) -> void:
 		"equipment_data": {}
 	}
 
-	var file = FileAccess.open(ACCOUNTS_DIR + char_name + ".json", FileAccess.WRITE)
+	var file = FileAccess.open_encrypted_with_pass(ACCOUNTS_DIR + char_name + ".json", FileAccess.WRITE, SAVE_ENCRYPTION_KEY)
 	if file:
-		file.store_string(JSON.stringify(default_data, "\t"))
+		file.store_string(JSON.stringify(default_data))
 		file.close()
 
 func _launch_game_with_character(char_name: String, new_game: bool = false) -> void:

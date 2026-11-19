@@ -389,6 +389,13 @@ func take_damage(amount: int, attacker: CharacterBody3D = null) -> void:
 		if has_node("/root/QuestManager") and is_instance_valid(attacker):
 			QuestManager.on_monster_killed(attacker, monster_name)
 
+		if is_instance_valid(attacker) and attacker.has_method("register_monster_kill"):
+			attacker.register_monster_kill(monster_name)
+		else:
+			var players_grp = get_tree().get_nodes_in_group("Player")
+			if players_grp.size() > 0 and players_grp[0].has_method("register_monster_kill"):
+				players_grp[0].register_monster_kill(monster_name)
+
 		rpc_despawn()
 
 		get_tree().create_timer(respawn_time).timeout.connect(func():

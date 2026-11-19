@@ -9,8 +9,12 @@ extends StaticBody3D
 
 @export_category("Configuração de Interação")
 @export var require_button_press: bool = true # true = aperta E | false = teleporta ao encostar
-@export var interact_action: String = "interact"
+@export var interact_action: String = "Interagir"
 @export var prompt_text: String = "E"
+
+@export_category("Aparência do Portal")
+@export var core_color: Color = Color(0.3, 0.85, 1.0, 1.0)
+@export var swirl_color: Color = Color(0.1, 0.4, 1.0, 1.0)
 
 @onready var interaction_area: Area3D = $InteractionArea
 @onready var interaction_prompt: Sprite3D = $InteractionPrompt
@@ -32,6 +36,26 @@ func _ready() -> void:
 	if interaction_area:
 		interaction_area.body_entered.connect(_on_interaction_area_body_entered)
 		interaction_area.body_exited.connect(_on_interaction_area_body_exited)
+
+	_apply_portal_colors()
+
+func _apply_portal_colors() -> void:
+	var portal_mesh := find_child("Portal", true, false) as MeshInstance3D
+	if not portal_mesh:
+		return
+
+	var mat := portal_mesh.get_surface_override_material(0) as ShaderMaterial
+	if not mat:
+		mat = portal_mesh.get_active_material(0) as ShaderMaterial
+	if mat:
+		var unique_mat := mat.duplicate() as ShaderMaterial
+		portal_mesh.set_surface_override_material(0, unique_mat)
+		unique_mat.set_shader_parameter("core_color", core_color)
+		unique_mat.set_shader_parameter("swirl_color", swirl_color)
+
+	for child in portal_mesh.get_children():
+		if child is OmniLight3D:
+			child.light_color = swirl_color
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_teleporting or not require_button_press or not is_instance_valid(player_in_range):
