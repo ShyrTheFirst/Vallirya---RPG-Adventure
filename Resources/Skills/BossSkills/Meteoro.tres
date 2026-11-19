@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BossSkillData" format=3 uid="uid://dd4sb64km5hf0"]
 
-[ext_resource type="Script" uid="uid://cxtryt8hip3dn" path="res://Scripts/BossSkillData.gd" id="1_f7wdt"]
+[ext_resource type="Script" uid="uid://cxtryt8hip3dn" path="res://Scripts/Monstros/BossSkillData.gd" id="1_f7wdt"]
 [ext_resource type="PackedScene" uid="uid://tby4j47gix11" path="res://Scenes/Skills/Bola_De_Fogo.tscn" id="2_8wt3q"]
 
 [resource]

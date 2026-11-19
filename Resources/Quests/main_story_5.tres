@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://bu0w5o52iq506"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_6cv5x"]
+
+[resource]
+script = ExtResource("1_6cv5x")
+quest_id = "main_story_5"
+title = "O Desabafo do Veterano"
+description = "Derrote 50 Orcs Lutadores e encontre o veterano."
+target_id = "Orc Lutador"
+required_amount = 50
+turn_in_npc_id = "npc_floresta"
+reward_xp = 2450
+metadata/_custom_type_script = "uid://co3cscegp8qam"

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://tby4j47gix11"]
 
-[ext_resource type="Script" uid="uid://bjkmae7qe8iqo" path="res://Scripts/bola_de_fogo.gd" id="1_ktjqo"]
+[ext_resource type="Script" uid="uid://bjkmae7qe8iqo" path="res://Scripts/Skills/bola_de_fogo.gd" id="1_ktjqo"]
 [ext_resource type="SphereMesh" uid="uid://bcmxxebwdd4ee" path="res://ASSETS/VFX/fireball.tres" id="2_ub3p3"]
 [ext_resource type="Shader" uid="uid://nijwjn130dv7" path="res://ASSETS/VFX/Shaders/Bola_De_Fogo.gdshader" id="3_crdeh"]
 [ext_resource type="AudioStream" uid="uid://beo0dye2o1dw3" path="res://ASSETS/SFX/Skills/Firebuff 1.ogg" id="4_2nss4"]

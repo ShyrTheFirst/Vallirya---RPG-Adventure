@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://r0sl5k7b5x5g"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_fk6di"]
+[ext_resource type="Resource" uid="uid://blfaim5yty8ht" path="res://Resources/Items/Minerio_latao.tres" id="1_r5i0n"]
+
+[resource]
+script = ExtResource("1_fk6di")
+quest_id = "main_story_9"
+title = "Minério Bruto"
+description = "Entregue minérios de bronze coletados."
+quest_type = 1
+target_id = "res://Resources/Items/Minerio_Cobre.tres"
+required_amount = 12
+item_required_to_turn_in = ExtResource("1_r5i0n")
+reward_xp = 400
+metadata/_custom_type_script = "uid://co3cscegp8qam"

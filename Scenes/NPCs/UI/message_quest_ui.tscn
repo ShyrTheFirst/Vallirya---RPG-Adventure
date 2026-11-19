@@ -1,0 +1,142 @@
+[gd_scene format=3 uid="uid://36lybu24k7r8"]
+
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="1_6xjgt"]
+[ext_resource type="Script" uid="uid://cge7v28kjwwnr" path="res://Scripts/UI/MessageAndQuestUI.gd" id="2_6xjgt"]
+
+[node name="MessageAndQuestUI" type="Control" unique_id=13965645]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_6xjgt")
+script = ExtResource("2_6xjgt")
+
+[node name="MessageUIPanel" type="Panel" parent="." unique_id=1670919924]
+custom_minimum_size = Vector2(1820, 150)
+custom_maximum_size = Vector2(1820, 150)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -80.0
+offset_right = 1870.0
+offset_bottom = -40.0
+grow_vertical = 0
+
+[node name="TextLabel" type="Label" parent="MessageUIPanel" unique_id=1576992744]
+custom_minimum_size = Vector2(1820, 120)
+custom_maximum_size = Vector2(1820, 120)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -910.0
+offset_top = -60.0
+offset_right = 910.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 1
+text = "Here, the NPC message will be showing, so the player can read and react  (clicking T on the keyboard) to go to the next line (or just pressing the button down here. The button must say \"Continuar ('T')\" so the player will know what to do when he wants to read the next line of text or say \"Fechar ('T')\" if the dialogue will end after that line of text. If the player have a quest to accept or deny, this buton must be \"inactive\" so the player can't close this conversation without accepting or rejecting the quest (if he rejects, then this UI simply closes, if he interact with the same NPC again, he can see the full dialogue and accept or deny the same quest again!)"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="NameLabel" type="Label" parent="MessageUIPanel" unique_id=818572196]
+layout_mode = 1
+offset_top = -15.0
+offset_right = 96.0
+offset_bottom = 12.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Nome NPC"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BtnClose" type="Button" parent="MessageUIPanel" unique_id=1943409820]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -138.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Fechar ('T')"
+
+[node name="AcceptQuestUIContainer" type="PanelContainer" parent="." unique_id=1374102058]
+custom_minimum_size = Vector2(600, 600)
+custom_maximum_size = Vector2(600, 600)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -390.0
+offset_right = 300.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_6xjgt")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AcceptQuestUIContainer" unique_id=454588554]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="QNameLabel" type="Label" parent="AcceptQuestUIContainer/VBoxContainer" unique_id=900608865]
+custom_minimum_size = Vector2(320, 50)
+custom_maximum_size = Vector2(-1, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Quest Name in Here - The full name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QDescLabel" type="Label" parent="AcceptQuestUIContainer/VBoxContainer" unique_id=451350634]
+custom_minimum_size = Vector2(500, 350)
+custom_maximum_size = Vector2(500, 350)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 1
+text = "Here the player will have a full description of the quest, what he is doing, why, who is asking ... Everything should be get from the QuestData info (in the QuestData's quest description)"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AcceptQuestUIContainer" unique_id=796273042]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="BtnAccept" type="Button" parent="AcceptQuestUIContainer/HBoxContainer" unique_id=1642148786]
+custom_minimum_size = Vector2(130, 50)
+custom_maximum_size = Vector2(130, 50)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Accept Quest"
+
+[node name="BtnDeny" type="Button" parent="AcceptQuestUIContainer/HBoxContainer" unique_id=1225726426]
+custom_minimum_size = Vector2(130, 50)
+custom_maximum_size = Vector2(130, 50)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Reject Quest"
+
+[connection signal="pressed" from="MessageUIPanel/BtnClose" to="." method="_on_close_clicked"]
+[connection signal="pressed" from="AcceptQuestUIContainer/HBoxContainer/BtnAccept" to="." method="_on_accept_clicked"]
+[connection signal="pressed" from="AcceptQuestUIContainer/HBoxContainer/BtnDeny" to="." method="_on_deny_clicked"]

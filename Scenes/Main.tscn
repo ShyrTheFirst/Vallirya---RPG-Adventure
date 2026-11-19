@@ -3,16 +3,31 @@
 [ext_resource type="Script" uid="uid://b2wf3i8qrswg4" path="res://Scripts/main.gd" id="1_idj7w"]
 [ext_resource type="PackedScene" uid="uid://bohw58o3vxrms" path="res://Scenes/Player.tscn" id="1_r150o"]
 [ext_resource type="Script" uid="uid://bq8gyu2tp5wjh" path="res://Globals/DayNightCycle.gd" id="3_jw32o"]
-[ext_resource type="Script" uid="uid://ds20oivgyuosh" path="res://Scripts/MenuJogo.gd" id="3_rgh2o"]
+[ext_resource type="Script" uid="uid://ds20oivgyuosh" path="res://Scripts/UI/MenuJogo.gd" id="3_rgh2o"]
 [ext_resource type="Environment" uid="uid://v6qwweiju7a7" path="res://ASSETS/VFX/WorldEnv.tres" id="4_50glp"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_pbw6q"]
-[ext_resource type="Script" uid="uid://cbga4vb4e1bbn" path="res://Scripts/VolumeControl.gd" id="5_pbw6q"]
-[ext_resource type="Script" uid="uid://bjjby0yx6jddh" path="res://Scripts/hud.gd" id="8_vy5pj"]
+[ext_resource type="Script" uid="uid://cbga4vb4e1bbn" path="res://Scripts/UI/VolumeControl.gd" id="5_pbw6q"]
+[ext_resource type="Script" uid="uid://bjjby0yx6jddh" path="res://Scripts/UI/hud.gd" id="8_vy5pj"]
 [ext_resource type="Texture2D" uid="uid://xgfaltqinryh" path="res://ASSETS/Icones/backpack.png" id="9_4kpch"]
 [ext_resource type="Texture2D" uid="uid://b3q15e7qw8htu" path="res://ASSETS/Icones/attack-gauge.png" id="10_grg3l"]
 [ext_resource type="Texture2D" uid="uid://c5xx502anyjd3" path="res://ASSETS/Icones/open-book.png" id="11_frkhe"]
 [ext_resource type="Texture2D" uid="uid://cwhl5hrpb4etv" path="res://ASSETS/Icones/spell-book.png" id="12_grg3l"]
 [ext_resource type="Texture2D" uid="uid://cbps85d3owmp3" path="res://ASSETS/Icones/stone-crafting.png" id="13_frkhe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frkhe"]
+bg_color = Color(0.4972428, 0.4245502, 0.3581229, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8018705, 0.73837054, 0.67594296, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 8.0
+expand_margin_right = 8.0
 
 [node name="Main" type="Node3D" unique_id=780729372]
 script = ExtResource("1_idj7w")
@@ -330,6 +345,78 @@ layout_mode = 2
 theme = ExtResource("4_pbw6q")
 step = 1.0
 value = 50.0
+
+[node name="TutorialWindow" type="PanelContainer" parent="HUD" unique_id=160406039]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 25.0
+offset_top = -20.0
+offset_right = 65.0
+offset_bottom = 20.0
+grow_vertical = 2
+theme = ExtResource("4_pbw6q")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/TutorialWindow" unique_id=1163609066]
+layout_mode = 2
+
+[node name="Label6" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=401816114]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_frkhe")
+text = "Atalhos de teclado"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=64233147]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'Q' - Diario de missoes"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label2" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=1031661445]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'I' - Inventario"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label3" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=560837961]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'C' - Atributos"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label4" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=343343033]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'B' - Habilidades"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label5" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=1759285397]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'K' - Maestrias de oficio"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Label7" type="Label" parent="HUD/TutorialWindow/VBoxContainer" unique_id=1834550590]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "'Ctrl' - Liberar/Travar camera"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnSave" to="UI/MenuJogo" method="_on_btn_save_pressed"]
 [connection signal="pressed" from="UI/MenuJogo/Panel/VBoxContainer/BtnQuit" to="UI/MenuJogo" method="_on_btn_quit_pressed"]

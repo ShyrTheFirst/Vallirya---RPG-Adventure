@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://c1cys31uqcysu"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_0unko"]
+
+[resource]
+script = ExtResource("1_0unko")
+quest_id = "main_story_6"
+title = "Patrulha: Bandidos"
+description = "Derrote 10 Bandidos da Estrada."
+target_id = "Bandido"
+required_amount = 10
+reward_xp = 350
+metadata/_custom_type_script = "uid://co3cscegp8qam"

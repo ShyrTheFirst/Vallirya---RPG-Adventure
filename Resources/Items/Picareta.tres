@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dqjry64whur88"]
 
-[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_f1vgl"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_f1vgl"]
 [ext_resource type="PackedScene" uid="uid://clr01nqfrmcf7" path="res://ASSETS/Armas/Picareta/Picareta.fbx" id="1_ifkpl"]
 
 [resource]

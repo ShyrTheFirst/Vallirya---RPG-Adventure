@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://cyw1atx3buphv"]
+
+[ext_resource type="Shader" uid="uid://nait6appxh26" path="res://ASSETS/VFX/Shaders/clouds.gdshader" id="1_42i78"]
+[ext_resource type="Script" uid="uid://dnsake4or2oo4" path="res://Scenes/VFX/CloudRandomizer.gd" id="2_0tsc0"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_3gngh"]
+radius = 75.0
+height = 60.0
+radial_segments = 8
+rings = 6
+is_hemisphere = true
+
+[sub_resource type="Gradient" id="Gradient_42i78"]
+offsets = PackedFloat32Array(0.20454545, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_d0u6y"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_57qmd"]
+width = 128
+height = 128
+noise = SubResource("FastNoiseLite_d0u6y")
+color_ramp = SubResource("Gradient_42i78")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yf5fn"]
+render_priority = 0
+shader = ExtResource("1_42i78")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_57qmd")
+shader_parameter/cloud_color = Color(0.40982565, 0.4882353, 0.59736454, 0.8509804)
+shader_parameter/rim_color = Color(0.94811296, 0.9452769, 0.68577677, 1)
+shader_parameter/rim_power = 2.5
+shader_parameter/speed = 0.015
+
+[node name="Clouds" type="MeshInstance3D" unique_id=542398175]
+mesh = SubResource("SphereMesh_3gngh")
+surface_material_override/0 = SubResource("ShaderMaterial_yf5fn")
+script = ExtResource("2_0tsc0")

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://dkoex0vaiyys5"]
 
-[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="1_y4386"]
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/Skills/SkillData.gd" id="1_y4386"]
 [ext_resource type="PackedScene" uid="uid://tby4j47gix11" path="res://Scenes/Skills/Bola_De_Fogo.tscn" id="2_n48h1"]
 
 [sub_resource type="Gradient" id="Gradient_y4386"]

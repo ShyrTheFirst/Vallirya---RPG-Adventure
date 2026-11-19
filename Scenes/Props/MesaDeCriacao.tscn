@@ -1,15 +1,13 @@
 [gd_scene format=4 uid="uid://dk8e685nb8ew7"]
 
 [ext_resource type="Texture2D" uid="uid://da1k3glubaba8" path="res://ASSETS/Mesh_files/CraftingTable_0.png" id="1_dux21"]
-[ext_resource type="Script" uid="uid://cveebpu5mk63t" path="res://Scripts/CraftingStation.gd" id="1_xde65"]
-[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/CraftData.gd" id="2_d3qd7"]
+[ext_resource type="Script" uid="uid://cveebpu5mk63t" path="res://Scripts/Props/CraftingStation.gd" id="1_xde65"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_d3qd7"]
 [ext_resource type="Texture2D" uid="uid://cbf3ow1mbreuc" path="res://ASSETS/Mesh_files/CraftingTable_1.png" id="2_oubda"]
-[ext_resource type="Resource" uid="uid://5e6e3ml1xag" path="res://Resources/Items/Moeda_Bronze_1.tres" id="3_h5mdr"]
+[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/Crafts/Espada_latao.tres" id="3_hs8np"]
 [ext_resource type="Texture2D" uid="uid://c267spjmlgl7k" path="res://ASSETS/Mesh_files/CraftingTable_2.png" id="3_xde65"]
 [ext_resource type="Texture2D" uid="uid://cm6w1jxeplige" path="res://ASSETS/Mesh_files/CraftingTable_3.png" id="4_d3qd7"]
-[ext_resource type="Resource" uid="uid://27x1wo7n7np" path="res://Resources/Items/HP_Grande.tres" id="4_o4y80"]
 [ext_resource type="Texture2D" uid="uid://ygqpfxys8jey" path="res://ASSETS/Mesh_files/CraftingTable_4.png" id="5_hs8np"]
-[ext_resource type="Resource" uid="uid://d1wg38ikckjhs" path="res://Resources/Items/Mana_Grande.tres" id="5_o4y80"]
 [ext_resource type="Texture2D" uid="uid://dmc8lngy4pkca" path="res://ASSETS/Mesh_files/CraftingTable_5.png" id="6_h5mdr"]
 [ext_resource type="Texture2D" uid="uid://3t7g7niw4rha" path="res://ASSETS/Mesh_files/CraftingTable_6.png" id="7_o4y80"]
 [ext_resource type="Texture2D" uid="uid://cqq0aq443qytb" path="res://ASSETS/Mesh_files/CraftingTable_7.png" id="8_xk3ah"]
@@ -29,20 +27,6 @@
 [ext_resource type="Texture2D" uid="uid://br1q2mca51vjx" path="res://ASSETS/Mesh_files/CraftingTable_21.png" id="22_64x17"]
 [ext_resource type="Texture2D" uid="uid://8vpeby4y06on" path="res://ASSETS/Mesh_files/CraftingTable_22.png" id="23_ugago"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="26_d3qd7"]
-
-[sub_resource type="Resource" id="Resource_g4v7s"]
-script = ExtResource("2_d3qd7")
-equipment_type = "outros"
-input_item_1 = ExtResource("3_h5mdr")
-result_item = ExtResource("4_o4y80")
-metadata/_custom_type_script = "uid://b308ysrsgvy6j"
-
-[sub_resource type="Resource" id="Resource_h5mdr"]
-script = ExtResource("2_d3qd7")
-equipment_type = "outros"
-input_item_1 = ExtResource("3_h5mdr")
-result_item = ExtResource("5_o4y80")
-metadata/_custom_type_script = "uid://b308ysrsgvy6j"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jmcvr"]
 resource_name = "Argolas Inferior"
@@ -1064,7 +1048,7 @@ viewport_path = NodePath("InteractionPrompt/SubViewport")
 collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_xde65")
-station_recipes = Array[ExtResource("2_d3qd7")]([SubResource("Resource_g4v7s"), SubResource("Resource_h5mdr")])
+station_recipes = Array[ExtResource("2_d3qd7")]([ExtResource("3_hs8np")])
 
 [node name="CraftingTable" type="Node3D" parent="." unique_id=1952525536]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)

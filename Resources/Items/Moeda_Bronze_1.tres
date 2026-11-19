@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://5e6e3ml1xag"]
 
-[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_2k1i4"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_2k1i4"]
 [ext_resource type="PackedScene" uid="uid://do6o43br6l656" path="res://Resources/MESH/Moeda_Cobre_1.tscn" id="1_remy3"]
 
 [resource]
 script = ExtResource("1_2k1i4")
-id = "Moeda_Cobre_1"
-name = "Moeda de Cobre"
-description = "Uma moeda de cobre usada para comprar itens."
+id = "Moeda_Bronze_1"
+name = "Moeda de Bronze"
+active_legendary = null
+description = "Uma moeda de bronze usada para comprar itens."
 mesh_scene = ExtResource("1_remy3")
 sell_price = 1
 inventory_rotation = Vector3(45, 90, 0)

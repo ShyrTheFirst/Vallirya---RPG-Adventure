@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://bpxwcjtugb1w1"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_5ttmh"]
+
+[resource]
+script = ExtResource("1_5ttmh")
+quest_id = "main_story_12"
+title = "Relatório ao Mestre"
+description = "Entregue os relatórios ao Mestre da Guilda."
+quest_type = 2
+target_id = "npc_inicial"
+required_amount = 1
+turn_in_npc_id = "npc_inicial"
+reward_xp = 1200
+metadata/_custom_type_script = "uid://co3cscegp8qam"

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c7rjgnpg5d4ui"]
 
-[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="1_p23wj"]
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/Skills/SkillData.gd" id="1_p23wj"]
 
 [sub_resource type="Gradient" id="Gradient_qlvk6"]
 offsets = PackedFloat32Array(0.36746988, 0.5, 0.59638554)

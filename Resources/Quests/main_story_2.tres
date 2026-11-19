@@ -1,13 +1,17 @@
 [gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://bfd24ymitv4ld"]
 
-[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/QuestData.gd" id="1_hf10w"]
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_hf10w"]
 
 [resource]
 script = ExtResource("1_hf10w")
 quest_id = "main_story_2"
-title = "Limpeza no campo"
-description = "Algumas aranhas estao incomodando os moradores da regiao. Mate 10 delas para ajudar a reduzir os ataques na regiao!"
-target_id = "Aranha"
-required_amount = 10
-reward_xp = 150
+title = "Kit de Sobrevivência"
+description = "Converse com o Ferreiro para conseguir seus equipamentos, voce pode comprar as barras para criar sua espada no comerciante com as moedas que te dei. A feiticeira vai te ensinar a fazer poçoes, voce pode comprar alguns recursos para fazer as primeiras poçoes com o comerciante tambem."
+quest_type = 2
+target_ids = Array[String](["ferreiro", "feiticeira", "comerciante"])
+required_amount = 3
+start_npc_id = "Valkor"
+turn_in_npc_id = "Valkor"
+reward_xp = 60
+reward_gold_value_in_bronze = 10
 metadata/_custom_type_script = "uid://co3cscegp8qam"

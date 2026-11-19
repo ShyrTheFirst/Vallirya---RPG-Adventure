@@ -1,14 +1,17 @@
 [gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://l7g8i4xt7hyw"]
 
-[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/QuestData.gd" id="1_eypwy"]
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_eypwy"]
 
 [resource]
 script = ExtResource("1_eypwy")
 quest_id = "main_story_1"
-title = "Conhecendo os arredores"
-description = "Fale com Valkor, ele vai te ajudar a começar sua jornada como aventureiro!"
+title = "Boas-Vindas a Kalythra"
+description = "Conheça a guilda e registre-se com o Mestre."
 quest_type = 2
-target_id = "npc_valkor"
+target_ids = Array[String](["Valkor"])
 required_amount = 1
-reward_xp = 500
+start_npc_id = "Valkor"
+turn_in_npc_id = "Valkor"
+reward_xp = 50
+reward_gold_value_in_bronze = 200
 metadata/_custom_type_script = "uid://co3cscegp8qam"

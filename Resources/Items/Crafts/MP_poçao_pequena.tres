@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://cn2dahrre3xf5"]
+
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_6d77b"]
+[ext_resource type="Resource" uid="uid://csuqmcjb74qxg" path="res://Resources/Items/ErvaMedicinal.tres" id="1_rvp1j"]
+[ext_resource type="Resource" uid="uid://n055wuem1lnl" path="res://Resources/Items/Mana_Pequena.tres" id="2_i1kld"]
+
+[resource]
+script = ExtResource("1_6d77b")
+equipment_type = "outros"
+input_item_1 = ExtResource("1_rvp1j")
+result_item = ExtResource("2_i1kld")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

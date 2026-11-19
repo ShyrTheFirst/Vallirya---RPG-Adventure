@@ -8,15 +8,15 @@
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="4_1iu4k"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="5_m0x7a"]
 [ext_resource type="AudioStream" uid="uid://durt51e5mci5r" path="res://ASSETS/SFX/Pickup_Gold_00.mp3" id="13_1iu4k"]
-[ext_resource type="Script" uid="uid://cqsffnwvjo0q2" path="res://Scripts/SkillManager.gd" id="13_miouo"]
-[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/SkillData.gd" id="14_lslt6"]
+[ext_resource type="Script" uid="uid://cqsffnwvjo0q2" path="res://Scripts/Skills/SkillManager.gd" id="13_miouo"]
+[ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/Skills/SkillData.gd" id="14_lslt6"]
 [ext_resource type="AudioStream" uid="uid://d3ktj3c8kfxf4" path="res://ASSETS/SFX/Gathering/gather_from_ground.wav" id="14_m0x7a"]
 [ext_resource type="Resource" uid="uid://dkoex0vaiyys5" path="res://Resources/Skills/Bola_de_Fogo.tres" id="15_ulo2v"]
 [ext_resource type="Resource" uid="uid://c7rjgnpg5d4ui" path="res://Resources/Skills/Cura.tres" id="16_1iu4k"]
 [ext_resource type="Resource" uid="uid://ce1bisc62sx10" path="res://Resources/Skills/Meteoro.tres" id="17_m0x7a"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="18_8flut"]
 [ext_resource type="StyleBox" uid="uid://d2q0hfvlmass8" path="res://ASSETS/VFX/Themes/background_progress_bar.tres" id="18_qidb7"]
-[ext_resource type="Script" uid="uid://digm4c2cy4038" path="res://Scripts/EquipmentManager.gd" id="18_ulo2v"]
+[ext_resource type="Script" uid="uid://digm4c2cy4038" path="res://Scripts/Props/EquipmentManager.gd" id="18_ulo2v"]
 [ext_resource type="StyleBox" uid="uid://h12ndbr2278k" path="res://ASSETS/VFX/Themes/fill_progress_bar_HP.tres" id="19_70hv0"]
 [ext_resource type="AudioStream" uid="uid://djdxpluqs8cnj" path="res://ASSETS/SFX/Dirt Walk 1.wav" id="20_m0x7a"]
 [ext_resource type="PackedScene" uid="uid://b5ir7y7v6jccw" path="res://Scenes/VFX/slash.tscn" id="21_5v66d"]
@@ -3033,6 +3033,7 @@ tracks/49/keys = PackedFloat32Array(0, 1, -0.037821334, 0.14011277, -0.5478237, 
 
 [sub_resource type="Animation" id="Animation_0w2dh"]
 resource_name = "Armature|Correr"
+loop_mode = 1
 tracks/0/type = "position_3d"
 tracks/0/imported = true
 tracks/0/enabled = true
@@ -6395,6 +6396,9 @@ states/Armature|Pegando/position = Vector2(492, 375)
 transitions = ["Start", "Armature|Ataque 1", SubResource("AnimationNodeStateMachineTransition_avx33"), "Armature|Ataque 1", "End", SubResource("AnimationNodeStateMachineTransition_rxg2u"), "Start", "Armature|Ataque 2", SubResource("AnimationNodeStateMachineTransition_xixlo"), "Armature|Ataque 2", "End", SubResource("AnimationNodeStateMachineTransition_bfbt0"), "Start", "Armature|Ataque 3", SubResource("AnimationNodeStateMachineTransition_wosd6"), "Armature|Ataque 3", "End", SubResource("AnimationNodeStateMachineTransition_hkrn1"), "Start", "Armature|Ataque 4", SubResource("AnimationNodeStateMachineTransition_wpo1r"), "Armature|Ataque 4", "End", SubResource("AnimationNodeStateMachineTransition_pqity"), "Start", "Armature|Ataque 5", SubResource("AnimationNodeStateMachineTransition_opqna"), "Armature|Ataque 5", "End", SubResource("AnimationNodeStateMachineTransition_00okb"), "Start", "Armature|Beber", SubResource("AnimationNodeStateMachineTransition_6hr71"), "Armature|Beber", "End", SubResource("AnimationNodeStateMachineTransition_y6y60"), "Start", "Armature|Pegando", SubResource("AnimationNodeStateMachineTransition_vmcrb"), "Armature|Pegando", "End", SubResource("AnimationNodeStateMachineTransition_teras"), "Start", "Armature|Interagindo", SubResource("AnimationNodeStateMachineTransition_8p516"), "Armature|Interagindo", "End", SubResource("AnimationNodeStateMachineTransition_fvoow"), "Start", "Armature|Cortar", SubResource("AnimationNodeStateMachineTransition_v5fqo"), "Armature|Cortar", "End", SubResource("AnimationNodeStateMachineTransition_yf17c"), "Start", "Armature|Minerar", SubResource("AnimationNodeStateMachineTransition_awd2i"), "Armature|Minerar", "End", SubResource("AnimationNodeStateMachineTransition_o2sks"), "Start", "Armature|Nadando", SubResource("AnimationNodeStateMachineTransition_ulo2v"), "Armature|Nadando", "End", SubResource("AnimationNodeStateMachineTransition_1iu4k")]
 graph_offset = Vector2(-211, -120)
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_avx33"]
+animation = &"Armature|Correr"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_u4y2r"]
 animation = &"Armature|Parado"
 
@@ -6414,21 +6418,27 @@ input_1/name = "state_1"
 input_1/auto_advance = false
 input_1/break_loop_at_end = false
 input_1/reset = true
+input_2/name = "state_2"
+input_2/auto_advance = false
+input_2/break_loop_at_end = false
+input_2/reset = true
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_g4v7s"]
-graph_offset = Vector2(-466.14725, 108.57199)
+graph_offset = Vector2(-909.80023, 56.211624)
 nodes/output/position = Vector2(500, 100)
 nodes/Parado/node = SubResource("AnimationNodeAnimation_u4y2r")
 nodes/Parado/position = Vector2(-278.62112, 63.378708)
 nodes/Andar/node = SubResource("AnimationNodeAnimation_5v66d")
-nodes/Andar/position = Vector2(-280, 240)
+nodes/Andar/position = Vector2(-500, 200)
 nodes/locomotion/node = SubResource("AnimationNodeTransition_vp15a")
 nodes/locomotion/position = Vector2(20.578876, 93.078705)
 nodes/attack_shot/node = SubResource("AnimationNodeOneShot_tbv6f")
 nodes/attack_shot/position = Vector2(300, 100)
 nodes/AttacksCombo/node = SubResource("AnimationNodeStateMachine_3rw25")
 nodes/AttacksCombo/position = Vector2(-20, 360)
-node_connections = [&"output", 0, &"attack_shot", &"locomotion", 0, &"Parado", &"locomotion", 1, &"Andar", &"attack_shot", 0, &"locomotion", &"attack_shot", 1, &"AttacksCombo"]
+nodes/Correr/node = SubResource("AnimationNodeAnimation_avx33")
+nodes/Correr/position = Vector2(-280, 300)
+node_connections = [&"output", 0, &"attack_shot", &"locomotion", 0, &"Parado", &"locomotion", 1, &"Andar", &"locomotion", 2, &"Correr", &"attack_shot", 0, &"locomotion", &"attack_shot", 1, &"AttacksCombo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qidb7"]
 render_priority = 0

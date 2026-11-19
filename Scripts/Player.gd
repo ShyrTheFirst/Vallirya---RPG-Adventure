@@ -22,7 +22,6 @@ var base_player_speed: float = 5.5
 @onready var fire_effect: GPUParticles3D = $FireEffect
 @onready var frost_effect: GPUParticles3D = $FrostEffect
 
-
 # Identificação e Atributos Base
 var player_name: String = "Aventureiro"
 var stat_str: int = 5
@@ -32,6 +31,7 @@ var stat_int: int = 5
 
 # Atributos Derivados e Status
 var speed: float = 5.5
+var is_running: bool = false
 @export var jump_velocity: float = 4.8
 var max_hp: int = 150
 var hp: int = 150
@@ -45,14 +45,13 @@ var attack_damage: int = 19
 var magic_damage: int = 10
 var defense: int = 5
 var bonus_defense: int = 0
-var evasion: float = 5.0 # Porcentagem (máx 40.0%)
+var evasion: float = 5.0
 
 var attack_cooldown_time: float = 0.45
 
 # --- SISTEMA DE MISSÕES (QUESTS) ---
-var active_quests: Dictionary = {} # q_id -> {"current_amount": int, "is_completed": bool}
-var completed_quests: Array = []   # Lista de IDs completos
 var client_active_quests: Array = [] # Lista formatada para HUD
+var completed_quests: Array = []     # Lista de IDs completos
 var quest_board_ui_scene = preload("res://Scenes/UI/QuestBoardUI.tscn")
 var active_board_ui: Control = null
 
@@ -65,7 +64,6 @@ var ui_quest_panel: PanelContainer = null
 var ui_quest_list_container: VBoxContainer = null
 var ui_mastery_panel: PanelContainer = null
 var ui_mastery_list_container: VBoxContainer = null
-
 
 # --- EQUIPAMENTOS ATIVOS ---
 var equipped_items: Dictionary = {
@@ -80,15 +78,18 @@ var current_weapon_mesh_path: String = ""
 const INVENTORY_CAPACITY: int = 32
 var inventory_items: Array = []
 
+@export var WAREHOUSE_CAPACITY: int = 4096
+var warehouse_items: Array = []
+
 # UI do Baú e Coleta
 var ui_chest_panel: PanelContainer = null
 var ui_chest_list_vbox: VBoxContainer = null
 var active_chest_ref: Node3D = null
 
 @export_category("Ferramentas de Coleta (Meshes)")
-@export var axe_tool_mesh: PackedScene # Arraste a cena/mesh do Machado de Lenhador aqui no Inspetor!
-@export var pickaxe_tool_mesh: PackedScene # Arraste a cena/mesh da Picareta aqui no Inspetor!
-@export var gather_cooldown_duration: float = 30.0 # Tempo de espera (30s) entre coletas
+@export var axe_tool_mesh: PackedScene
+@export var pickaxe_tool_mesh: PackedScene
+@export var gather_cooldown_duration: float = 30.0
 var gather_cooldown_timer: float = 0.0
 var is_gathering_locked: bool = false
 
@@ -109,7 +110,7 @@ var combo_reset_timer: float = 0.0
 var is_targeting_spell: bool = false
 var pending_spell_id: int = -1
 var active_spell_decal: Node3D = null
-var spell_decal_scene = preload("res://Scenes/SpellDecal.tscn") 
+var spell_decal_scene = preload("res://Scenes/VFX/SpellDecal.tscn") 
 
 # Animações e passos
 var current_locomotion_state: String = ""
@@ -138,7 +139,7 @@ var attacks_playback: AnimationNodeStateMachinePlayback
 @onready var levelup_audio: AudioStreamPlayer3D = get_node_or_null("LevelUpAudio")
 @onready var levelup_beam: MeshInstance3D = get_node_or_null("LevelUpBeam")
 
-var floating_damage_scene = preload("res://Scenes/FloatingDamage.tscn")
+var floating_damage_scene = preload("res://Scenes/VFX/FloatingDamage.tscn")
 var death_screen_layer: CanvasLayer = null
 var hud_layer: CanvasLayer = null
 
@@ -186,9 +187,8 @@ var active_equipment_slot: String = ""
 @onready var right_hand_bone: BoneAttachment3D = get_node_or_null("Personagem (IK)/Armature/Skeleton3D/RightHand")
 @onready var torch_light: OmniLight3D = $TorchLight
 
-# --- CONTROLE DE REGENERAÇÃO E COMBATE ---
 var out_of_combat_timer: float = 0.0
-const COMBAT_COOLDOWN_DURATION: float = 10.0 # 10 segundos sem combate para regenerar
+const COMBAT_COOLDOWN_DURATION: float = 10.0
 var regen_tick_timer: float = 0.0
 
 func _init() -> void:
@@ -196,11 +196,9 @@ func _init() -> void:
 
 func _ready() -> void:
 	add_to_group("Player")
-	
-	# 1. Cria a HUD primeiro para todos os painéis e botões existirem na memória
 	setup_local_hud()
+	warehouse_items.resize(WAREHOUSE_CAPACITY)
 
-	# 2. Depois carrega o save do herói (os botões já estão prontos para receber os ícones)
 	if "current_player_name" in LevelManager and LevelManager.current_player_name != "":
 		player_name = LevelManager.current_player_name
 		load_player_save(player_name)
@@ -237,23 +235,34 @@ func _ready() -> void:
 		name_label.modulate = Color(0.4, 0.9, 1.0)
 
 func recalculate_derived_stats() -> void:
-	var old_max_hp = max_hp
-	max_hp = 100 + (player_level * 15) + (stat_vit * 12) + bonus_hp
-	max_mana = 80 + (player_level * 10) + (stat_int * 15) + bonus_mana
-	attack_damage = 10 + (player_level * 2) + int(stat_str * 1.5)
-	magic_damage = 12 + (player_level * 2) + int(stat_int * 2.0)
-	defense = 4 + int(stat_vit * 0.8) + bonus_defense
-	speed = clamp(5.5 + (stat_agi * 0.05), 5.5, 12.0)
-	evasion = min(40.0, 3.0 + (stat_agi * 0.02))
-	attack_cooldown_time = clamp(0.5 - (stat_agi * 0.012), 0.22, 0.55)
+	# Reseta os bônus derivados para calcular do zero com base nos atributos base + equipamentos
+	var base_atk = stat_str * 2 # Exemplo do seu cálculo de força
+	var base_def = stat_vit * 1
+	
+	var eq_atk = 0
+	var eq_def = 0
+	var eq_hp = 0
+	var eq_mana = 0
 
-	if max_hp > old_max_hp and hp > 0:
-		hp += (max_hp - old_max_hp)
+	for slot_key in equipped_items.keys():
+		var eq_item: ItemData = equipped_items[slot_key]
+		if eq_item:
+			eq_atk += int(eq_item.bonus_attack)
+			eq_def += int(eq_item.bonus_defense)
+			eq_hp += int(eq_item.bonus_hp)
+			eq_mana += int(eq_item.bonus_mana)
+
+	attack_damage = base_atk + eq_atk
+	defense = base_def + eq_def
+	max_hp = 100 + (stat_vit * 10) + eq_hp
+	max_mana = 100 + (stat_int * 10) + eq_mana
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dead:
 		return
-	
+	if event.is_action_pressed("Correr"):
+		is_running = not is_running
+
 	if skill_manager and skill_manager.is_targeting_spell:
 		if event is InputEventMouseButton and event.pressed:
 			if event.button_index == MOUSE_BUTTON_LEFT:
@@ -308,7 +317,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func try_cast_spell(skill_id: SkillData) -> void:
 	if skill_manager:
 		skill_manager.try_cast(skill_id)
-		
 
 func try_perform_local_attack() -> void:
 	if spell_cast_lockout > 0.0 or (skill_manager and skill_manager.is_targeting_spell):
@@ -386,11 +394,9 @@ func _physics_process(delta: float) -> void:
 		if combo_reset_timer <= 0.0:
 			combo_step = 1
 	
-	# Controla o tempo fora de combate
 	if out_of_combat_timer > 0.0:
 		out_of_combat_timer -= delta
 	else:
-		# Fora de combate! Aplica a regeneração natural a cada 1 segundo
 		regen_tick_timer += delta
 		if regen_tick_timer >= 1.0:
 			regen_tick_timer = 0.0
@@ -400,7 +406,10 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var move_vec = Input.get_vector("Esquerda", "Direita", "Frente", "Costas")
+	var is_moving: bool = move_vec.length() > 0.1 and is_on_floor()
 	var wants_jump = Input.is_action_just_pressed("Pular") and is_on_floor()
+	
+	var current_move_speed = speed * 1.7 if (is_running and is_moving) else speed
 
 	if wants_jump:
 		velocity.y = jump_velocity
@@ -412,12 +421,11 @@ func _physics_process(delta: float) -> void:
 
 	var local_dir = Vector3(move_vec.x, 0, move_vec.y).normalized()
 	var world_dir = global_transform.basis * local_dir
-	velocity.x = world_dir.x * speed
-	velocity.z = world_dir.z * speed
+	velocity.x = world_dir.x * current_move_speed
+	velocity.z = world_dir.z * current_move_speed
 
 	move_and_slide()
 	
-	# Atualiza status negativos no player
 	if active_player_status != "":
 		player_status_timer -= delta
 		player_status_tick -= delta
@@ -425,9 +433,6 @@ func _physics_process(delta: float) -> void:
 			player_status_tick = 1.0
 			hp = max(0, hp - player_status_damage)
 			show_damage_effect(player_status_damage, hp)
-			if hp <= 0:
-				# Dispara a lógica de morte existente no player
-				pass
 		if player_status_timer <= 0.0:
 			remove_player_status()
 
@@ -438,7 +443,15 @@ func update_client_visuals(delta: float) -> void:
 	var move_vec = Input.get_vector("Esquerda", "Direita", "Frente", "Costas")
 	var is_moving: bool = move_vec.length() > 0.1 and is_on_floor()
 
-	var target_state: String = "state_1" if is_moving else "state_0"
+	var target_state: String = "state_1"
+	if is_moving:
+		if is_running:
+			target_state = "state_2"
+		else:
+			target_state = "state_1"
+	else:
+		target_state = "state_0"
+
 	if current_locomotion_state != target_state:
 		current_locomotion_state = target_state
 		anim_tree.set("parameters/locomotion/transition_request", target_state)
@@ -452,8 +465,6 @@ func update_client_visuals(delta: float) -> void:
 				step_audio.play()
 	else:
 		step_timer = 0.05
-
-# --- PROGRESSÃO E EXPERIÊNCIA ---
 
 func add_experience(amount: int) -> void:
 	current_xp += amount
@@ -620,16 +631,13 @@ func rpc_player_respawn(pos: Vector3, new_hp: int, new_mp: int) -> void:
 	hp = new_hp
 	mana = new_mp
 	
-	# --- BUSCA INTELIGENTE DO SPAWNPOINT ---
 	var current_scene = get_tree().current_scene
 	var spawn_node = current_scene.find_child("SpawnPoint", true, false)
 	
 	if spawn_node and spawn_node is Node3D:
 		global_position = spawn_node.global_position
 	else:
-		# Fallback caso o SpawnPoint não seja encontrado no mapa atual
 		global_position = pos if pos != Vector3.ZERO else Vector3(0, 1, 0)
-	# ----------------------------------------
 
 	visible = true
 	collision_shape.set_deferred("disabled", false)
@@ -667,8 +675,6 @@ func hide_death_ui() -> void:
 		death_screen_layer.queue_free()
 		death_screen_layer = null
 
-# --- INTERFACES LOCAIS (HUD, ATRIBUTOS, STATUS, INVENTÁRIO E EQUIPAMENTOS) ---
-
 func setup_local_hud() -> void:
 	if hud_layer:
 		hud_layer.queue_free()
@@ -676,7 +682,6 @@ func setup_local_hud() -> void:
 	hud_layer = CanvasLayer.new()
 	add_child(hud_layer)
 
-	# 1. BARRA DE XP (Inferior Esquerdo)
 	var hud_box = VBoxContainer.new()
 	hud_box.custom_minimum_size = Vector2(300, 45)
 	hud_layer.add_child(hud_box)
@@ -688,7 +693,7 @@ func setup_local_hud() -> void:
 	hud_box.offset_right = 325
 
 	ui_level_label = Label.new()
-	ui_level_label.text = "Nível 1 (C: Atrib | I: Inv | Q: Quests)"
+	ui_level_label.text = "Nível 1 (C: Atrib | I: Inv | Q: Quests | B: Hab. | K: Maestria)"
 	ui_level_label.add_theme_font_size_override("font_size", 12)
 	hud_box.add_child(ui_level_label)
 
@@ -707,7 +712,6 @@ func setup_local_hud() -> void:
 	ui_xp_bar.add_theme_stylebox_override("fill", fill_style)
 	hud_box.add_child(ui_xp_bar)
 
-	# 2. PAINEL DE ATRIBUTOS
 	ui_attr_panel = PanelContainer.new()
 	ui_attr_panel.custom_minimum_size = Vector2(260, 200)
 	ui_attr_panel.visible = false
@@ -753,7 +757,6 @@ func setup_local_hud() -> void:
 	ui_btn_int = row_int.btn
 	p_box.add_child(row_int.container)
 
-	# 3. PAINEL DE STATUS DERIVADOS
 	ui_status_panel = PanelContainer.new()
 	ui_status_panel.custom_minimum_size = Vector2(260, 210)
 	ui_status_panel.visible = false
@@ -801,7 +804,6 @@ func setup_local_hud() -> void:
 	lbl_evasion_status.add_theme_font_size_override("font_size", 12)
 	s_box.add_child(lbl_evasion_status)
 
-	# 4. PAINEL DE INVENTÁRIO (32 SLOTS)
 	ui_inventory_panel = PanelContainer.new()
 	ui_inventory_panel.custom_minimum_size = Vector2(320, 320)
 	ui_inventory_panel.visible = false
@@ -832,7 +834,6 @@ func setup_local_hud() -> void:
 	ui_inv_grid.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(ui_inv_grid)
 
-	# --- NOVO: BOTÃO DE REORGANIZAR INVENTÁRIO ---
 	var btn_sort_inv = Button.new()
 	btn_sort_inv.text = "🔄 Reorganizar Itens"
 	btn_sort_inv.custom_minimum_size = Vector2(0, 28)
@@ -840,7 +841,6 @@ func setup_local_hud() -> void:
 	btn_sort_inv.pressed.connect(sort_and_compact_inventory)
 	inv_box.add_child(btn_sort_inv)
 
-	# 5. PAINEL DE EQUIPAMENTOS
 	ui_equipment_panel = PanelContainer.new()
 	ui_equipment_panel.custom_minimum_size = Vector2(320, 150)
 	ui_equipment_panel.visible = false
@@ -904,7 +904,6 @@ func setup_local_hud() -> void:
 		slot_vbox.add_child(slot_btn)
 		eq_grid.add_child(slot_vbox)
 
-	# 6. RASTREADOR DE MISSÕES (HUD Lateral Direito)
 	ui_quest_tracker = PanelContainer.new()
 	ui_quest_tracker.custom_minimum_size = Vector2(240, 90)
 	ui_quest_tracker.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -939,7 +938,6 @@ func setup_local_hud() -> void:
 	ui_quest_list_vbox.add_theme_constant_override("separation", 8)
 	tracker_main_vbox.add_child(ui_quest_list_vbox)
 
-	# 7. PAINEL DE DIÁLOGO (NPC / QUESTS)
 	ui_dialogue_panel = PanelContainer.new()
 	ui_dialogue_panel.custom_minimum_size = Vector2(500, 140)
 	ui_dialogue_panel.visible = false
@@ -979,7 +977,6 @@ func setup_local_hud() -> void:
 	ui_dialogue_close_btn.pressed.connect(close_dialogue_window)
 	d_hbox.add_child(ui_dialogue_close_btn)
 
-	# 8. PAINEL DE DIÁRIO DE MISSÕES (Atalho Q)
 	ui_quest_panel = PanelContainer.new()
 	ui_quest_panel.custom_minimum_size = Vector2(340, 380)
 	ui_quest_panel.visible = false
@@ -1010,7 +1007,6 @@ func setup_local_hud() -> void:
 	ui_quest_list_container.add_theme_constant_override("separation", 10)
 	q_scroll.add_child(ui_quest_list_container)
 	
-	# 9. PAINEL DE MAESTRIA DE PROFISSÕES (Atalho K)
 	ui_mastery_panel = PanelContainer.new()
 	ui_mastery_panel.custom_minimum_size = Vector2(360, 400)
 	ui_mastery_panel.visible = false
@@ -1042,7 +1038,6 @@ func setup_local_hud() -> void:
 	ui_mastery_list_container.add_theme_constant_override("separation", 10)
 	m_scroll.add_child(ui_mastery_list_container)
 	
-	# 10. MINI-UI DE SAQUE DO BAÚ
 	ui_chest_panel = PanelContainer.new()
 	ui_chest_panel.custom_minimum_size = Vector2(300, 260)
 	ui_chest_panel.visible = false
@@ -1093,7 +1088,6 @@ func setup_local_hud() -> void:
 	update_quest_tracker_ui()
 
 func add_item_to_inventory(item: ItemData, quantity: int = 1) -> bool:
-	print("[DEBUG] Item adicionado ao inventario : %s", item)
 	if not item or quantity <= 0:
 		return false
 
@@ -1102,7 +1096,7 @@ func add_item_to_inventory(item: ItemData, quantity: int = 1) -> bool:
 	if item.is_stackable:
 		for i in range(INVENTORY_CAPACITY):
 			var slot = inventory_items[i]
-			if slot != null and slot["item"].id == item.id:
+			if slot != null and slot is Dictionary and slot["item"].id == item.id:
 				var space_available = item.max_stack - slot["amount"]
 				if space_available > 0:
 					var to_add = min(remaining, space_available)
@@ -1150,6 +1144,18 @@ func populate_inventory_ui() -> void:
 			var amount: int = int(slot_data.get("amount", 1))
 
 			if item:
+				# Define a cor da borda com base na raridade (Comum não tem borda ou é neutra)
+				var rarity_color = Color.TRANSPARENT
+				match item.rarity:
+					ItemData.Rarity.UNCOMMON: rarity_color = Color(0.2, 0.8, 0.2)   # Verde
+					ItemData.Rarity.RARE: rarity_color = Color(0.2, 0.5, 1.0)       # Azul
+					ItemData.Rarity.EPIC: rarity_color = Color(0.6, 0.2, 0.8)       # Roxo
+					ItemData.Rarity.LEGENDARY: rarity_color = Color(1.0, 0.6, 0.1)  # Laranja amarelado
+
+				if rarity_color != Color.TRANSPARENT:
+					slot_style.border_color = rarity_color
+					slot_style.set_border_width_all(1) # Borda bem fina (1 pixel)
+
 				if "is_quest_item" in item and item.is_quest_item:
 					slot_style.border_color = Color(1.0, 0.82, 0.1, 1.0)
 					slot_style.set_border_width_all(2)
@@ -1175,9 +1181,7 @@ func populate_inventory_ui() -> void:
 		slot_btn.add_theme_stylebox_override("normal", slot_style)
 
 		var current_idx = i
-		# Conexão direta com debug no clique do inventário
 		slot_btn.pressed.connect(func():
-			print("[DEBUG INVENTÁRIO] Botão do slot ", current_idx, " foi clicado!")
 			_on_inventory_slot_clicked(current_idx, slot_btn)
 		)
 		slot_btn.mouse_entered.connect(func(): _show_item_tooltip(current_idx, slot_btn))
@@ -1210,23 +1214,19 @@ func create_item_3d_viewport(mesh_scene: PackedScene, item_data: ItemData = null
 	return icon_instance
 
 func _on_inventory_slot_clicked(slot_idx: int, _slot_node: Control) -> void:
-	print("[DEBUG INVENTÁRIO] Analisando clique no índice: ", slot_idx)
-	
 	if slot_idx < 0 or slot_idx >= inventory_items.size():
 		return
 
 	var slot_data = inventory_items[slot_idx]
 	if slot_data == null:
-		print("[DEBUG INVENTÁRIO] O slot ", slot_idx, " está VAZIO (null).")
 		return
 
 	var item: ItemData = slot_data.get("item", null)
 	if not item:
 		return
 
-	# Define exclusivamente o índice do inventário
 	selected_slot_index = slot_idx
-	active_equipment_slot = "" # Limpa o equipamento para evitar conflito
+	active_equipment_slot = ""
 
 	if not item_context_menu:
 		item_context_menu = PopupMenu.new()
@@ -1238,14 +1238,10 @@ func _on_inventory_slot_clicked(slot_idx: int, _slot_node: Control) -> void:
 	
 	if item.item_type == ItemData.ItemType.CONSUMABLE:
 		item_context_menu.add_item("Usar", 0)
-   
-		# Se for consumível de HP, permite atrelar ao Z
 		if item.bonus_hp > 0:
 			item_context_menu.add_item("Atribuir ao Atalho Z", 100)
-		# Se for consumível de Mana, permite atrelar ao X
 		elif item.bonus_mana > 0:
 			item_context_menu.add_item("Atribuir ao Atalho X", 101)
-
 	elif item.item_type in [ItemData.ItemType.WEAPON, ItemData.ItemType.ARMOR, ItemData.ItemType.HELM, ItemData.ItemType.BOOTS]:
 		item_context_menu.add_item("Equipar", 1)
 
@@ -1259,19 +1255,14 @@ func _on_inventory_slot_clicked(slot_idx: int, _slot_node: Control) -> void:
 	item_context_menu.popup()
 
 func _on_context_menu_item_selected(id: int) -> void:
-	print("[DIAGNÓSTICO] Menu acionado. ID: ", id, " | Inv Slot: ", selected_slot_index, " | Eq Slot: ", active_equipment_slot)
-
-	# Se for comando de desequipar (ID 10)
 	if id == 10 and active_equipment_slot != "":
 		unequip_item(active_equipment_slot)
 		active_equipment_slot = ""
 		_hide_item_tooltip()
 		return
 
-	# Se for comandos do inventário (Usar, Equipar, Descartar)
 	if selected_slot_index >= 0:
 		if selected_slot_index >= inventory_items.size() or inventory_items[selected_slot_index] == null:
-			print("[ERRO] Slot do inventário inválido ou vazio no momento da ação.")
 			return
 
 		var slot_data = inventory_items[selected_slot_index]
@@ -1286,18 +1277,16 @@ func _on_context_menu_item_selected(id: int) -> void:
 				equip_item_from_inventory(item, selected_slot_index)
 			2:
 				discard_item(selected_slot_index)
-			100: # Atribuir ao Atalho Z (Poção de HP)
+			100:
 				var hud = get_tree().current_scene.find_child("HUD", true, false)
 				if hud and hud.has_method("assign_potion_to_slot"):
 					hud.assign_potion_to_slot("hp", item)
-					print("[PLAYER] Poção de HP atribuída ao atalho Z: ", item.name)
 				_hide_item_tooltip()
 				return
-			101: # Atribuir ao Atalho X (Poção de Mana)
+			101:
 				var hud = get_tree().current_scene.find_child("HUD", true, false)
 				if hud and hud.has_method("assign_potion_to_slot"):
 					hud.assign_potion_to_slot("mp", item)
-					print("[PLAYER] Poção de MP atribuída ao atalho X: ", item.name)
 				_hide_item_tooltip()
 				return
 
@@ -1306,14 +1295,11 @@ func _on_context_menu_item_selected(id: int) -> void:
 	_hide_item_tooltip()
 
 func equip_item_from_inventory(item: ItemData, slot_idx: int) -> void:
-	print("[DIAGNÓSTICO EQUIPAR] Tentando equipar: ", item.name, " do slot inventário: ", slot_idx)
 	if not item or slot_idx < 0 or slot_idx >= INVENTORY_CAPACITY:
-		print("[ERRO EQUIPAR] Parâmetros inválidos.")
 		return
 
 	var slot_data = inventory_items[slot_idx]
 	if slot_data != null and slot_data.get("amount", 1) > 1:
-		print("[EQUIPAR] Separe o item antes de equipar!")
 		return
 
 	var target_slot_key = ""
@@ -1323,60 +1309,43 @@ func equip_item_from_inventory(item: ItemData, slot_idx: int) -> void:
 		ItemData.ItemType.HELM: target_slot_key = "helm"
 		ItemData.ItemType.BOOTS: target_slot_key = "boots"
 
-	print("[DIAGNÓSTICO EQUIPAR] Slot de destino mapeado: ", target_slot_key)
 	if target_slot_key == "":
-		print("[ERRO EQUIPAR] Tipo de item desconhecido para equipamento.")
 		return
 
+	# Se já houver um item equipado neste slot, devolvemos ele para o inventário
 	var old_item: ItemData = equipped_items.get(target_slot_key, null)
 	if old_item:
-		print("[DIAGNÓSTICO EQUIPAR] Substituindo item antigo: ", old_item.name)
-		attack_damage -= old_item.bonus_attack
-		defense -= old_item.bonus_defense
-		bonus_hp -= old_item.bonus_hp
-		bonus_mana -= old_item.bonus_mana
+		equipped_items[target_slot_key] = null
 		inventory_items[slot_idx] = {"item": old_item, "amount": 1}
 	else:
-		print("[DIAGNÓSTICO EQUIPAR] Slot de destino estava vazio. Liberando inventário no slot: ", slot_idx)
 		inventory_items[slot_idx] = null
 
+	# Equipa o novo item
 	equipped_items[target_slot_key] = item
-	attack_damage += item.bonus_attack
-	defense += item.bonus_defense
-	bonus_hp += item.bonus_hp
-	bonus_mana += item.bonus_mana
 
 	if target_slot_key == "weapon":
 		current_weapon_mesh_path = item.mesh_scene.resource_path if item.mesh_scene else ""
 		update_hand_visual(item.mesh_scene)
 
 	update_equipment_slot_visual(target_slot_key, item)
-	recalculate_derived_stats()
+	recalculate_derived_stats() # Recalcula considerando todos os itens em 'equipped_items'
 	update_inventory_display()
 	update_hud_display()
-	print("[DIAGNÓSTICO EQUIPAR] Sucesso! Item equipado com êxito.")
 
 func unequip_item(slot_key: String) -> bool:
 	if not equipped_items.has(slot_key) or equipped_items[slot_key] == null:
-		print("[DEBUG] Tentou desequipar slot vazio ou inexistente: ", slot_key)
 		return false
 
 	var item: ItemData = equipped_items[slot_key]
-	print("[DEBUG] Iniciando desequipamento do item: ", item.name, " do slot: ", slot_key)
-
-	# Tenta adicionar o item de volta ao inventário
 	var success = add_item_to_inventory(item, 1)
 	if not success:
-		print("[ERRO] Falha ao desequipar: Inventário cheio ou incapaz de receber o item!")
 		return false
 
-	# Remove os bônus
 	attack_damage -= item.bonus_attack
 	defense -= item.bonus_defense
 	bonus_hp -= item.bonus_hp
 	bonus_mana -= item.bonus_mana
 
-	# Limpa o equipamento ativo
 	equipped_items[slot_key] = null
 
 	if slot_key == "weapon":
@@ -1387,18 +1356,14 @@ func unequip_item(slot_key: String) -> bool:
 	update_equipment_slot_visual(slot_key, null)
 	update_inventory_display()
 	update_hud_display()
-	
-	print("[EQUIPAMENTOS] Item desequipado com sucesso e transferido para o inventário!")
 	return true
 
 func _on_equipment_slot_clicked(slot_key: String) -> void:
-	print("[DEBUG] Slot de equipamento clicado: ", slot_key)
 	if not equipped_items.has(slot_key) or equipped_items[slot_key] == null:
-		print("[DEBUG] Slot está vazio!")
 		return
 
 	active_equipment_slot = slot_key
-	selected_slot_index = -1 # Reseta o inventário para evitar conflito
+	selected_slot_index = -1
 
 	if not item_context_menu:
 		item_context_menu = PopupMenu.new()
@@ -1407,33 +1372,26 @@ func _on_equipment_slot_clicked(slot_key: String) -> void:
 		hud_layer.add_child(item_context_menu)
 
 	item_context_menu.clear()
-	item_context_menu.add_item("Desequipar", 10) # ID 10 exclusivo para desequipar
+	item_context_menu.add_item("Desequipar", 10)
 
 	item_context_menu.position = Vector2i(get_viewport().get_mouse_position())
 	item_context_menu.reset_size()
 	item_context_menu.popup()
 
-func _on_equipment_menu_selected(_id: int) -> void:
-	pass
-
 func use_consumable(item: ItemData, slot_idx: int) -> void:
 	if not item:
 		return
 
-	# 1. Aplica o efeito usando as funções especializadas (que já disparam animação e texto flutuante)
 	if item.bonus_hp > 0:
 		heal(item.bonus_hp, item)
-	
 	if item.bonus_mana > 0:
 		restore_mana(item.bonus_mana, item)
 
-	# 2. Reduz a quantidade no inventário do player
 	if inventory_items[slot_idx] != null:
 		inventory_items[slot_idx]["amount"] -= 1
 		if inventory_items[slot_idx]["amount"] <= 0:
 			inventory_items[slot_idx] = null
 
-	# 3. Atualiza as exibições na tela
 	recalculate_derived_stats()
 	update_hud_display()
 	update_inventory_display()
@@ -1487,6 +1445,30 @@ func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 	title.modulate = Color(1.0, 0.85, 0.2)
 	vbox.add_child(title)
 
+	# --- ADICIONA A RARIDADE COLORIDA NA DESCRIÇÃO ---
+	var rarity_text = "Comum"
+	var rarity_color = Color(0.8, 0.8, 0.8)
+	match item.rarity:
+		ItemData.Rarity.UNCOMMON:
+			rarity_text = "Incomum"
+			rarity_color = Color(0.2, 0.8, 0.2)
+		ItemData.Rarity.RARE:
+			rarity_text = "Raro"
+			rarity_color = Color(0.2, 0.5, 1.0)
+		ItemData.Rarity.EPIC:
+			rarity_text = "Épico"
+			rarity_color = Color(0.6, 0.2, 0.8)
+		ItemData.Rarity.LEGENDARY:
+			rarity_text = "Lendário"
+			rarity_color = Color(1.0, 0.6, 0.1)
+
+	var rarity_lbl = Label.new()
+	rarity_lbl.text = "Qualidade: %s" % rarity_text
+	rarity_lbl.modulate = rarity_color
+	rarity_lbl.add_theme_font_size_override("font_size", 11)
+	vbox.add_child(rarity_lbl)
+	# -----------------------------------------------
+
 	var desc = Label.new()
 	desc.text = item.description
 	desc.add_theme_font_size_override("font_size", 11)
@@ -1516,7 +1498,7 @@ func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 	var slot_pos = slot_node.global_position
 	var screen_size = get_viewport().get_visible_rect().size
 	if slot_pos.x > screen_size.x - 350:
-		item_tooltip_panel.position = slot_pos + Vector2(-280, 0) # Abre à esquerda
+		item_tooltip_panel.position = slot_pos + Vector2(-280, 0)
 	else:
 		item_tooltip_panel.position = slot_node.global_position + Vector2(65, 0)
 
@@ -1526,8 +1508,6 @@ func _hide_item_tooltip() -> void:
 
 func update_inventory_display() -> void:
 	populate_inventory_ui()
-
-# --- AUXILIARES E INTERFACE DE STATUS ---
 
 func create_stat_row(title: String, stat_key: String) -> Dictionary:
 	var hbox = HBoxContainer.new()
@@ -1603,7 +1583,6 @@ func update_hud_display() -> void:
 	ui_btn_vit.disabled = not can_spend
 	ui_btn_int.disabled = not can_spend
 
-# No Player.gd, atualize a função update_hand_visual:
 func update_hand_visual(mesh_scene: PackedScene, custom_scale: Vector3 = Vector3(0.01, 0.01, 0.01), keep_scene_transform: bool = false) -> void:
 	if not right_hand_bone:
 		return
@@ -1621,23 +1600,19 @@ func update_hand_visual(mesh_scene: PackedScene, custom_scale: Vector3 = Vector3
 			item_instance.position = Vector3.ZERO
 
 func discard_item(slot_idx: int) -> void:
-	print("[DIAGNÓSTICO DESCARTAR] Tentando descartar do slot: ", slot_idx)
 	if slot_idx < 0 or slot_idx >= INVENTORY_CAPACITY or inventory_items[slot_idx] == null:
-		print("[ERRO DESCARTAR] Slot inválido ou vazio.")
 		return
 
 	var slot_data = inventory_items[slot_idx]
 	var item_to_drop: ItemData = slot_data["item"]
 	
 	if not item_to_drop is ItemData or ("is_quest_item" in item_to_drop and item_to_drop.is_quest_item):
-		print("[INVENTÁRIO] Descarte de item de missão impedido!")
 		return
 
 	slot_data["amount"] -= 1
 	if slot_data["amount"] <= 0:
 		inventory_items[slot_idx] = null
 
-	print("[DIAGNÓSTICO DESCARTAR] Item descartado com sucesso do slot: ", slot_idx)
 	update_inventory_display()
 
 func open_dialogue_window(npc_title: String, text: String) -> void:
@@ -1664,7 +1639,6 @@ func toggle_quest_window() -> void:
 	ui_quest_panel.visible = is_Visible
 	
 	if is_Visible:
-		# POPULA O DIÁRIO COM AS MISSÕES ATIVAS ASSIM QUE ELE ABRE!
 		populate_quest_log_ui()
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
@@ -1703,7 +1677,6 @@ func load_player_save(username: String) -> void:
 	if not lm and get_tree().current_scene:
 		lm = get_tree().current_scene.find_child("LevelManager", true, false)
 	
-	# Carrega o mapa salvo se ainda não houver mapa instanciado na cena OU se for diferente do atual
 	if lm and (not is_instance_valid(lm.current_map_instance) or lm.current_map_key != saved_map):
 		lm.load_map_into_container(saved_map, "SpawnPoint", lm.is_new_game)
 
@@ -1729,28 +1702,98 @@ func load_player_save(username: String) -> void:
 			var res_path = str(entry.get("path", ""))
 			var amt = int(entry.get("amount", 1))
 			if res_path != "" and ResourceLoader.exists(res_path):
+				var base_item = load(res_path) as ItemData
+				var loaded_item = base_item.duplicate() # Duplica para não corromper o .tres original
+				
+				# Restaura os dados salvos do item dinâmico
+				if entry.has("rarity"):
+					loaded_item.rarity = int(entry.get("rarity", 0))
+				if entry.has("bonus_attack"):
+					loaded_item.bonus_attack = int(entry.get("bonus_attack", loaded_item.bonus_attack))
+				if entry.has("bonus_defense"):
+					loaded_item.bonus_defense = int(entry.get("bonus_defense", loaded_item.bonus_defense))
+				if entry.has("bonus_hp"):
+					loaded_item.bonus_hp = int(entry.get("bonus_hp", loaded_item.bonus_hp))
+				if entry.has("bonus_mana"):
+					loaded_item.bonus_mana = int(entry.get("bonus_mana", loaded_item.bonus_mana))
+				if entry.has("level") and "level" in loaded_item:
+					loaded_item.level = int(entry.get("level", 1))
+				
 				inventory_items[i] = {
-					"item": load(res_path),
+					"item": loaded_item,
+					"amount": amt
+				}
+	
+	var wh_data = json_data.get("warehouse", []) as Array
+	warehouse_items.clear()
+	warehouse_items.resize(WAREHOUSE_CAPACITY)
+	for i in range(min(wh_data.size(), WAREHOUSE_CAPACITY)):
+		var entry = wh_data[i]
+		if entry is Dictionary and entry.has("path"):
+			var res_path = str(entry.get("path", ""))
+			var amt = int(entry.get("amount", 1))
+			if res_path != "" and ResourceLoader.exists(res_path):
+				var base_item = load(res_path) as ItemData
+				var loaded_item = base_item.duplicate()
+				
+				if entry.has("rarity"): loaded_item.rarity = int(entry.get("rarity", 0))
+				if entry.has("bonus_attack"): loaded_item.bonus_attack = int(entry.get("bonus_attack", 0))
+				if entry.has("bonus_defense"): loaded_item.bonus_defense = int(entry.get("bonus_defense", 0))
+				if entry.has("bonus_hp"): loaded_item.bonus_hp = int(entry.get("bonus_hp", 0))
+				if entry.has("bonus_mana"): loaded_item.bonus_mana = int(entry.get("bonus_mana", 0))
+				
+				warehouse_items[i] = {
+					"item": loaded_item,
 					"amount": amt
 				}
 	
 	if json_data.has("skills_data") and skill_manager:
 		skill_manager.load_saved_data(json_data["skills_data"])
 
-	# Limpa os equipamentos antes de carregar para evitar sobreposição de bônus ou referências fantasmas
 	for k in equipped_items.keys():
 		equipped_items[k] = null
 
 	var eq_data = json_data.get("equipment", {}) as Dictionary
 	for slot_key in ["helm", "armor", "boots", "weapon"]:
-		var eq_path = str(eq_data.get(slot_key, ""))
+		var eq_entry = eq_data.get(slot_key, null)
+		
+		# Compatibilidade retroativa caso o save antigo fosse apenas uma String (path)
+		var eq_path = ""
+		var saved_rarity = 0
+		var saved_atk = 0
+		var saved_def = 0
+		var saved_hp = 0
+		var saved_mana = 0
+		var saved_lvl = 1
+		
+		if eq_entry is Dictionary:
+			eq_path = str(eq_entry.get("path", ""))
+			saved_rarity = int(eq_entry.get("rarity", 0))
+			saved_atk = int(eq_entry.get("bonus_attack", 0))
+			saved_def = int(eq_entry.get("bonus_defense", 0))
+			saved_hp = int(eq_entry.get("bonus_hp", 0))
+			saved_mana = int(eq_entry.get("bonus_mana", 0))
+			saved_lvl = int(eq_entry.get("level", 1))
+		elif eq_entry is String:
+			eq_path = eq_entry
+
 		if eq_path != "" and ResourceLoader.exists(eq_path):
-			var item: ItemData = load(eq_path)
-			equipped_items[slot_key] = item
-			attack_damage += item.bonus_attack
-			defense += item.bonus_defense
-			bonus_hp += item.bonus_hp
-			bonus_mana += item.bonus_mana
+			var base_item = load(eq_path) as ItemData
+			var loaded_item = base_item.duplicate() # Duplica para preservar dados customizados
+			
+			if eq_entry is Dictionary:
+				loaded_item.rarity = saved_rarity
+				if saved_atk > 0: loaded_item.bonus_attack = saved_atk
+				if saved_def > 0: loaded_item.bonus_defense = saved_def
+				if saved_hp > 0: loaded_item.bonus_hp = saved_hp
+				if saved_mana > 0: loaded_item.bonus_mana = saved_mana
+				if "level" in loaded_item: loaded_item.level = saved_lvl
+			
+			equipped_items[slot_key] = loaded_item
+			attack_damage += loaded_item.bonus_attack
+			defense += loaded_item.bonus_defense
+			bonus_hp += loaded_item.bonus_hp
+			bonus_mana += loaded_item.bonus_mana
 
 	current_weapon_mesh_path = str(json_data.get("weapon_mesh_path", ""))
 	if current_weapon_mesh_path == "" and equipped_items.get("weapon") != null:
@@ -1762,7 +1805,6 @@ func load_player_save(username: String) -> void:
 	if raw_active is Array:
 		client_active_quests = raw_active
 	elif raw_active is Dictionary:
-		# Se veio salvo como Dicionário (ex: {}), converte os valores para Array ou limpa
 		client_active_quests = raw_active.values()
 	else:
 		client_active_quests = []
@@ -1774,32 +1816,19 @@ func load_player_save(username: String) -> void:
 		completed_quests = raw_completed.keys()
 	else:
 		completed_quests = []
-	
-	active_quests.clear()
-	for q in client_active_quests:
-		var qid = q.get("id", "")
-		if qid != "":
-			active_quests[qid] = {
-				"title": q.get("title", ""),
-				"description": q.get("description", ""),
-				"current": q.get("current", 0),
-				"required": q.get("required", 1),
-				"completed": q.get("completed", false)
-			}
 
 	recalculate_derived_stats()
 	hp = max_hp
 	mana = max_mana
+	
+	if has_node("/root/QuestManager"):
+		QuestManager.sync_main_story_progress(self)
 	
 	update_hud_display()
 	update_inventory_display()
 	update_quest_tracker_ui()
 	populate_quest_log_ui()
 
-	if has_node("/root/QuestManager"):
-		QuestManager.load_quest_board_data_from_json(json_data)
-	
-	# Garante a atualização visual correta de cada slot de equipamento ao iniciar o jogo
 	for slot_key in ["helm", "armor", "boots", "weapon"]:
 		var item: ItemData = equipped_items.get(slot_key, null)
 		if item:
@@ -1827,9 +1856,21 @@ func save_player_account() -> void:
 	var serialized_inventory: Array = []
 	for slot in inventory_items:
 		if slot != null and slot is Dictionary and slot.get("item") is ItemData:
+			var item_data: ItemData = slot["item"]
+			var path = item_data.resource_path
+			if path == "" and "id" in item_data and item_data.id != "":
+				path = "res://Resources/Items/%s.tres" % item_data.id
+				
 			serialized_inventory.append({
-				"path": slot["item"].resource_path,
-				"amount": slot.get("amount", 1)
+				"path": path,
+				"amount": slot.get("amount", 1),
+				# Salva as propriedades dinâmicas do item encantado/craftado:
+				"rarity": int(item_data.rarity),
+				"bonus_attack": item_data.bonus_attack,
+				"bonus_defense": item_data.bonus_defense,
+				"bonus_hp": item_data.bonus_hp,
+				"bonus_mana": item_data.bonus_mana,
+				"level": item_data.level if "level" in item_data else 1
 			})
 		else:
 			serialized_inventory.append(null)
@@ -1837,10 +1878,43 @@ func save_player_account() -> void:
 	var serialized_equipment: Dictionary = {}
 	for slot_key in equipped_items.keys():
 		var eq_item = equipped_items[slot_key]
-		if eq_item is ItemData and eq_item.resource_path != "":
-			serialized_equipment[slot_key] = eq_item.resource_path
+		if eq_item is ItemData:
+			var path = eq_item.resource_path
+			if path == "" and "id" in eq_item and eq_item.id != "":
+				path = "res://Resources/Items/%s.tres" % eq_item.id
+				
+			serialized_equipment[slot_key] = {
+				"path": path,
+				"rarity": int(eq_item.rarity),
+				"bonus_attack": eq_item.bonus_attack,
+				"bonus_defense": eq_item.bonus_defense,
+				"bonus_hp": eq_item.bonus_hp,
+				"bonus_mana": eq_item.bonus_mana,
+				"level": eq_item.level if "level" in eq_item else 1
+			}
 		else:
-			serialized_equipment[slot_key] = ""
+			serialized_equipment[slot_key] = null
+	
+	var serialized_warehouse: Array = []
+	for slot in warehouse_items:
+		if slot != null and slot is Dictionary and slot.get("item") is ItemData:
+			var item_data: ItemData = slot["item"]
+			var path = item_data.resource_path
+			if path == "" and "id" in item_data and item_data.id != "":
+				path = "res://Resources/Items/%s.tres" % item_data.id
+				
+			serialized_warehouse.append({
+				"path": path,
+				"amount": slot.get("amount", 1),
+				"rarity": int(item_data.rarity),
+				"bonus_attack": item_data.bonus_attack,
+				"bonus_defense": item_data.bonus_defense,
+				"bonus_hp": item_data.bonus_hp,
+				"bonus_mana": item_data.bonus_mana,
+				"level": item_data.level if "level" in item_data else 1
+			})
+		else:
+			serialized_warehouse.append(null)
 
 	var lm = get_node_or_null("/root/LevelManager")
 	if not lm and get_tree().current_scene:
@@ -1873,18 +1947,14 @@ func save_player_account() -> void:
 		"equipped_potions": hud_ref.equipped_potion_items if hud_ref else {},
 		"skills_data": skill_manager.get_save_data() if skill_manager else {},
 		"equipment_data": equipment_manager.get_save_data() if equipment_manager else {},
-		"current_map": lm.current_map_key if lm else "ilha_inicial"
+		"current_map": lm.current_map_key if lm else "ilha_inicial",
+		"warehouse": serialized_warehouse
 	}
-	print("HUD : ", hud_ref)
-	print("pocoes : ", hud_ref.equipped_potion_items)
-	if has_node("/root/QuestManager"):
-		QuestManager.save_quest_board_data(player_name, account_data)
 
 	var write_file = FileAccess.open(file_path, FileAccess.WRITE)
 	if write_file:
 		write_file.store_string(JSON.stringify(account_data, "\t"))
 		write_file.close()
-		print("[SAVE] Progresso, inventário e missões salvos para o herói: ", player_name)
 
 func update_quest_tracker_ui() -> void:
 	if not ui_quest_list_vbox or not ui_quest_tracker:
@@ -1901,14 +1971,14 @@ func update_quest_tracker_ui() -> void:
 
 	for q in client_active_quests:
 		var q_title: String = q.get("title", "Missão")
-		var target_name: String = q.get("target_enemy", "Inimigo")
 		var cur: int = int(q.get("current", 0))
-		var req: int = int(q.get("required", 1))
+		var target_ids: Array = q.get("target_ids", [])
+		var req: int = max(int(q.get("required", 1)), target_ids.size())
 		var is_done: bool = bool(q.get("completed", false))
 
 		var quest_entry_box = VBoxContainer.new()
 		quest_entry_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		quest_entry_box.add_theme_constant_override("separation", 1)
+		quest_entry_box.add_theme_constant_override("separation", 2)
 
 		var lbl_title = Label.new()
 		lbl_title.text = "• %s" % q_title
@@ -1916,23 +1986,36 @@ func update_quest_tracker_ui() -> void:
 		lbl_title.modulate = Color(1.0, 0.85, 0.3) if q.get("is_main_story", false) else Color(0.95, 0.95, 0.95)
 		quest_entry_box.add_child(lbl_title)
 
-		var lbl_progress = Label.new()
-		lbl_progress.add_theme_font_size_override("font_size", 10)
-
 		if is_done:
-			lbl_progress.text = "   Pronta para entregar!"
-			lbl_progress.modulate = Color(0.3, 1.0, 0.4)
+			var lbl_done = Label.new()
+			lbl_done.add_theme_font_size_override("font_size", 10)
+			lbl_done.text = "    Pronta para entregar!"
+			lbl_done.modulate = Color(0.3, 1.0, 0.4)
+			quest_entry_box.add_child(lbl_done)
+		elif target_ids.size() > 1:
+			var talked_list: Array = q.get("talked_npcs", [])
+			for t_id in target_ids:
+				var lbl_step = Label.new()
+				lbl_step.add_theme_font_size_override("font_size", 10)
+				var step_done: bool = t_id in talked_list
+				var step_val: int = 1 if step_done else 0
+				lbl_step.text = "    %s: %d / 1" % [str(t_id).capitalize(), step_val]
+				lbl_step.modulate = Color(0.3, 1.0, 0.4) if step_done else Color(0.8, 0.8, 0.8)
+				quest_entry_box.add_child(lbl_step)
 		else:
-			# Mostra claramente o objetivo (ex: Matar Orc: 0/10)
-			lbl_progress.text = "   %s: %d / %d" % [target_name, cur, req]
+			var lbl_progress = Label.new()
+			lbl_progress.add_theme_font_size_override("font_size", 10)
+			var target_name = target_ids[0] if not target_ids.is_empty() else "Objetivo"
+			if target_name.begins_with("res://"):
+				target_name = target_name.get_file().get_basename()
+			lbl_progress.text = "    %s: %d / %d" % [target_name, cur, req]
 			lbl_progress.modulate = Color(0.8, 0.8, 0.8)
+			quest_entry_box.add_child(lbl_progress)
 
-		quest_entry_box.add_child(lbl_progress)
 		ui_quest_list_vbox.add_child(quest_entry_box)
 
 func populate_quest_log_ui() -> void:
 	if not ui_quest_list_container:
-		print("[ERRO] ui_quest_list_container não encontrado!")
 		return
 
 	for child in ui_quest_list_container.get_children():
@@ -1951,15 +2034,13 @@ func populate_quest_log_ui() -> void:
 		box.add_theme_constant_override("separation", 4)
 		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		
-		# Título da Missão
 		var title_lbl = Label.new()
-		var prefix = "⭐ [Principal] " if q.get("is_main_story", false) else "📜 [Caçada] "
+		var prefix = "⭐ " if q.get("is_main_story", false) else "📜 "
 		title_lbl.text = "%s%s" % [prefix, q.get("title", "Missão")]
 		title_lbl.modulate = Color(1.0, 0.85, 0.3) if q.get("is_main_story", false) else Color(0.9, 0.9, 0.9)
 		title_lbl.add_theme_font_size_override("font_size", 13)
 		box.add_child(title_lbl)
 
-		# Descrição detalhada
 		var desc_lbl = Label.new()
 		desc_lbl.text = q.get("description", "Complete o objetivo indicado.")
 		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1968,23 +2049,37 @@ func populate_quest_log_ui() -> void:
 		desc_lbl.modulate = Color(0.8, 0.8, 0.8)
 		box.add_child(desc_lbl)
 
-		var target_name = q.get("target_enemy", "Alvo")
-		var cur = int(q.get("current", 0))
-		var req = int(q.get("required", 1))
-		var is_done = bool(q.get("completed", false))
+		var target_ids: Array = q.get("target_ids", [])
+		var cur: int = int(q.get("current", 0))
+		var req: int = max(int(q.get("required", 1)), target_ids.size())
+		var is_done: bool = bool(q.get("completed", false))
 
-		# Status do progresso
-		var prog_lbl = Label.new()
 		if is_done:
-			prog_lbl.text = "   Status: Concluído! Pronto para entregar."
+			var prog_lbl = Label.new()
+			prog_lbl.text = "    Status: Concluído! Pronto para entregar."
 			prog_lbl.modulate = Color(0.3, 1.0, 0.4)
+			prog_lbl.add_theme_font_size_override("font_size", 11)
+			box.add_child(prog_lbl)
+		elif target_ids.size() > 1:
+			var talked_list: Array = q.get("talked_npcs", [])
+			for t_id in target_ids:
+				var step_lbl = Label.new()
+				var step_done: bool = t_id in talked_list
+				var step_val: int = 1 if step_done else 0
+				step_lbl.text = "    • %s: %d / 1" % [str(t_id).capitalize(), step_val]
+				step_lbl.modulate = Color(0.3, 1.0, 0.4) if step_done else Color(1.0, 0.6, 0.2)
+				step_lbl.add_theme_font_size_override("font_size", 11)
+				box.add_child(step_lbl)
 		else:
-			prog_lbl.text = "   Progresso (%s): %d / %d" % [target_name, cur, req]
+			var prog_lbl = Label.new()
+			var target_name = target_ids[0] if not target_ids.is_empty() else "Alvo"
+			if target_name.begins_with("res://"):
+				target_name = target_name.get_file().get_basename()
+			prog_lbl.text = "    Progresso (%s): %d / %d" % [target_name, cur, req]
 			prog_lbl.modulate = Color(1.0, 0.6, 0.2)
-		prog_lbl.add_theme_font_size_override("font_size", 11)
-		box.add_child(prog_lbl)
+			prog_lbl.add_theme_font_size_override("font_size", 11)
+			box.add_child(prog_lbl)
 
-		# Linha separadora
 		var sep = HSeparator.new()
 		box.add_child(sep)
 
@@ -1996,21 +2091,14 @@ func _exit_tree() -> void:
 func check_torch_status(delta: float) -> void:
 	if not torch_light: return
 	
-	# Como o nó Cycle está na Main, subimos para o root e procuramos por ele
 	var main_node = get_tree().root.get_node_or_null("Main")
 	if not main_node: return
 	
 	var day_night_node = main_node.find_child("Cycle", true, false)
-	
 	if day_night_node:
-		# Se o seu script DayNightCycle tem a variável 'time_progress':
-		# O dia vai de 0.0 a 0.5 (aproximadamente), e a noite de 0.5 a 1.0.
 		var time_val = day_night_node.get("time_progress")
-		
 		if time_val != null:
-			# Se o tempo estiver na faixa da noite (ex: entre 0.55 e 0.95)
 			var is_night = (time_val >= 0.52 and time_val <= 0.98)
-			
 			if is_night:
 				torch_light.visible = true
 				torch_light.light_energy = move_toward(torch_light.light_energy, 1.2, delta * 2.0)
@@ -2019,7 +2107,6 @@ func check_torch_status(delta: float) -> void:
 				if torch_light.light_energy <= 0.05:
 					torch_light.visible = false
 
-# Função para curar o HP do player (usada por poções, magias de cura, etc.)
 func heal(amount: int, Potion: ItemData) -> void:
 	if is_dead: return 
 	hp = min(hp + amount, max_hp) 
@@ -2037,7 +2124,6 @@ func restore_mana(amount: int, Potion: ItemData) -> void:
 	update_hud_display()
 
 func play_drink_animation(potion_item: ItemData) -> void:
-	var _current_weapon: ItemData = equipped_items.get("weapon", null)
 	if potion_item.mesh_scene:
 		update_hand_visual(potion_item.mesh_scene, Vector3(0.1 , 0.1 , 0.1))
 
@@ -2056,7 +2142,6 @@ func play_drink_animation(potion_item: ItemData) -> void:
 	)
 
 func show_heal_effect(amount: int, type : String = "HP") -> void:
-	# Dispara o texto flutuante verde subindo do player (mesmo sistema do dano, mas em verde!)
 	var heal_lbl = floating_damage_scene.instantiate()
 	get_parent().add_child(heal_lbl)
 	heal_lbl.global_position = global_position + Vector3(0, 2.0, 0)
@@ -2082,7 +2167,6 @@ func play_spell_animation(anim_name: String) -> void:
 
 	if anim_tree:
 		anim_tree.set("parameters/attack_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
-		print("[PLAYER] Executando animação de magia: ", anim_name)
 
 func send_message_HUD(message : String, color : Color):
 	hud_ref.show_floating_message(message, color)
@@ -2121,7 +2205,6 @@ func populate_mastery_ui() -> void:
 		var type_box = VBoxContainer.new()
 		type_box.add_theme_constant_override("separation", 4)
 		
-		# Título da Categoria (Ex: Armadura, Elmo, Bota, etc.)
 		var type_title = Label.new()
 		type_title.text = "🛠️ Categoria: %s" % eq_type.capitalize()
 		type_title.add_theme_font_size_override("font_size", 13)
@@ -2153,21 +2236,18 @@ func populate_mastery_ui() -> void:
 		ui_mastery_list_container.add_child(type_box)
 		ui_mastery_list_container.add_child(sep)
 
-# --- SISTEMA DE COLETA (GATHERING) COM FERRAMENTA NA MÃO E COOLDOWN ---
 func gathering(item_data: ItemData, anim_name: String, tool_type: String = "auto", anim_duration: float = 0.5) -> bool:
 	if is_dead or not item_data:
 		return false
 
-	# 1. Trava Anti-Spam: Verifica se já está coletando ou se o cooldown (ex: 30s) ainda está rodando
 	if is_gathering_locked or gather_cooldown_timer > 0.0:
 		var wait_seconds = int(ceil(gather_cooldown_timer))
 		send_message_HUD("Aguarde %ds para coletar novamente!" % wait_seconds, Color(1.0, 0.6, 0.2))
 		return false
 
 	is_gathering_locked = true
-	gather_cooldown_timer = gather_cooldown_duration # Inicia a trava de 30 segundos!
+	gather_cooldown_timer = gather_cooldown_duration
 
-	# 2. Coloca o Machado ou Picareta na mão (igual à poção em play_drink_animation)
 	var tool_mesh: PackedScene = null
 	var anim_lower = anim_name.to_lower()
 	
@@ -2177,10 +2257,8 @@ func gathering(item_data: ItemData, anim_name: String, tool_type: String = "auto
 		tool_mesh = pickaxe_tool_mesh
 
 	if tool_mesh:
-		# Ajuste a escala Vector3(0.01, 0.01, 0.01) se o modelo da sua ferramenta for maior/menor
 		update_hand_visual(tool_mesh, Vector3(0.01, 0.01, 0.01), true)
 
-	# 3. Reproduz a animação de coleta
 	if attacks_playback and anim_name != "":
 		attacks_playback.start(anim_name)
 	if anim_tree and anim_name != "":
@@ -2188,35 +2266,28 @@ func gathering(item_data: ItemData, anim_name: String, tool_type: String = "auto
 
 	play_gathering_sound()
 
-	# 4. Aguarda a animação da ferramenta terminar para entregar o item e devolver a arma original!
 	get_tree().create_timer(anim_duration).timeout.connect(func():
 		is_gathering_locked = false
 		if is_dead:
 			return
 
-		# Devolve a arma equipada original para a mão direita
 		var active_weapon: ItemData = equipped_items.get("weapon", null)
 		if active_weapon and active_weapon.mesh_scene:
 			update_hand_visual(active_weapon.mesh_scene)
 		else:
 			update_hand_visual(null)
 
-		# Entrega o item no inventário no fim da animação
 		var added = add_item_to_inventory(item_data, 1)
 		if added:
-			print("[GATHERING] Item coletado com sucesso: %s" % item_data.name)
 			send_message_HUD("Coletado: %s" % item_data.name, Color(0.4, 1.0, 0.4))
 			save_player_account()
 		else:
-			print("[GATHERING] Inventário cheio!")
 			send_message_HUD("Inventário Cheio!", Color.RED)
 	)
 
 	return true
 
 func play_gathering_sound() -> void:
-	# Você pode criar um nó AudioStreamPlayer3D chamado 'GatherAudio' no Player, 
-	# ou usar o hit_audio / step_audio como fallback seguro:
 	var gather_audio = get_node_or_null("GatherAudio") as AudioStreamPlayer3D
 	if gather_audio and gather_audio.stream:
 		gather_audio.pitch_scale = randf_range(0.9, 1.1)
@@ -2230,39 +2301,38 @@ func apply_status_effect(effect_type: String, total_damage: int, duration: float
 	player_status_timer = duration
 	player_status_tick = 1.0
 	
-	# Distribui o dano em até 3 segundos (ou na duração informada)
 	var effective_duration = min(duration, 3.0)
 	player_status_damage = max(1, int(total_damage / effective_duration))
 	
 	match active_player_status:
 		"envenenamento":
 			send_message_HUD("Você foi envenenado!", Color.GREEN)
-			venom_effect.emiting = true
+			venom_effect.emitting = true
 		"queimadura":
 			send_message_HUD("Você está queimando!", Color.RED)
-			fire_effect.emiting = true
+			fire_effect.emitting = true
 		"congelamento", "lentidao":
 			speed = base_player_speed * 0.6
 			send_message_HUD("Velocidade reduzida!", Color.BLUE)
-			frost_effect.emiting = true
+			frost_effect.emitting = true
 
 func remove_player_status() -> void:
 	match active_player_status:
 		"congelamento", "lentidao":
 			speed = base_player_speed
-			frost_effect.emiting = false
+			frost_effect.emitting = false
 		"queimadura":
-			fire_effect.emiting = false
+			fire_effect.emitting = false
 		"envenenamento":
-			venom_effect.emiting = false
+			venom_effect.emitting = false
 	active_player_status = ""
 
 func apply_natural_regeneration() -> void:
 	if is_dead:
 		return
 		
-	var hp_gain = int(max_hp * 0.05) # 5% do HP total
-	var mana_gain = int(max_mana * 0.05) # 5% da Mana total
+	var hp_gain = int(max_hp * 0.05)
+	var mana_gain = int(max_mana * 0.05)
 	
 	if hp < max_hp:
 		hp = min(max_hp, hp + hp_gain)
@@ -2277,15 +2347,12 @@ func apply_natural_regeneration() -> void:
 			mana_bar.value = mana
 
 func trigger_combat_state() -> void:
-	# Chamado sempre que o player toma dano ou realiza uma ação ofensiva
 	out_of_combat_timer = COMBAT_COOLDOWN_DURATION
 	regen_tick_timer = 0.0
 
-# --- FUNÇÃO DE REORGANIZAR E COMPACTAR O INVENTÁRIO ---
 func sort_and_compact_inventory() -> void:
 	var valid_entries: Array = []
 
-	# 1. Junta pilhas de itens iguais que sejam stackáveis
 	for i in range(INVENTORY_CAPACITY):
 		var slot = inventory_items[i]
 		if slot != null and slot is Dictionary and slot.get("item") is ItemData:
@@ -2304,14 +2371,12 @@ func sort_and_compact_inventory() -> void:
 			if amt > 0:
 				valid_entries.append({"item": item, "amount": amt})
 
-	# 2. Ordena por Tipo de Item e depois por Ordem Alfabética
 	valid_entries.sort_custom(func(a, b):
 		if a["item"].item_type != b["item"].item_type:
 			return a["item"].item_type < b["item"].item_type
 		return a["item"].name < b["item"].name
 	)
 
-	# 3. Reescreve os 32 slots sem buracos vazios no meio
 	inventory_items.clear()
 	inventory_items.resize(INVENTORY_CAPACITY)
 	for i in range(valid_entries.size()):
@@ -2321,7 +2386,6 @@ func sort_and_compact_inventory() -> void:
 	save_player_account()
 	send_message_HUD("Inventário reorganizado!", Color(0.4, 0.9, 1.0))
 
-# --- FUNÇÕES DA MINI-UI DO BAÚ ---
 func open_chest_loot_window(chest: Node3D) -> void:
 	if not ui_chest_panel:
 		return
@@ -2347,7 +2411,12 @@ func _refresh_chest_ui() -> void:
 	var loot_list: Array = active_chest_ref.current_loot
 	if loot_list.is_empty():
 		close_chest_loot_window()
-		if active_chest_ref.interaction_prompt:
+		# Verificação de segurança para evitar o erro caso o baú não tenha a propriedade
+		if active_chest_ref and active_chest_ref.has_node("InteractionPrompt"):
+			var prompt = active_chest_ref.get_node("InteractionPrompt")
+			if prompt:
+				prompt.visible = false
+		elif active_chest_ref and "interaction_prompt" in active_chest_ref and active_chest_ref.interaction_prompt:
 			active_chest_ref.interaction_prompt.visible = false
 		return
 

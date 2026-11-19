@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://hsi2jw07latn"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_gatth"]
+
+[resource]
+script = ExtResource("1_gatth")
+quest_id = "main_story_3"
+title = "Praga Verde"
+description = "Derrote 10 Goblins Errantes"
+target_id = "Goblin Errante"
+required_amount = 10
+reward_xp = 320
+metadata/_custom_type_script = "uid://co3cscegp8qam"

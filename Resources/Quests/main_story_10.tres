@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://bbavxd2xc55l1"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_0qbtt"]
+
+[resource]
+script = ExtResource("1_0qbtt")
+quest_id = "main_story_10"
+title = "Fim dos Salteadores"
+description = "Derrote 25 Goblins Ladrões."
+target_id = "Goblin Ladrão"
+required_amount = 25
+reward_xp = 850
+metadata/_custom_type_script = "uid://co3cscegp8qam"

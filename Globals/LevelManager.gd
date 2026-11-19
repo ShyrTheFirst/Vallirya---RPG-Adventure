@@ -1,9 +1,12 @@
 extends Node
 
 const MAPS = {
-	"ilha_inicial": preload("res://Scenes/MapaInicial.tscn"),
-	"floresta": preload("res://Scenes/Mapa_02.tscn")
+	"ilha_inicial": preload("res://Scenes/Mapas/MapaInicial.tscn"),
+	"floresta": preload("res://Scenes/Mapas/Mapa_02.tscn"),
+	"BossGolem": preload("res://Scenes/Mapas/BossGolem.tscn"),
+	"BossLich": preload("res://Scenes/Mapas/BossArenaLich.tscn")
 }
+
 
 var current_map_instance: Node3D = null
 var current_map_key: String = "ilha_inicial"

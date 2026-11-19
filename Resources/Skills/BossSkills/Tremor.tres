@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BossSkillData" format=3 uid="uid://cg2o5otvbpd5n"]
 
-[ext_resource type="Script" uid="uid://cxtryt8hip3dn" path="res://Scripts/BossSkillData.gd" id="1_r3lan"]
+[ext_resource type="Script" uid="uid://cxtryt8hip3dn" path="res://Scripts/Monstros/BossSkillData.gd" id="1_r3lan"]
 [ext_resource type="PackedScene" uid="uid://uoy2ttkccdcg" path="res://Scenes/Skills/Tremor.tscn" id="2_4whre"]
 
 [resource]

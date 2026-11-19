@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://cf5mjapvui5hv"]
 
 [ext_resource type="Texture2D" uid="uid://biu8ptd4b4vcy" path="res://ASSETS/Pacote Modular Vallirya - Objetos/QuadroAvisos_0.png" id="1_1yyxu"]
-[ext_resource type="Script" uid="uid://m06i3s5eaaxt" path="res://Scripts/QuestBoardWorld.gd" id="1_kxw8q"]
+[ext_resource type="Script" uid="uid://m06i3s5eaaxt" path="res://Scripts/Quests/Questboard.gd" id="1_kxw8q"]
 [ext_resource type="Texture2D" uid="uid://dlvi028qkx6jd" path="res://ASSETS/Pacote Modular Vallirya - Objetos/QuadroAvisos_1.png" id="2_0ww1i"]
 [ext_resource type="Texture2D" uid="uid://ckd0nb2p8engb" path="res://ASSETS/Pacote Modular Vallirya - Objetos/QuadroAvisos_4.png" id="3_kxw8q"]
 [ext_resource type="Texture2D" uid="uid://bo7mgokshavxl" path="res://ASSETS/Pacote Modular Vallirya - Objetos/QuadroAvisos_5.png" id="4_5d1ru"]
@@ -173,12 +173,31 @@ size = Vector3(0.001, 0.012, 0.02)
 [sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
 radius = 1.1757057
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_0ww1i"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_w3oyt"]
 viewport_path = NodePath("InteractionPrompt/SubViewport")
 
-[node name="QuadroAvisos" type="StaticBody3D" unique_id=36560846]
-collision_layer = 2
-collision_mask = 9
+[sub_resource type="ViewportTexture" id="ViewportTexture_hrbg1"]
+viewport_path = NodePath("NameSprite/SubViewport")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ike01"]
+viewport_path = NodePath("QuestStatusIcon/SubViewport")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w3oyt"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8018705, 0.73837054, 0.67594296, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 8.0
+expand_margin_right = 8.0
+
+[node name="QuadroAvisos" type="CharacterBody3D" unique_id=1429822899]
 script = ExtResource("1_kxw8q")
 
 [node name="QuadroDeAvisos" type="MeshInstance3D" parent="." unique_id=2055309970]
@@ -198,10 +217,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0719942, 0)
 shape = SubResource("SphereShape3D_g4v7s")
 
 [node name="InteractionPrompt" type="Sprite3D" parent="." unique_id=1292258418]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2866678, 0)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1670117, 0)
 billboard = 1
-texture = SubResource("ViewportTexture_0ww1i")
+texture = SubResource("ViewportTexture_w3oyt")
 
 [node name="SubViewport" type="SubViewport" parent="InteractionPrompt" unique_id=822555782]
 transparent_bg = true
@@ -226,5 +244,57 @@ text = "'E'"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="body_entered" from="InteractionArea" to="." method="_on_player_entered"]
-[connection signal="body_exited" from="InteractionArea" to="." method="_on_player_exited"]
+[node name="NameSprite" type="Sprite3D" parent="." unique_id=1528035156]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1940508, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_hrbg1")
+
+[node name="SubViewport" type="SubViewport" parent="NameSprite" unique_id=1839779279]
+transparent_bg = true
+size = Vector2i(250, 50)
+
+[node name="Label" type="Label" parent="NameSprite/SubViewport" unique_id=1123986245]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -49.0
+offset_top = -13.5
+offset_right = 49.0
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("9_0ww1i")
+text = "NPC NAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuestStatusIcon" type="Sprite3D" parent="." unique_id=1401707915]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4557176, 0)
+billboard = 1
+texture = SubResource("ViewportTexture_ike01")
+
+[node name="SubViewport" type="SubViewport" parent="QuestStatusIcon" unique_id=1964999316]
+transparent_bg = true
+size = Vector2i(50, 30)
+
+[node name="Label" type="Label" parent="QuestStatusIcon/SubViewport" unique_id=1312072267]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -13.5
+offset_top = -13.5
+offset_right = 13.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("9_0ww1i")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_w3oyt")
+text = "!"
+horizontal_alignment = 1
+vertical_alignment = 1

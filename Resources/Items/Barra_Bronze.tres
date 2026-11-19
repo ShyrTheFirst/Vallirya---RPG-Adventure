@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://5bswh4n461rt"]
 
 [ext_resource type="PackedScene" uid="uid://dums66q041xmg" path="res://Resources/MESH/Barra_Bronze.tscn" id="1_q4mmy"]
-[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/ItemData.gd" id="1_rmten"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_rmten"]
 
 [resource]
 script = ExtResource("1_rmten")

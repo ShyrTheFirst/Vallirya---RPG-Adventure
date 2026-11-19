@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://donv0g3fvawp6"]
 
-[ext_resource type="Script" uid="uid://dx5ap08h6cn3e" path="res://Scripts/WorldItem.gd" id="1_ji1af"]
+[ext_resource type="Script" uid="uid://dx5ap08h6cn3e" path="res://Scripts/Props/WorldItem.gd" id="1_ji1af"]
 [ext_resource type="AudioStream" uid="uid://durt51e5mci5r" path="res://ASSETS/SFX/Pickup_Gold_00.mp3" id="2_2dbi4"]
-[ext_resource type="Script" uid="uid://c0652qk2jkp0a" path="res://Scripts/ItemDropEffect.gd" id="3_ctlli"]
+[ext_resource type="Script" uid="uid://c0652qk2jkp0a" path="res://Scripts/Props/ItemDropEffect.gd" id="3_ctlli"]
 [ext_resource type="Shader" uid="uid://oi5m7628lven" path="res://ASSETS/VFX/Shaders/AuraWave.gdshader" id="4_ais02"]
 [ext_resource type="TubeTrailMesh" uid="uid://cody4qddgw135" path="res://ASSETS/VFX/TubeTrail.tres" id="4_e7yvy"]
 
@@ -108,7 +108,7 @@ script = ExtResource("3_ctlli")
 
 [node name="BeamParticles" type="GPUParticles3D" parent="ItemDropEffect" unique_id=1934169918]
 amount = 3
-lifetime = 0.09999999999999999
+lifetime = 0.1
 process_material = SubResource("ParticleProcessMaterial_e7yvy")
 draw_pass_1 = ExtResource("4_e7yvy")
 

@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://fn76k3ifu4r5"]
 
-[ext_resource type="Script" uid="uid://bdn7dotcte56j" path="res://Scripts/bau.gd" id="1_n3nk2"]
+[ext_resource type="Script" uid="uid://bdn7dotcte56j" path="res://Scripts/Props/bau.gd" id="1_n3nk2"]
 [ext_resource type="Texture2D" uid="uid://c1juog4d24h42" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_0.png" id="1_y26v4"]
 [ext_resource type="Texture2D" uid="uid://c0xotlib2ltcv" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_1.png" id="2_loy4a"]
 [ext_resource type="Texture2D" uid="uid://crs73vjwt18qq" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bau_Basico_4.png" id="3_n3nk2"]

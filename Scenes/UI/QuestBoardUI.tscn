@@ -1,19 +1,20 @@
 [gd_scene format=3 uid="uid://b2552ha48vf2m"]
 
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="1_driw8"]
-[ext_resource type="Script" uid="uid://cgmmaab6m4o5d" path="res://Scripts/QuestBoardUI.gd" id="2_jeytu"]
+[ext_resource type="Script" uid="uid://cgmmaab6m4o5d" path="res://Scripts/Quests/QuestBoardUI.gd" id="2_jeytu"]
 
 [node name="QuestBoardUI" type="PanelContainer" unique_id=1374102058]
-custom_minimum_size = Vector2(600, 500)
+custom_minimum_size = Vector2(750, 900)
+custom_maximum_size = Vector2(750, -1)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -250.0
-offset_right = 300.0
-offset_bottom = 250.0
+offset_left = -269.0
+offset_top = -350.0
+offset_right = 431.0
+offset_bottom = 350.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_driw8")
@@ -21,26 +22,39 @@ script = ExtResource("2_jeytu")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1049460777]
 layout_mode = 2
+theme_override_constants/separation = 40
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="VBoxContainer" unique_id=818572196]
 layout_mode = 2
 text = "Quadro de Missões"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="GridContainer" type="GridContainer" parent="VBoxContainer" unique_id=1165383284]
-custom_minimum_size = Vector2(50, 500)
+[node name="QuestTypeSelector" type="HBoxContainer" parent="VBoxContainer" unique_id=1995802484]
 layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=569783919]
-layout_mode = 2
+theme_override_constants/separation = 15
 alignment = 1
 
-[node name="BtnRefreshBoard" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1498925654]
+[node name="BtnPrincipais" type="Button" parent="VBoxContainer/QuestTypeSelector" unique_id=479316834]
 layout_mode = 2
-text = "  Renovar Mural  "
+text = "  Quests Urgentes  "
 
-[node name="BtnClose" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1943409820]
+[node name="BtnSecundarias" type="Button" parent="VBoxContainer/QuestTypeSelector" unique_id=430400506]
+layout_mode = 2
+text = "  Quests da Vila  "
+
+[node name="QuestsContainer" type="GridContainer" parent="VBoxContainer" unique_id=1165383284]
+custom_minimum_size = Vector2(50, 500)
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(25, 0)
+theme_override_constants/h_separation = 50
+theme_override_constants/v_separation = 50
+columns = 3
+
+[node name="BtnClose" type="Button" parent="VBoxContainer" unique_id=1943409820]
 layout_mode = 2
 text = "  Fechar Mural  "
 
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/BtnClose" to="." method="_on_btn_close_pressed"]
+[connection signal="pressed" from="VBoxContainer/BtnClose" to="." method="_on_btn_close_pressed"]

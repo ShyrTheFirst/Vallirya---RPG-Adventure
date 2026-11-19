@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://blx7keqbdkmli"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_swcng"]
+
+[resource]
+script = ExtResource("1_swcng")
+quest_id = "main_story_13"
+title = "Investigação Silenciosa"
+description = "Fale com a feiticeira Valeska sobre anomalias mágicas."
+quest_type = 2
+target_id = "feiticeira"
+required_amount = 1
+turn_in_npc_id = "feiticeira"
+reward_xp = 800
+metadata/_custom_type_script = "uid://co3cscegp8qam"

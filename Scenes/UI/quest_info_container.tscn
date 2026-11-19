@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cj058gqlg412g"]
+
+[ext_resource type="Script" uid="uid://0ehcuusys45n" path="res://Scripts/Quests/quest_info_container.gd" id="1_koqs3"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="2_5wkda"]
+
+[node name="QuestInfoContainer" type="PanelContainer" unique_id=718602956]
+custom_minimum_size = Vector2(200, 320)
+custom_maximum_size = Vector2(200, 320)
+theme = ExtResource("2_5wkda")
+script = ExtResource("1_koqs3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1302827997]
+custom_minimum_size = Vector2(200, 320)
+custom_maximum_size = Vector2(200, 320)
+layout_mode = 2
+theme = ExtResource("2_5wkda")
+
+[node name="QNameLabel" type="Label" parent="VBoxContainer" unique_id=1896286850]
+custom_minimum_size = Vector2(200, 30)
+custom_maximum_size = Vector2(200, 30)
+layout_mode = 2
+theme = ExtResource("2_5wkda")
+text = "Quest Name"
+
+[node name="QDescLabel" type="Label" parent="VBoxContainer" unique_id=37323076]
+custom_minimum_size = Vector2(200, 260)
+custom_maximum_size = Vector2(200, 260)
+layout_mode = 2
+theme = ExtResource("2_5wkda")
+text = "Quest description with lot of informations here that can fillup until this space down here, descriptions should have a lot of informations for the player!!!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="BtnTurnIn" type="Button" parent="VBoxContainer" unique_id=23623455]
+custom_minimum_size = Vector2(200, 36)
+custom_maximum_size = Vector2(200, 36)
+layout_mode = 2
+theme = ExtResource("2_5wkda")
+text = "Accept Quest"

@@ -1,10 +1,8 @@
 [gd_scene format=4 uid="uid://dxuvjxn7i6cmt"]
 
-[ext_resource type="Script" uid="uid://c4vmfpv1o2fr3" path="res://Scenes/NPCs/NpcValkor.gd" id="1_dop3h"]
+[ext_resource type="Script" uid="uid://c4vmfpv1o2fr3" path="res://Scripts/NPCs/NpcValkor.gd" id="1_dop3h"]
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="1_ry7po"]
-[ext_resource type="Resource" uid="uid://v18sy0j6h36f" path="res://Resources/Quests/Tutorial.tres" id="2_6jhx2"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="2_dop3h"]
-[ext_resource type="Resource" uid="uid://ciib15vt037p" path="res://Resources/Quests/Tutorial_2.tres" id="3_o7lnf"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="6_tom05"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2kuio"]
@@ -6233,13 +6231,14 @@ viewport_path = NodePath("NameSprite/SubViewport")
 [sub_resource type="ViewportTexture" id="ViewportTexture_q0rd4"]
 viewport_path = NodePath("InteractionPrompt/SubViewport")
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_6jhx2"]
+viewport_path = NodePath("QuestStatusIcon/SubViewport")
+
 [node name="NPCValkor" type="CharacterBody3D" unique_id=224469840]
 collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_dop3h")
-first_quest = ExtResource("2_6jhx2")
-second_quest = ExtResource("3_o7lnf")
-npc_id = "npc_valkor"
+npc_id = "Valkor"
 npc_name = "Valkor"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=332708498]
@@ -6647,5 +6646,32 @@ grow_vertical = 2
 size_flags_horizontal = 6
 theme = ExtResource("6_tom05")
 text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuestStatusIcon" type="Sprite3D" parent="." unique_id=861909516]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6227623, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_6jhx2")
+
+[node name="SubViewport" type="SubViewport" parent="QuestStatusIcon" unique_id=34668441]
+transparent_bg = true
+size = Vector2i(250, 50)
+
+[node name="Label" type="Label" parent="QuestStatusIcon/SubViewport" unique_id=450369307]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -51.5
+offset_top = -13.5
+offset_right = 51.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_tom05")
+text = "!"
 horizontal_alignment = 1
 vertical_alignment = 1

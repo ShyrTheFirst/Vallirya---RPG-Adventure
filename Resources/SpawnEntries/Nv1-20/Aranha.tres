@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="SpawnEntry" format=3 uid="uid://rnpfejbu7ai7"]
 
-[ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/SpawnEntry.gd" id="1_genay"]
-[ext_resource type="PackedScene" uid="uid://dfxluh22i38xf" path="res://Scenes/Aranha.tscn" id="1_wauas"]
+[ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/Monstros/SpawnEntry.gd" id="1_genay"]
+[ext_resource type="PackedScene" uid="uid://dfxluh22i38xf" path="res://Scenes/Monstros/Aranha.tscn" id="1_wauas"]
 
 [resource]
 script = ExtResource("1_genay")

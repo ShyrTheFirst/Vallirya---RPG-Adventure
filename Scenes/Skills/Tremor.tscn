@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://uoy2ttkccdcg"]
 
-[ext_resource type="Script" uid="uid://prcjdjagt6wn" path="res://Scripts/tremor.gd" id="1_cf65d"]
+[ext_resource type="Script" uid="uid://prcjdjagt6wn" path="res://Scripts/Skills/tremor.gd" id="1_cf65d"]
 [ext_resource type="ArrayMesh" uid="uid://c7lx8ri0ggngj" path="res://Resources/MESH/mineral_bronze.res" id="2_kca2j"]
 [ext_resource type="AudioStream" uid="uid://dj2assx31yuyq" path="res://ASSETS/SFX/Skills/Rock Wall 1.ogg" id="3_e84vi"]
 

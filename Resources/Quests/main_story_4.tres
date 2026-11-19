@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://bo6vbl7cd1kxi"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_flfdc"]
+
+[resource]
+script = ExtResource("1_flfdc")
+quest_id = "main_story_4"
+title = "Teias na Estrada"
+description = "Elimine 25 Aranhas da Bruma"
+target_id = "Aranha da Bruma"
+required_amount = 25
+reward_xp = 1150
+metadata/_custom_type_script = "uid://co3cscegp8qam"

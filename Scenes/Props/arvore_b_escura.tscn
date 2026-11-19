@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://cbc7ls1hk08d6"]
 
 [ext_resource type="Texture2D" uid="uid://d1dlvgxfhxkko" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_B_Escura_0.png" id="1_3ulut"]
-[ext_resource type="Script" uid="uid://cm422nunom8g7" path="res://Scripts/GatherableProp.gd" id="1_42mry"]
+[ext_resource type="Script" uid="uid://cm422nunom8g7" path="res://Scripts/Props/GatherableProp.gd" id="1_42mry"]
 [ext_resource type="Texture2D" uid="uid://3ex6fsc62pmc" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_B_Escura_1.png" id="2_42mry"]
 [ext_resource type="Resource" uid="uid://c1ydt6gaega5h" path="res://Resources/Items/Madeira.tres" id="2_aaxg7"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_0el3m"]

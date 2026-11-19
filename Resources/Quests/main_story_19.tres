@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://o5vmeafi5fal"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_cfvtq"]
+
+[resource]
+script = ExtResource("1_cfvtq")
+metadata/_custom_type_script = "uid://co3cscegp8qam"

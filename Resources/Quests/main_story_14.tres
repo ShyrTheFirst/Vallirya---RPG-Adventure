@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://12u7m4v660an"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_g0hte"]
+
+[resource]
+script = ExtResource("1_g0hte")
+quest_id = "main_story_14"
+title = "Preparo de Batalha"
+description = "Fale com o ferreiro Hakan para se equipar."
+quest_type = 2
+target_id = "ferreiro"
+required_amount = 1
+turn_in_npc_id = "ferreiro"
+reward_xp = 950
+metadata/_custom_type_script = "uid://co3cscegp8qam"

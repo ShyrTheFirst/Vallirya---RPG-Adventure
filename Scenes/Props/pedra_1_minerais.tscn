@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://bo4albhfrdlim"]
 
 [ext_resource type="Texture2D" uid="uid://cfdbw2sw1vtsd" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Pedra_1_Base_0.png" id="1_3bwoh"]
-[ext_resource type="Script" uid="uid://dm0y7yuwql7de" path="res://Scripts/MiningRock.gd" id="1_bwfpl"]
+[ext_resource type="Script" uid="uid://dm0y7yuwql7de" path="res://Scripts/Props/MiningRock.gd" id="1_bwfpl"]
 [ext_resource type="Resource" uid="uid://5bswh4n461rt" path="res://Resources/Items/Barra_Bronze.tres" id="2_8u1eu"]
 [ext_resource type="Texture2D" uid="uid://dw41ssunca72k" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Pedra_1_Base_1.png" id="2_bwfpl"]
 [ext_resource type="Resource" uid="uid://dtlngmsue0o5q" path="res://Resources/Items/Barra_Celestial.tres" id="3_6g1pf"]

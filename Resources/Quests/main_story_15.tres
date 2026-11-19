@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://biol48oyd24yc"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_2eb25"]
+
+[resource]
+script = ExtResource("1_2eb25")
+quest_id = "main_story_15"
+title = "O Despertar do Golem"
+description = "Derrote o Golem de Kalythra."
+target_id = "Golem de Kalythra"
+required_amount = 1
+turn_in_npc_id = "npc_inicial"
+reward_xp = 2100
+metadata/_custom_type_script = "uid://co3cscegp8qam"

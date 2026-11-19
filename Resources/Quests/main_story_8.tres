@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://cjry0050mlpob"]
+
+[ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_14vj0"]
+
+[resource]
+script = ExtResource("1_14vj0")
+quest_id = "main_story_8"
+title = "Ameaça na Fronteira"
+description = "Derrote 15 Orcs Veteranos."
+target_id = "Orc Veterano"
+required_amount = 15
+reward_xp = 500
+metadata/_custom_type_script = "uid://co3cscegp8qam"

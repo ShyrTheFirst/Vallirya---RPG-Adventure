@@ -109,6 +109,8 @@ func execute_station_craft(equipment_type: String, recipe_tier: int, base_item: 
 	# 3. Cria e bonifica o item
 	var crafted_item = base_item.duplicate() as ItemData
 	crafted_item.level = recipe_tier # Ajustado de 'item_level' para 'level'
+	if base_item.resource_path != "":
+		crafted_item.resource_path = base_item.resource_path
 	
 	# Converte a string da raridade para o Enum correspondente do seu ItemData
 	match selected_rarity:

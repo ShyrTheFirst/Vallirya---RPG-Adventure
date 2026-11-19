@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://b2pklf13r4hqo"]
 
-[ext_resource type="Script" uid="uid://cm422nunom8g7" path="res://Scripts/GatherableProp.gd" id="1_amtnc"]
+[ext_resource type="Script" uid="uid://cm422nunom8g7" path="res://Scripts/Props/GatherableProp.gd" id="1_amtnc"]
 [ext_resource type="Texture2D" uid="uid://cbolswqdtfp3f" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Galho_Arvore_0.png" id="1_l4yb6"]
 [ext_resource type="Texture2D" uid="uid://cuy1pij5mqh1u" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Galho_Arvore_1.png" id="2_amtnc"]
 [ext_resource type="Resource" uid="uid://dysj0flmc4vaa" path="res://Resources/Items/Galho.tres" id="2_t8c5f"]
