@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://72jbd52xwt1y" path="res://Resources/MESH/picareta.tscn" id="3_qidb7"]
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="4_1iu4k"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="5_m0x7a"]
+[ext_resource type="PackedScene" uid="uid://bjpxop65hwmx5" path="res://Scenes/NPCs/cavalo.tscn" id="6_qidb7"]
 [ext_resource type="AudioStream" uid="uid://durt51e5mci5r" path="res://ASSETS/SFX/Pickup_Gold_00.mp3" id="13_1iu4k"]
 [ext_resource type="Script" uid="uid://cqsffnwvjo0q2" path="res://Scripts/Skills/SkillManager.gd" id="13_miouo"]
 [ext_resource type="Script" uid="uid://w0obpvkma68s" path="res://Scripts/Skills/SkillData.gd" id="14_lslt6"]
@@ -6968,6 +6969,15 @@ bone_idx = 30
 transform = Transform3D(4.3971646e-05, 5.9735372e-05, 1.0000058, -0.1533451, 0.9881894, -5.2197596e-05, -0.9881738, -0.15333821, 5.4978573e-05, 0.0015829428, 0.0003522306, -0.007008837)
 bone_name = "Feet R"
 bone_idx = 35
+
+[node name="Body" type="BoneAttachment3D" parent="Personagem (IK)/Armature/Skeleton3D" unique_id=678652578]
+transform = Transform3D(1, 4.0017767e-11, 2.384067e-07, 2.3842236e-07, -1.19209275e-07, -0.9999998, -4.0017767e-11, 0.9999999, -1.2201447e-07, 4.973799e-14, -4.656613e-10, -0.002018022)
+bone_name = "Body"
+bone_idx = 9
+
+[node name="Cavalo2" parent="Personagem (IK)/Armature/Skeleton3D/Body" unique_id=1122511330 instance=ExtResource("6_qidb7")]
+transform = Transform3D(-5.3153445e-07, -5.683949e-10, 0.010000004, -1.8161916e-09, 0.010000002, 3.0378315e-13, -0.010000001, -1.816183e-09, -5.3153445e-07, 6.433421e-13, -0.015745034, 3.7539087e-09)
+visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Personagem (IK)" unique_id=1049801844]
 libraries/ = SubResource("AnimationLibrary_wxoq4")

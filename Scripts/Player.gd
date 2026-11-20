@@ -195,7 +195,15 @@ var selected_item_data: ItemData = null
 var active_inventory_slot: int = -1
 var active_equipment_slot: String = ""
 
-@onready var right_hand_bone: BoneAttachment3D = get_node_or_null("Personagem (IK)/Armature/Skeleton3D/RightHand")
+@onready var right_hand_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/RightHand"
+@onready var left_hand_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/LeftHand"
+@onready var head_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/Head"
+@onready var chest_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/Chest"
+@onready var torso_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/Torso"
+@onready var left_feet_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/LeftFeet"
+@onready var right_feet_bone: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/RightFeet"
+@onready var horse_place: BoneAttachment3D = $"Personagem (IK)/Armature/Skeleton3D/Body"
+
 @onready var torch_light: OmniLight3D = $TorchLight
 
 var out_of_combat_timer: float = 0.0
@@ -229,6 +237,9 @@ func _ready() -> void:
 
 	if anim_tree:
 		anim_tree.active = true
+	var player_col := get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if player_col:
+		player_col.disabled = false
 		attacks_playback = anim_tree.get("parameters/AttacksCombo/playback")
 
 	if slashes_container:
@@ -275,6 +286,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("Correr"):
 		is_running = not is_running
+		if is_mounted:
+			var player_run_speed: float = base_player_speed * 1.45
+			var horse_walk_speed: float = player_run_speed * 1.5
+			speed = horse_walk_speed * 2.0 if is_running else horse_walk_speed
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_J:
 			toggle_achievements_window()
@@ -1723,6 +1738,9 @@ func load_player_save(username: String) -> void:
 			if loaded_stats.has(key):
 				achievements_stats[key] = loaded_stats[key]
 
+	if bool(json_data.get("is_mounted", false)):
+		call_deferred("_restore_mounted_state")
+
 	player_level = int(json_data.get("level", 1))
 	current_xp = int(json_data.get("current_xp", 0))
 	required_xp = int(json_data.get("required_xp", 100))
@@ -2007,7 +2025,8 @@ func save_player_account() -> void:
 		"equipment_data": equipment_manager.get_save_data() if equipment_manager else {},
 		"current_map": lm.current_map_key if lm else "ilha_inicial",
 		"warehouse": serialized_warehouse,
-		"achievements_stats": achievements_stats
+		"achievements_stats": achievements_stats,
+		"is_mounted": is_mounted
 	}
 
 	_write_json_encrypted(file_path, account_data)
@@ -2611,3 +2630,104 @@ func _convert_coin_tier(source_id: String, target_path: String) -> void:
 	var target_item: ItemData = load(target_path)
 	if target_item and to_add > 0:
 		add_item_to_inventory(target_item, to_add)
+
+var is_mounted: bool = false
+var mounted_horse: Node3D = null
+
+func mount_horse(horse: Node3D) -> void:
+	if is_mounted or not is_instance_valid(horse):
+		return
+	is_mounted = true
+	mounted_horse = horse
+	if get_parent() and horse.get_parent() != get_parent():
+		horse.reparent(get_parent())
+	if "is_occupied" in horse:
+		horse.is_occupied = true
+	if "rider" in horse:
+		horse.rider = self
+	if anim_tree:
+		anim_tree.active = false
+	var player_col := get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if player_col:
+		player_col.disabled = true
+	# Velocidade de andar do cavalo = 1.5x velocidade de correr do player
+	# Velocidade de correr do cavalo = 2.0x velocidade de andar do cavalo
+	var player_run_speed: float = base_player_speed * 1.45
+	var horse_walk_speed: float = player_run_speed * 1.5
+	speed = horse_walk_speed * 2.0 if is_running else horse_walk_speed
+	global_position = horse.global_position + Vector3(0.0, 5.0, 0.0)
+
+func dismount_horse() -> void:
+	if not is_mounted:
+		return
+	var player_col := get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if player_col:
+		player_col.disabled = false
+	velocity = Vector3.ZERO
+	if is_instance_valid(mounted_horse):
+		global_position = mounted_horse.global_position + mounted_horse.global_transform.basis.x * 1.8 + Vector3(0.0, 3.0, 0.0)
+		if "is_occupied" in mounted_horse:
+			mounted_horse.is_occupied = false
+		if "rider" in mounted_horse:
+			mounted_horse.rider = null
+	is_mounted = false
+	mounted_horse = null
+	speed = base_player_speed
+	if anim_tree:
+		anim_tree.active = true
+
+func update_equipment_visuals(slot_key: String, mesh_scene: PackedScene) -> void:
+	var clear_bone := func(bone: Node) -> void:
+		if is_instance_valid(bone):
+			for c in bone.get_children():
+				c.queue_free()
+
+	match slot_key:
+		"helm":
+			var bone = get("head_bone")
+			clear_bone.call(bone)
+			if mesh_scene and is_instance_valid(bone):
+				bone.add_child(mesh_scene.instantiate())
+		"offhand":
+			var bone = get("left_hand_bone")
+			clear_bone.call(bone)
+			if mesh_scene and is_instance_valid(bone):
+				bone.add_child(mesh_scene.instantiate())
+		"armor":
+			var t_bone = get("torso_bone")
+			var c_bone = get("chest_bone")
+			clear_bone.call(t_bone)
+			clear_bone.call(c_bone)
+			if mesh_scene:
+				var inst = mesh_scene.instantiate()
+				var torso_part = inst.find_child("torso_part", true, false)
+				var chest_part = inst.find_child("chest_part", true, false)
+				if torso_part and is_instance_valid(t_bone):
+					torso_part.get_parent().remove_child(torso_part)
+					t_bone.add_child(torso_part)
+				if chest_part and is_instance_valid(c_bone):
+					chest_part.get_parent().remove_child(chest_part)
+					c_bone.add_child(chest_part)
+				inst.queue_free()
+		"boots":
+			var lf_bone = get("left_feet_bone")
+			var rf_bone = get("right_feet_bone")
+			clear_bone.call(lf_bone)
+			clear_bone.call(rf_bone)
+			if mesh_scene:
+				var inst = mesh_scene.instantiate()
+				var left_feet = inst.find_child("left_feet", true, false)
+				var right_feet = inst.find_child("right_feet", true, false)
+				if left_feet and is_instance_valid(lf_bone):
+					left_feet.get_parent().remove_child(left_feet)
+					lf_bone.add_child(left_feet)
+				if right_feet and is_instance_valid(rf_bone):
+					right_feet.get_parent().remove_child(right_feet)
+					rf_bone.add_child(right_feet)
+				inst.queue_free()
+
+func _restore_mounted_state() -> void:
+	await get_tree().process_frame
+	var horses = get_tree().get_nodes_in_group("PlayerHorse")
+	if horses.size() > 0 and is_instance_valid(horses[0]):
+		mount_horse(horses[0])

@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://dw7c32u240fcx" path="res://Resources/Items/Crafts/HP_poçao_pequena.tres" id="3_nry71"]
 [ext_resource type="Texture2D" uid="uid://gyb2tyn1u4se" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_2.png" id="3_t8a3s"]
 [ext_resource type="Resource" uid="uid://cn2dahrre3xf5" path="res://Resources/Items/Crafts/MP_poçao_pequena.tres" id="4_eaxnq"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="8_nsoou"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nted5"]
 size = Vector3(0.0098927505, 0.015000001, 0.00601767)
@@ -101,6 +102,12 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_6lxyv")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_nry71"]
+radius = 1.0377144
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_eaxnq"]
+viewport_path = NodePath("InteractionPrompt/SubViewport")
+
 [node name="MesaPentagrama" type="StaticBody3D" unique_id=36560846]
 collision_layer = 2
 collision_mask = 9
@@ -119,3 +126,39 @@ mesh = SubResource("ArrayMesh_ss1ry")
 [node name="Mesa" type="MeshInstance3D" parent="." unique_id=1143813689]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0, 0, 0)
 mesh = SubResource("ArrayMesh_kh5k2")
+
+[node name="InteractionArea" type="Area3D" parent="." unique_id=1266134642]
+collision_layer = 2
+collision_mask = 9
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=1992408449]
+shape = SubResource("SphereShape3D_nry71")
+
+[node name="InteractionPrompt" type="Sprite3D" parent="." unique_id=117685512]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3412869, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_eaxnq")
+
+[node name="SubViewport" type="SubViewport" parent="InteractionPrompt" unique_id=398925973]
+transparent_bg = true
+size = Vector2i(50, 30)
+
+[node name="Label" type="Label" parent="InteractionPrompt/SubViewport" unique_id=771140744]
+custom_maximum_size = Vector2(50, 50)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.5
+offset_top = -13.5
+offset_right = 7.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+theme = ExtResource("8_nsoou")
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="2_mt3as"]
 [ext_resource type="Texture2D" uid="uid://b4mvp38xle2gf" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Avançada_0.png" id="3_cr6r1"]
 [ext_resource type="Texture2D" uid="uid://dr6j55ixms2bg" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Avançada_1.png" id="4_c7bqo"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="5_mt3as"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g4v7s"]
 radius = 0.3
@@ -106,6 +107,12 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_s7ank")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_cr6r1"]
+radius = 1.0377144
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_c7bqo"]
+viewport_path = NodePath("InteractionPrompt/SubViewport")
+
 [node name="Bigorna_Avançada" type="StaticBody3D" unique_id=36560846]
 collision_layer = 2
 collision_mask = 9
@@ -127,3 +134,39 @@ shape = SubResource("SphereShape3D_yf5fn")
 [node name="Bigorna" type="MeshInstance3D" parent="." unique_id=121948275]
 transform = Transform3D(100, 0, 0, 0, -2.3841858e-05, 99.99999, 0, -99.99999, -2.3841858e-05, 0, 0.253, 0)
 mesh = SubResource("ArrayMesh_sg8hx")
+
+[node name="InteractionArea" type="Area3D" parent="." unique_id=429239058]
+collision_layer = 2
+collision_mask = 9
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=926584644]
+shape = SubResource("SphereShape3D_cr6r1")
+
+[node name="InteractionPrompt" type="Sprite3D" parent="." unique_id=579123956]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3412869, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_c7bqo")
+
+[node name="SubViewport" type="SubViewport" parent="InteractionPrompt" unique_id=731991887]
+transparent_bg = true
+size = Vector2i(50, 30)
+
+[node name="Label" type="Label" parent="InteractionPrompt/SubViewport" unique_id=669512136]
+custom_maximum_size = Vector2(50, 50)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.5
+offset_top = -13.5
+offset_right = 7.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+theme = ExtResource("5_mt3as")
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1
