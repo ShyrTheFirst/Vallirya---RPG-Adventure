@@ -12,6 +12,8 @@ const ACCOUNTS_DIR = "user://accounts/"
 @onready var character_list_container: VBoxContainer = $CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer/CharacterScrollContainer/CharacterListContainer
 
 var selected_character_name: String = ""
+var language_option_btn: OptionButton = null
+var language_label_node: Label = null
 
 func _ready() -> void:
 	_random_select_bgm()
@@ -26,8 +28,64 @@ func _ready() -> void:
 	if btn_new_character:
 		btn_new_character.pressed.connect(_on_btn_new_character_pressed)
 
+	_setup_language_selector()
+	LanguageManager.language_changed.connect(_on_language_changed)
+	_apply_menu_translations()
+
 	# Atualiza a lista de personagens salvos ao abrir o menu
 	refresh_character_list()
+
+func _setup_language_selector() -> void:
+	var vbox := $CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer
+	if not vbox:
+		return
+
+	var hbox := HBoxContainer.new()
+	hbox.alignment = BoxContainer.ALIGNMENT_END
+	hbox.add_theme_constant_override("separation", 8)
+
+	language_label_node = Label.new()
+	language_label_node.text = LanguageManager.tr_key("language_label", "Idioma:")
+	hbox.add_child(language_label_node)
+
+	language_option_btn = OptionButton.new()
+	language_option_btn.focus_mode = Control.FOCUS_NONE
+	var langs: Array[String] = LanguageManager.get_available_languages()
+	var selected_idx: int = 0
+	for i in range(langs.size()):
+		var code: String = langs[i]
+		language_option_btn.add_item(LanguageManager.get_language_display_name(code))
+		language_option_btn.set_item_metadata(i, code)
+		if code == LanguageManager.current_language:
+			selected_idx = i
+
+	language_option_btn.selected = selected_idx
+	language_option_btn.item_selected.connect(_on_language_selected)
+	hbox.add_child(language_option_btn)
+
+	vbox.add_child(hbox)
+	vbox.move_child(hbox, 0)
+
+func _on_language_selected(index: int) -> void:
+	if not language_option_btn:
+		return
+	var lang_code: String = str(language_option_btn.get_item_metadata(index))
+	LanguageManager.set_language(lang_code)
+
+func _on_language_changed(_new_lang: String) -> void:
+	_apply_menu_translations()
+	refresh_character_list()
+
+func _apply_menu_translations() -> void:
+	if language_label_node:
+		language_label_node.text = LanguageManager.tr_key("language_label", "Idioma:")
+	if line_edit_username:
+		line_edit_username.placeholder_text = LanguageManager.tr_key("menu_placeholder", "Nome do personagem")
+	if btn_new_character:
+		btn_new_character.text = LanguageManager.tr_key("menu_add_btn", "Adicionar Novo Personagem")
+	var title_label := get_node_or_null("CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer/Label")
+	if title_label and title_label is Label:
+		title_label.text = LanguageManager.tr_key("menu_title", "SELECIONAR PERSONAGEM")
 
 # Lê a pasta de saves e preenche a lista com os personagens existentes
 func refresh_character_list() -> void:

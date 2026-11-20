@@ -2,6 +2,7 @@ class_name TreasureChest
 extends StaticBody3D
 
 @export_category("Itens do Baú")
+@export var chest_id: String = "" # ID único para salvar quais itens já foram coletados
 @export var chest_items: Array[ItemData] = []
 @export var chest_quantities: Array[int] = [] # Opcional: quantidade de cada item no mesmo índice
 
@@ -30,11 +31,40 @@ func _ready() -> void:
 	for i in range(chest_items.size()):
 		if chest_items[i] != null:
 			var qtd = chest_quantities[i] if i < chest_quantities.size() and chest_quantities[i] > 0 else 1
-			current_loot.append({"item": chest_items[i], "amount": qtd})
+			current_loot.append({"item": chest_items[i], "amount": qtd, "slot_index": i})
+
+	call_deferred("_sync_loot_with_player")
 
 	if interaction_area:
 		interaction_area.body_entered.connect(_on_body_entered)
 		interaction_area.body_exited.connect(_on_body_exited)
+
+func _sync_loot_with_player() -> void:
+	if chest_id == "":
+		return
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player or not ("opened_chests" in player):
+		return
+	if not player.opened_chests.has(chest_id):
+		return
+
+	var collected_raw = player.opened_chests[chest_id]
+	if not (collected_raw is Array):
+		return
+
+	var collected_indices: Array = []
+	for idx_val in collected_raw:
+		collected_indices.append(int(idx_val))
+
+	for i in range(current_loot.size() - 1, -1, -1):
+		var s_idx: int = int(current_loot[i].get("slot_index", -1))
+		if s_idx in collected_indices:
+			current_loot.remove_at(i)
+
+	if current_loot.is_empty():
+		is_opened = true
+		if lid_mesh:
+			lid_mesh.rotation_degrees.x -= 65.0
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_instance_valid(player_in_range):

@@ -24,6 +24,14 @@ enum WeaponType { NONE, SWORD, STAFF, AXE }
 @export var is_stackable: bool = true
 @export var max_stack: int = 9999
 
+func get_translated_name() -> String:
+	var key_id: String = id if id != "" else name
+	return LanguageManager.tr_item_name(key_id, name)
+
+func get_translated_description() -> String:
+	var key_id: String = id if id != "" else name
+	return LanguageManager.tr_item_desc(key_id, description)
+
 # Atributos de combate
 @export var bonus_attack: int = 0
 @export var bonus_defense: int = 0

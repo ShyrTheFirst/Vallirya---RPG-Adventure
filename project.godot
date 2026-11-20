@@ -25,6 +25,7 @@ QuestManager="*uid://dastricacomjm"
 LevelManager="*uid://wt4370n57u57"
 AudioManager="*uid://cqysrcfjlu8jp"
 CraftManager="*uid://devokygwxxw5"
+LanguageManager="*res://Globals/LanguageManager.gd"
 
 [display]
 

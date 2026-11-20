@@ -52,8 +52,8 @@ func set_quest_offer(npc_title: String, message: String, quest_data: QuestData, 
 	if name_label: name_label.text = npc_title
 	if text_label: text_label.text = message
 	
-	if q_name_label: q_name_label.text = quest_data.title
-	if q_desc_label: q_desc_label.text = quest_data.description
+	if q_name_label: q_name_label.text = LanguageManager.tr_quest_title(quest_data.quest_id, quest_data.title)
+	if q_desc_label: q_desc_label.text = LanguageManager.tr_quest_desc(quest_data.quest_id, quest_data.description)
 	
 	if btn_deny:
 		btn_deny.visible = allow_deny

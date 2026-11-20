@@ -52,6 +52,7 @@ var attack_cooldown_time: float = 0.45
 # --- SISTEMA DE MISSÕES (QUESTS) ---
 var client_active_quests: Array = [] # Lista formatada para HUD
 var completed_quests: Array = []     # Lista de IDs completos
+var opened_chests: Dictionary = {}     # { "chest_id": [0, 1, ...] } índices de itens coletados
 var quest_board_ui_scene = preload("res://Scenes/UI/QuestBoardUI.tscn")
 var active_board_ui: Control = null
 
@@ -1928,6 +1929,8 @@ func load_player_save(username: String) -> void:
 		completed_quests = raw_completed.keys()
 	else:
 		completed_quests = []
+	var raw_chests = json_data.get("opened_chests", {})
+	opened_chests = raw_chests if raw_chests is Dictionary else {}
 
 	recalculate_derived_stats()
 	hp = max_hp
@@ -2052,6 +2055,7 @@ func save_player_account() -> void:
 		},
 		"client_active_quests": client_active_quests,
 		"completed_quests": completed_quests,
+		"opened_chests": opened_chests,
 		"equipped_skills": hud_ref.equipped_skill_slots if hud_ref else {},
 		"equipped_potions": hud_ref.equipped_potion_items if hud_ref else {},
 		"skills_data": skill_manager.get_save_data() if skill_manager else {},
@@ -2078,7 +2082,8 @@ func update_quest_tracker_ui() -> void:
 	ui_quest_tracker.visible = true
 
 	for q in client_active_quests:
-		var q_title: String = q.get("title", "Missão")
+		var q_id: String = str(q.get("id", ""))
+		var q_title: String = LanguageManager.tr_quest_title(q_id, q.get("title", "Missão"))
 		var cur: int = int(q.get("current", 0))
 		var target_ids: Array = q.get("target_ids", [])
 		var req: int = max(int(q.get("required", 1)), target_ids.size())
@@ -2097,7 +2102,7 @@ func update_quest_tracker_ui() -> void:
 		if is_done:
 			var lbl_done = Label.new()
 			lbl_done.add_theme_font_size_override("font_size", 10)
-			lbl_done.text = "    Pronta para entregar!"
+			lbl_done.text = "    " + LanguageManager.tr_key("quest_ready", "Pronta para entregar!")
 			lbl_done.modulate = Color(0.3, 1.0, 0.4)
 			quest_entry_box.add_child(lbl_done)
 		elif target_ids.size() > 1:
@@ -2131,7 +2136,7 @@ func populate_quest_log_ui() -> void:
 
 	if client_active_quests.is_empty():
 		var lbl_empty = Label.new()
-		lbl_empty.text = "Nenhuma missão registrada no momento."
+		lbl_empty.text = LanguageManager.tr_key("quest_empty", "Nenhuma missão registrada no momento.")
 		lbl_empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lbl_empty.modulate = Color(0.7, 0.7, 0.7)
 		ui_quest_list_container.add_child(lbl_empty)
@@ -2142,15 +2147,16 @@ func populate_quest_log_ui() -> void:
 		box.add_theme_constant_override("separation", 4)
 		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		
+		var q_id: String = str(q.get("id", ""))
 		var title_lbl = Label.new()
 		var prefix = "⭐ " if q.get("is_main_story", false) else "📜 "
-		title_lbl.text = "%s%s" % [prefix, q.get("title", "Missão")]
+		title_lbl.text = "%s%s" % [prefix, LanguageManager.tr_quest_title(q_id, q.get("title", "Missão"))]
 		title_lbl.modulate = Color(1.0, 0.85, 0.3) if q.get("is_main_story", false) else Color(0.9, 0.9, 0.9)
 		title_lbl.add_theme_font_size_override("font_size", 13)
 		box.add_child(title_lbl)
 
 		var desc_lbl = Label.new()
-		desc_lbl.text = q.get("description", "Complete o objetivo indicado.")
+		desc_lbl.text = LanguageManager.tr_quest_desc(q_id, q.get("description", "Complete o objetivo indicado."))
 		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		desc_lbl.custom_minimum_size = Vector2(280, 0)
 		desc_lbl.add_theme_font_size_override("font_size", 11)
@@ -2560,6 +2566,7 @@ func _take_chest_item(idx: int) -> void:
 	var entry = loot_list[idx]
 	if add_item_to_inventory(entry["item"], entry["amount"]):
 		send_message_HUD("Obtido: %s (x%d)" % [entry["item"].name, entry["amount"]], Color(0.4, 1.0, 0.4))
+		_register_chest_item_collected(active_chest_ref, int(entry.get("slot_index", -1)))
 		loot_list.remove_at(idx)
 		save_player_account()
 		_refresh_chest_ui()
@@ -2573,12 +2580,24 @@ func _on_chest_take_all_pressed() -> void:
 	for i in range(loot_list.size() - 1, -1, -1):
 		var entry = loot_list[i]
 		if add_item_to_inventory(entry["item"], entry["amount"]):
+			_register_chest_item_collected(active_chest_ref, int(entry.get("slot_index", -1)))
 			loot_list.remove_at(i)
 		else:
 			send_message_HUD("Inventário Cheio!", Color.RED)
 			break
 	save_player_account()
 	_refresh_chest_ui()
+
+func _register_chest_item_collected(chest: Node3D, slot_index: int) -> void:
+	if not is_instance_valid(chest) or slot_index < 0 or not ("chest_id" in chest):
+		return
+	var c_id: String = str(chest.chest_id)
+	if c_id == "":
+		return
+	if not opened_chests.has(c_id) or not (opened_chests[c_id] is Array):
+		opened_chests[c_id] = []
+	if not (slot_index in opened_chests[c_id]):
+		opened_chests[c_id].append(slot_index)
 
 var ui_achievements_panel: PanelContainer = null
 var ui_achievements_label: RichTextLabel = null
@@ -2596,6 +2615,9 @@ func toggle_achievements_window() -> void:
 		ui_achievements_panel = PanelContainer.new()
 		ui_achievements_panel.custom_minimum_size = Vector2(440, 380)
 		_apply_standard_window_style(ui_achievements_panel)
+		var theme_res := load("res://Assets/VFX/Themes/ValliryaTheme_Final.tres") as Theme
+		if theme_res:
+			ui_achievements_panel.theme = theme_res
 		_add_close_button_to_window(ui_achievements_panel, toggle_achievements_window)
 		var margin = MarginContainer.new()
 		margin.add_theme_constant_override("margin_left", 16)

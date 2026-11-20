@@ -33,10 +33,13 @@ func request_quit_game() -> void:
 
 	_quit_dialog = ConfirmationDialog.new()
 	_quit_dialog.process_mode = Node.PROCESS_MODE_ALWAYS
-	_quit_dialog.title = "Confirmar Saída"
-	_quit_dialog.dialog_text = "Tem certeza que deseja sair do jogo?"
-	_quit_dialog.ok_button_text = "Sair"
-	_quit_dialog.cancel_button_text = "Cancelar"
+	var theme_res := load("res://Assets/VFX/Themes/ValliryaTheme_Final.tres") as Theme
+	if theme_res:
+		_quit_dialog.theme = theme_res
+	_quit_dialog.title = LanguageManager.tr_key("quit_confirm_title", "Confirmar Saída")
+	_quit_dialog.dialog_text = LanguageManager.tr_key("quit_confirm_text", "Tem certeza que deseja sair do jogo?")
+	_quit_dialog.ok_button_text = LanguageManager.tr_key("quit_confirm_ok", "Sair")
+	_quit_dialog.cancel_button_text = LanguageManager.tr_key("quit_confirm_cancel", "Cancelar")
 	_quit_dialog.confirmed.connect(_on_quit_confirmed)
 	_quit_dialog.canceled.connect(_on_quit_canceled)
 	_quit_dialog.close_requested.connect(_on_quit_canceled)

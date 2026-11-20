@@ -282,13 +282,13 @@ transform = Transform3D(-0.9850884, 0, 0.17204869, 0, 1, 0, -0.17204869, 0, -0.9
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=676898569]
 
 [node name="GameLogo" type="TextureRect" parent="CanvasLayer" unique_id=424921425]
-custom_maximum_size = Vector2(256, 256)
+custom_maximum_size = Vector2(480, 270)
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -1000.0
-offset_right = 1000.0
-offset_bottom = 2000.0
+offset_left = -960.0
+offset_right = 960.0
+offset_bottom = 1080.0
 grow_horizontal = 2
 texture = ExtResource("8_0ncoa")
 
@@ -310,12 +310,6 @@ layout_mode = 2
 theme = ExtResource("9_4pyop")
 theme_override_constants/separation = 20
 alignment = 1
-
-[node name="TitleLabel" type="Label" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=1508249061]
-layout_mode = 2
-theme = ExtResource("9_4pyop")
-text = "SELECIONAR PERSONAGEM"
-horizontal_alignment = 1
 
 [node name="LineEditUsername" type="LineEdit" parent="CanvasLayer/CenterContainer/OfflinePanel/VBoxContainer" unique_id=1917066790]
 custom_minimum_size = Vector2(250, 0)

@@ -6,7 +6,7 @@
 script = ExtResource("1_hf10w")
 quest_id = "main_story_2"
 title = "Kit de Sobrevivência"
-description = "Converse com o Ferreiro para conseguir seus equipamentos, voce pode comprar as barras para criar sua espada no comerciante com as moedas que te dei. A feiticeira vai te ensinar a fazer poçoes, voce pode comprar alguns recursos para fazer as primeiras poçoes com o comerciante tambem."
+description = "Converse com o Ferreiro para conseguir seus equipamentos, voce pode comprar as barras para criar sua espada no comerciante com as moedas que te dei ou adquirir algumas barras no bau proximo do ferreiro. A feiticeira vai te ensinar a fazer poçoes, voce pode comprar alguns recursos para fazer as primeiras poçoes com o comerciante ou adquirir algumas para criar suas primeiras poçoes no bau do ferreiro tambem!"
 quest_type = 2
 target_ids = Array[String](["ferreiro", "feiticeira", "comerciante"])
 required_amount = 3
