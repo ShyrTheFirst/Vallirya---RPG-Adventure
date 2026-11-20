@@ -186,6 +186,7 @@ func assign_quest(player: Node, quest_id: String) -> void:
 
 	if player.has_method("update_quest_tracker_ui"):
 		player.update_quest_tracker_ui()
+	get_tree().call_group("NPCs", "update_visual_quest_status")
 
 # --- PROGRESSO (Monstros, NPCs, Inventário) ---
 func on_monster_killed(player: Node, monster_name: String) -> void:
@@ -215,6 +216,7 @@ func on_monster_killed(player: Node, monster_name: String) -> void:
 
 	if player.has_method("update_quest_tracker_ui"):
 		player.update_quest_tracker_ui()
+	get_tree().call_group("NPCs", "update_visual_quest_status")
 
 func on_npc_talked(player: Node, npc_id: String) -> void:
 	if not player or not "client_active_quests" in player:
@@ -243,8 +245,10 @@ func on_npc_talked(player: Node, npc_id: String) -> void:
 
 	if player.has_method("update_quest_tracker_ui"):
 		player.update_quest_tracker_ui()
+	get_tree().call_group("NPCs", "update_visual_quest_status")
 	if player.has_method("populate_quest_log_ui"):
 		player.populate_quest_log_ui()
+	get_tree().call_group("NPCs", "update_visual_quest_status")
 
 # --- CONCLUIR E ENTREGAR (Com Sistema de Moedas de Ouro, Prata e Bronze) ---
 func complete_and_turn_in_quest(player: Node, quest_id: String) -> void:
@@ -311,6 +315,8 @@ func complete_and_turn_in_quest(player: Node, quest_id: String) -> void:
 	print("[QUEST!] Quest '%s' entregue com sucesso!" % quest_id)
 	if player.has_method("update_quest_tracker_ui"):
 		player.update_quest_tracker_ui()
+	get_tree().call_group("NPCs", "update_visual_quest_status")
+	get_tree().call_group("NPCs", "update_visual_quest_status")
 
 # Calcula em qual missão principal o jogador está com base nas concluídas
 func sync_main_story_progress(player: Node) -> void:

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://m5icj5fs74ks" path="res://Scripts/NPCs/Cavalo.gd" id="1_cf5bb"]
 [ext_resource type="Texture2D" uid="uid://cn3sx5o6lbcjv" path="res://ASSETS/Personagem/Cavalo/Cavalo_0.png" id="1_yuflp"]
 [ext_resource type="Texture2D" uid="uid://ddy5vqnkwl68y" path="res://ASSETS/Personagem/Cavalo/Cavalo_1.png" id="2_cf5bb"]
+[ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_7c1yp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5rgf8"]
 resource_name = "Material"
@@ -923,6 +924,9 @@ _data = {
 radius = 0.9423828
 height = 2.9192467
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_7c1yp"]
+viewport_path = NodePath("InteractionPrompt/SubViewport")
+
 [node name="Cavalo" type="CharacterBody3D" unique_id=1122511330]
 collision_layer = 8
 collision_mask = 7
@@ -1343,3 +1347,31 @@ shape = SubResource("CapsuleShape3D_g4v7s")
 
 [node name="Player_Place" type="Marker3D" parent="." unique_id=342005890]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.029143333, 1.924216, 0)
+
+[node name="InteractionPrompt" type="Sprite3D" parent="." unique_id=1421236235]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5703301, 0)
+visible = false
+billboard = 1
+texture = SubResource("ViewportTexture_7c1yp")
+
+[node name="SubViewport" type="SubViewport" parent="InteractionPrompt" unique_id=1809985465]
+transparent_bg = true
+size = Vector2i(50, 30)
+
+[node name="Label" type="Label" parent="InteractionPrompt/SubViewport" unique_id=1478433810]
+custom_minimum_size = Vector2(27, 27)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -13.5
+offset_top = -13.5
+offset_right = 13.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_7c1yp")
+text = "P"
+horizontal_alignment = 1
+vertical_alignment = 1

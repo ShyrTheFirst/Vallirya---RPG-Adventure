@@ -286,6 +286,24 @@ func create_skill_tree_ui() -> void:
 		panel.theme = theme
 	skill_tree_window.add_child(panel)
 
+	var close_overlay := Control.new()
+	close_overlay.name = "CloseXOverlay"
+	close_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	close_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var close_btn := Button.new()
+	close_btn.name = "CloseXButton"
+	close_btn.text = "X"
+	close_btn.custom_minimum_size = Vector2(32, 32)
+	close_btn.size = Vector2(32, 32)
+	close_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	close_btn.offset_left = 10
+	close_btn.offset_top = -40
+	close_btn.offset_right = 20
+	close_btn.offset_bottom = -30
+	close_btn.pressed.connect(toggle_skill_tree_window)
+	close_overlay.add_child(close_btn)
+	panel.add_child(close_overlay)
+
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 15)
 	panel.add_child(vbox)
@@ -434,12 +452,12 @@ func create_skill_tree_ui() -> void:
 	)
 	footer_hbox.add_child(confirm_btn)
 
-	var close_btn = Button.new()
-	close_btn.text = "Fechar"
-	close_btn.pressed.connect(func():
+	var close_btn_2 = Button.new()
+	close_btn_2.text = "Fechar"
+	close_btn_2.pressed.connect(func():
 		toggle_skill_tree_window()
 	)
-	footer_hbox.add_child(close_btn)
+	footer_hbox.add_child(close_btn_2)
 
 func refresh_tree_display() -> void:
 	if is_instance_valid(skill_tree_window):

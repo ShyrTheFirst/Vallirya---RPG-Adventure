@@ -49,7 +49,6 @@
 [ext_resource type="PackedScene" uid="uid://c4qulvnuvp1ie" path="res://Resources/MESH/Pocao_Mana_Pequena.tscn" id="42_6e4af"]
 [ext_resource type="PackedScene" uid="uid://cp3mxlnhhrva3" path="res://Resources/MESH/Pocao_Mana_Media.tscn" id="43_m3v18"]
 [ext_resource type="PackedScene" uid="uid://dwuosmdv4tpls" path="res://Scenes/NPCs/npc_mercante.tscn" id="44_2tlrs"]
-[ext_resource type="PackedScene" uid="uid://bjpxop65hwmx5" path="res://Scenes/NPCs/cavalo.tscn" id="50_1hnie"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqsmw"]
 resource_name = "M_Ilha01_A"
@@ -287,6 +286,9 @@ transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70
 
 [node name="PortalPoint" type="Marker3D" parent="." unique_id=1606781259]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.709686, 1.6730397, -66.10428)
+
+[node name="Horse_place" type="Marker3D" parent="." unique_id=437363252]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39.77, 0.5945536, 5.973)
 
 [node name="MapaInicial" type="Node3D" parent="." unique_id=553194279]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.429489, 0, -36.95226)
@@ -643,9 +645,6 @@ transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -47.497902, 0.6371902, -7.968
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.35557, -3.8146973e-06, 6.0336637)
 
 [node name="NPCContainer" type="Node3D" parent="." unique_id=663891675]
-
-[node name="Cavalo" parent="NPCContainer" unique_id=1122511330 instance=ExtResource("50_1hnie")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39.77003, 0.06919098, 5.973037)
 
 [node name="NPCValkor" parent="NPCContainer" unique_id=224469840 instance=ExtResource("34_jicov")]
 transform = Transform3D(-0.98874235, 0, 0.14962871, 0, 1, 0, -0.14962871, 0, -0.98874235, -99.9165, 23.113882, -15.299026)

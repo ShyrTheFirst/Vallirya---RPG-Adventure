@@ -438,24 +438,26 @@ func _physics_process(delta: float) -> void:
 
 	var move_vec = Input.get_vector("Esquerda", "Direita", "Frente", "Costas")
 	var is_moving: bool = move_vec.length() > 0.1 and is_on_floor()
-	var wants_jump = Input.is_action_just_pressed("Pular") and is_on_floor()
+	var wants_jump = Input.is_action_just_pressed("Pular") and is_on_floor() and not is_mounted
 	
-	var current_move_speed = speed * 1.7 if (is_running and is_moving) else speed
+	var current_move_speed: float = speed if is_mounted else (speed * 1.7 if (is_running and is_moving) else speed)
 
-	if wants_jump:
-		velocity.y = jump_velocity
+	if not is_mounted:
+		if wants_jump:
+			velocity.y = jump_velocity
 
-	if not is_on_floor():
-		velocity.y -= 9.8 * delta
-	elif not wants_jump:
-		velocity.y = 0.0
+		if not is_on_floor():
+			velocity.y -= 9.8 * delta
+		elif not wants_jump:
+			velocity.y = 0.0
 
 	var local_dir = Vector3(move_vec.x, 0, move_vec.y).normalized()
 	var world_dir = global_transform.basis * local_dir
 	velocity.x = world_dir.x * current_move_speed
 	velocity.z = world_dir.z * current_move_speed
 
-	move_and_slide()
+	if not is_mounted:
+		move_and_slide()
 	
 	if active_player_status != "":
 		player_status_timer -= delta
@@ -587,6 +589,12 @@ func show_damage_effect(amount: int, current_hp: int) -> void:
 func take_damage(amount: int) -> void:
 	if is_dead:
 		return
+
+	if is_mounted:
+		var horse_ref := mounted_horse
+		dismount_horse()
+		if is_instance_valid(horse_ref) and horse_ref.has_method("reset_to_initial_position"):
+			horse_ref.reset_to_initial_position()
 
 	if randf() * 100.0 < evasion:
 		show_damage_effect(0, hp)
@@ -1561,9 +1569,32 @@ func create_stat_row(title: String, stat_key: String) -> Dictionary:
 
 	return {"container": hbox, "label": lbl, "btn": btn}
 
+func _add_close_button_to_window(panel: Control, close_callable: Callable) -> void:
+	if not is_instance_valid(panel) or panel.has_node("CloseXOverlay"):
+		return
+	var overlay := Control.new()
+	overlay.name = "CloseXOverlay"
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var btn := Button.new()
+	btn.name = "CloseXButton"
+	btn.text = "X"
+	btn.custom_minimum_size = Vector2(32, 32)
+	btn.size = Vector2(32, 32)
+	btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	btn.offset_left = 10
+	btn.offset_top = -40
+	btn.offset_right = 20
+	btn.offset_bottom = -30
+	btn.pressed.connect(close_callable)
+	overlay.add_child(btn)
+	panel.add_child(overlay)
+
 func toggle_attribute_window() -> void:
 	if not ui_attr_panel or not ui_status_panel:
 		return
+	_add_close_button_to_window(ui_attr_panel, toggle_attribute_window)
+	_add_close_button_to_window(ui_status_panel, toggle_attribute_window)
 	var is_Visible = not ui_attr_panel.visible
 	ui_attr_panel.visible = is_Visible
 	ui_status_panel.visible = is_Visible
@@ -1576,6 +1607,7 @@ func toggle_attribute_window() -> void:
 func toggle_inventory_window() -> void:
 	if not ui_inventory_panel or not ui_equipment_panel:
 		return
+	_add_close_button_to_window(ui_inventory_panel, toggle_inventory_window)
 	var is_Visible = not ui_inventory_panel.visible
 	ui_inventory_panel.visible = is_Visible
 	ui_equipment_panel.visible = is_Visible
@@ -1670,6 +1702,7 @@ func close_dialogue_window() -> void:
 func toggle_quest_window() -> void:
 	if not ui_quest_panel:
 		return
+	_add_close_button_to_window(ui_quest_panel, toggle_quest_window)
 	
 	var is_Visible = not ui_quest_panel.visible
 	ui_quest_panel.visible = is_Visible
@@ -2249,6 +2282,7 @@ func send_message_HUD(message : String, color : Color):
 func toggle_mastery_window() -> void:
 	if not ui_mastery_panel:
 		return
+	_add_close_button_to_window(ui_mastery_panel, toggle_mastery_window)
 	
 	var is_visible = not ui_mastery_panel.visible
 	ui_mastery_panel.visible = is_visible
@@ -2562,6 +2596,7 @@ func toggle_achievements_window() -> void:
 		ui_achievements_panel = PanelContainer.new()
 		ui_achievements_panel.custom_minimum_size = Vector2(440, 380)
 		_apply_standard_window_style(ui_achievements_panel)
+		_add_close_button_to_window(ui_achievements_panel, toggle_achievements_window)
 		var margin = MarginContainer.new()
 		margin.add_theme_constant_override("margin_left", 16)
 		margin.add_theme_constant_override("margin_right", 16)
@@ -2637,6 +2672,7 @@ var mounted_horse: Node3D = null
 func mount_horse(horse: Node3D) -> void:
 	if is_mounted or not is_instance_valid(horse):
 		return
+	horse.visible = true
 	is_mounted = true
 	mounted_horse = horse
 	if get_parent() and horse.get_parent() != get_parent():
@@ -2670,6 +2706,8 @@ func dismount_horse() -> void:
 			mounted_horse.is_occupied = false
 		if "rider" in mounted_horse:
 			mounted_horse.rider = null
+		if LevelManager.current_map_key != "ilha_inicial":
+			mounted_horse.visible = false
 	is_mounted = false
 	mounted_horse = null
 	speed = base_player_speed

@@ -59,4 +59,4 @@ func _on_btn_save_pressed() -> void:
 
 # Botão: Sair do Jogo
 func _on_btn_quit_pressed() -> void:
-	get_tree().quit()
+	LevelManager.request_quit_game()

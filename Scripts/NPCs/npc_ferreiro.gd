@@ -39,10 +39,10 @@ func get_current_quest_status() -> QuestStatus:
 				break
 
 		if is_active:
-			if q_data.quest_type == QuestData.QuestType.TALK_TO_NPC or is_completed:
-				return QuestStatus.READY_TO_TURN_IN # ! Verde (Pronta para entregar)
+			if (q_data.quest_type == QuestData.QuestType.TALK_TO_NPC and q_data.target_ids.has(npc_id)) or (is_completed and q_data.turn_in_npc_id == npc_id):
+				return QuestStatus.READY_TO_TURN_IN # ! Verde (Pronta para entregar/conversar)
 			return QuestStatus.IN_PROGRESS # ! Laranja (Em andamento)
-		else:
+		elif q_data.start_npc_id == npc_id:
 			return QuestStatus.AVAILABLE # ? Amarelo (Disponível para pegar)
 
 	return QuestStatus.NONE
@@ -72,13 +72,14 @@ func handle_npc_dialogue_flow(player: CharacterBody3D) -> void:
 
 		var active_entry = _get_active_quest_entry(player, q_id)
 		if not active_entry.is_empty():
-			# Registra a conversa com este NPC no gerenciador de quests automaticamente
-			QuestManager.on_npc_talked(player, npc_id)
+			# Registra a conversa com este NPC no gerenciador de quests se ele for um dos alvos
+			if q_data.quest_type == QuestData.QuestType.TALK_TO_NPC and q_data.target_ids.has(npc_id):
+				QuestManager.on_npc_talked(player, npc_id)
 			
 			target_quest = q_data
 			quest_state = "turn_in"
 			break
-		else:
+		elif q_data.start_npc_id == npc_id:
 			target_quest = q_data
 			quest_state = "available"
 			break
@@ -113,10 +114,11 @@ func _on_continue_pressed() -> void:
 			QuestManager.assign_quest(player, stored_quest_to_action)
 		
 		var q_data = QuestManager.quests_database.get(stored_quest_to_action, null)
-		if q_data and q_data.quest_type == QuestData.QuestType.TALK_TO_NPC:
+		if q_data and q_data.quest_type == QuestData.QuestType.TALK_TO_NPC and q_data.target_ids.has(npc_id):
 			QuestManager.on_npc_talked(player, npc_id)
 
-		QuestManager.complete_and_turn_in_quest(player, stored_quest_to_action)
+		if q_data and q_data.turn_in_npc_id == npc_id:
+			QuestManager.complete_and_turn_in_quest(player, stored_quest_to_action)
 		stored_quest_to_action = ""
 		is_turn_in_action = false
 	
@@ -129,7 +131,7 @@ func _on_continue_pressed() -> void:
 
 func _on_quest_accepted(quest_data: QuestData) -> void:
 	var player = get_tree().get_first_node_in_group("Player")
-	if player and quest_data:
+	if player and quest_data and quest_data.start_npc_id == npc_id:
 		QuestManager.assign_quest(player, quest_data.quest_id)
 	close_dialogue_ui()
 	update_visual_quest_status()

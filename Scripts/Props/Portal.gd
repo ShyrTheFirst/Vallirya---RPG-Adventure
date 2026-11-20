@@ -74,8 +74,14 @@ func _on_interaction_area_body_entered(body: Node3D) -> void:
 	if is_teleporting:
 		return
 		
+	var detected_player: CharacterBody3D = null
 	if body.is_in_group("Player") and body is CharacterBody3D:
-		player_in_range = body
+		detected_player = body
+	elif body.is_in_group("PlayerHorse") and body.get("is_occupied") and is_instance_valid(body.get("rider")):
+		detected_player = body.get("rider") as CharacterBody3D
+
+	if detected_player:
+		player_in_range = detected_player
 		if require_button_press:
 			if interaction_prompt:
 				interaction_prompt.visible = true
@@ -83,7 +89,8 @@ func _on_interaction_area_body_entered(body: Node3D) -> void:
 			_teleport_player()
 
 func _on_interaction_area_body_exited(body: Node3D) -> void:
-	if body == player_in_range:
+	var is_same_player = (body == player_in_range) or (body.is_in_group("PlayerHorse") and body.get("rider") == player_in_range)
+	if is_same_player:
 		player_in_range = null
 		if interaction_prompt:
 			interaction_prompt.visible = false

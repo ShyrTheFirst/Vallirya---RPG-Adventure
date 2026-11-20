@@ -84,7 +84,7 @@ func trigger_telegraph(skill: BossSkillData, caster: Node3D, target: Node3D = nu
 					overlapping_bodies.append(node)
 
 	for body in overlapping_bodies:
-		if body.is_in_group("Player") and body.has_method("take_damage"):
+		if (body.is_in_group("Player") or body.is_in_group("PlayerHorse")) and body.has_method("take_damage"):
 			if skill.shape_type == BossSkillData.ShapeType.CONE:
 				var dir_to_player = (body.global_position - global_position)
 				dir_to_player.y = 0.0
