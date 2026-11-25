@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bbaodr4gbg4j5"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_68cqe"]
+[ext_resource type="PackedScene" uid="uid://ckbko1udk6uos" path="res://Resources/MESH/Drops/Casco_Oco_Aranha.tscn" id="1_gct2y"]
+
+[resource]
+script = ExtResource("1_68cqe")
+id = "Casco_Aranha"
+name = "Casco oco de Aranha"
+rarity = 1
+level = 15
+active_legendary = 2
+description = "Exoesqueleto de aranha obtido apos sua derrota."
+mesh_scene = ExtResource("1_gct2y")
+sell_price = 50
+inventory_rotation = Vector3(45, 45, 0)
+inventory_scale = Vector3(30, 30, 30)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

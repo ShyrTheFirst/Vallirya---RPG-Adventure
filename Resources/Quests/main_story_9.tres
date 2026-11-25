@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://r0sl5k7b5x5g"]
 
 [ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_fk6di"]
-[ext_resource type="Resource" uid="uid://blfaim5yty8ht" path="res://Resources/Items/Minerio_latao.tres" id="1_r5i0n"]
+[ext_resource type="Resource" uid="uid://blfaim5yty8ht" path="res://Resources/Items/1 - Barras/T1_Minerio_Latao.tres" id="1_r5i0n"]
 
 [resource]
 script = ExtResource("1_fk6di")

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://by2guqioh87vx"]
+
+[ext_resource type="PackedScene" uid="uid://bif8pa3c62g17" path="res://Resources/MESH/Tabuas/T3_Tabua_Adornada.tscn" id="1_17amh"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_d8rt5"]
+
+[resource]
+script = ExtResource("2_d8rt5")
+id = "Tabua_T3"
+name = "Tabua Adornada"
+rarity = 2
+level = 25
+active_legendary = 2
+description = "Uma tabua refinada a partir de madeiras adornadas. Usada na fabricaçao"
+mesh_scene = ExtResource("1_17amh")
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

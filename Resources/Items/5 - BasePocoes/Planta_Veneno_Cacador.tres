@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://csuqmcjb74qxg"]
+
+[ext_resource type="PackedScene" uid="uid://c8g8jjgr4a0fq" path="res://Resources/MESH/Pocoes/ervaVenenoCacador.tscn" id="1_k0xp5"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_ti8bb"]
+
+[resource]
+script = ExtResource("1_ti8bb")
+id = "Veneno_Cacador"
+name = "Planta Veneno do Caçador"
+active_legendary = 2
+description = "Uma planta comum nas planices do mundo, util para criaçao de poçoes."
+mesh_scene = ExtResource("1_k0xp5")
+metadata/_custom_type_script = "uid://eaep86qi61ki"

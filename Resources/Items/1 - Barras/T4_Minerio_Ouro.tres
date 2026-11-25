@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cdn1wjptk6sm3"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_6cfm7"]
+[ext_resource type="PackedScene" uid="uid://6ol1j0mqjpxo" path="res://Resources/MESH/Minerios/mineral_ouro.tscn" id="1_v14is"]
+
+[resource]
+script = ExtResource("1_6cfm7")
+id = "minerio_ouro"
+name = "Minerio de Ouro"
+level = 4
+active_legendary = 2
+description = "Minerio de ouro adquirido da mineraçao."
+mesh_scene = ExtResource("1_v14is")
+sell_price = 1000
+inventory_rotation = Vector3(45, 30, 45)
+inventory_scale = Vector3(5, 5, 5)
+inventory_offset = Vector3(-1, 0.2, -0.3)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

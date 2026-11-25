@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ckgb0kogkxe3b"]
+
+[ext_resource type="PackedScene" uid="uid://cqrelkkyiqiiy" path="res://Resources/MESH/Tabuas/T4_Tabua_Realeza.tscn" id="1_o0fwj"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_x8lel"]
+
+[resource]
+script = ExtResource("2_x8lel")
+id = "Tabua_T4"
+name = "Tabua da Realeza"
+rarity = 3
+level = 50
+active_legendary = 2
+description = "Uma tabua refinada a partir de madeiras da realeza. Usada na fabricaçao"
+mesh_scene = ExtResource("1_o0fwj")
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

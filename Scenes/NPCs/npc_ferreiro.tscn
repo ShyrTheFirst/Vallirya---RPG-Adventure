@@ -5,9 +5,14 @@
 [ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_7767j"]
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="2_lq8vb"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="3_7767j"]
-[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/Crafts/Espada_latao.tres" id="3_oyiod"]
+[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T1_Espada_Latao.tres" id="3_oyiod"]
 [ext_resource type="Resource" uid="uid://bfd24ymitv4ld" path="res://Resources/Quests/main_story_2.tres" id="3_uv01a"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_oyiod"]
+[ext_resource type="Resource" uid="uid://dgvqq7f3it4xb" path="res://Resources/Items/0 - Crafts/Botas/T1_Bota_Basica.tres" id="6_u138k"]
+[ext_resource type="Resource" uid="uid://dtpmgyll6tye8" path="res://Resources/Items/0 - Crafts/Elmos/T1_Elmo_Basica.tres" id="7_3p2n3"]
+[ext_resource type="Resource" uid="uid://csvo7m38amd1t" path="res://Resources/Items/0 - Crafts/Armaduras/T1_Armadura_Basica.tres" id="8_ml2cn"]
+[ext_resource type="Resource" uid="uid://x3s6s85lj5lj" path="res://Resources/Items/0 - Crafts/Armas/Machados/T1_Machado_Latao.tres" id="9_r8hlh"]
+[ext_resource type="Resource" uid="uid://dc6f45wje2k78" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T1_Lanca_Pique_Latao.tres" id="10_gvfow"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2kuio"]
 radius = 0.3408203
@@ -6258,9 +6263,9 @@ collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_ucktw")
 managed_quests = Array[ExtResource("2_57o3n")]([ExtResource("3_uv01a")])
-station_recipes = Array[ExtResource("2_7767j")]([ExtResource("3_oyiod")])
+station_recipes = Array[ExtResource("2_7767j")]([ExtResource("3_oyiod"), ExtResource("6_u138k"), ExtResource("7_3p2n3"), ExtResource("8_ml2cn"), ExtResource("9_r8hlh"), ExtResource("10_gvfow")])
 npc_id = "ferreiro"
-npc_name = "Ferreiro Edhyr"
+npc_name = "Sr. Buco"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=332708498]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.068603516, 0)

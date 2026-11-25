@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://g6agr40qb543"]
+
+[ext_resource type="Resource" uid="uid://d1bijpmuopux2" path="res://Resources/Items/5 - BasePocoes/Planta_Agapanto.tres" id="1_a634p"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_h37xb"]
+[ext_resource type="Resource" uid="uid://dysj0flmc4vaa" path="res://Resources/Items/5 - BasePocoes/Galho_Seco.tres" id="2_h37xb"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="3_52e1k"]
+[ext_resource type="Resource" uid="uid://d1wg38ikckjhs" path="res://Resources/Items/3 - Pocoes/Mana_Grande.tres" id="3_doy4u"]
+
+[resource]
+script = ExtResource("3_52e1k")
+equipment_type = 9
+input_items = Array[ExtResource("1_h37xb")]([ExtResource("2_h37xb"), ExtResource("1_a634p")])
+input_quantities = Array[int]([4, 8])
+result_item = ExtResource("3_doy4u")
+result_quantity = 10
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

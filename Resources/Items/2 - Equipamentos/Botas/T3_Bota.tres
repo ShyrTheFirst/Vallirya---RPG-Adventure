@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b5e16laopdggs"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_1xd5c"]
+
+[resource]
+script = ExtResource("1_1xd5c")
+id = "Bota_T3"
+name = "Bota de Prata"
+item_type = 3
+level = 3
+active_legendary = 0
+description = "Uma bota de prata, para ostentar sua experiencia e riqueza na batalha."
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, 0, -0.2)
+is_stackable = false
+max_stack = 1
+metadata/_custom_type_script = "uid://eaep86qi61ki"

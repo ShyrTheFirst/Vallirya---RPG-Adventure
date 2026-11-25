@@ -30,7 +30,7 @@
 [ext_resource type="Script" uid="uid://u3f4n3lpl33r" path="res://Scripts/Fallzone.gd" id="24_gjwwt"]
 [ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="25_154en"]
 [ext_resource type="Resource" uid="uid://5e6e3ml1xag" path="res://Resources/Items/Moeda_Bronze_1.tres" id="26_iir8i"]
-[ext_resource type="Resource" uid="uid://c1ag76btnrnk6" path="res://Resources/Items/HP_Pequeno.tres" id="27_12hsc"]
+[ext_resource type="Resource" uid="uid://c1ag76btnrnk6" path="res://Resources/Items/3 - Pocoes/HP_Pequeno.tres" id="27_12hsc"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xibw8"]
 resource_name = "M_Ilha_02_A"

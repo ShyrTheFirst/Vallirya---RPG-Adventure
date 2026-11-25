@@ -1,9 +1,6 @@
 extends BossBase
 
 func _ready() -> void:
-	hp_factor = 3.0
-	atk_factor = 1.2
-	def_factor = 1.5
 	super._ready()
 
 func _cast_boss_skill(skill: BossSkillData, target: CharacterBody3D) -> void:

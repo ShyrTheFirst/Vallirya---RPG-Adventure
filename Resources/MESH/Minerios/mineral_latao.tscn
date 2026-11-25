@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bb5f5k7b67780"]
+
+[ext_resource type="ArrayMesh" uid="uid://c30k8noch8t4j" path="res://Resources/MESH/Minerios/Mineral_Latao.res" id="1_b1tf0"]
+
+[node name="MineralLatao" type="MeshInstance3D" unique_id=1424278796]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = ExtResource("1_b1tf0")

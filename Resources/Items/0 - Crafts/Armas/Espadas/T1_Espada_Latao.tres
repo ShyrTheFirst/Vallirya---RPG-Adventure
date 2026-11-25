@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://djt7wj71a5hn5"]
+
+[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/1 - Barras/T1_Barra_Latao.tres" id="1_0503m"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_kxq5x"]
+[ext_resource type="Resource" uid="uid://bjintplg23o2t" path="res://Resources/Items/2 - Equipamentos/Armas/Espadas/T1_Espada_Latao.tres" id="2_1pa45"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_mcljp"]
+
+[resource]
+script = ExtResource("2_mcljp")
+equipment_type = 3
+input_items = Array[ExtResource("1_kxq5x")]([ExtResource("1_0503m")])
+input_quantities = Array[int]([4])
+result_item = ExtResource("2_1pa45")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

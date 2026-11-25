@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://qo0aa4n3ollf"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_o6n8g"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_wk4s7"]
+[ext_resource type="Resource" uid="uid://lhnqrcy0skxj" path="res://Resources/Items/4 - Tabuas/T1_Tabua_Simples.tres" id="2_3eijc"]
+[ext_resource type="Resource" uid="uid://cfa2p4mjg44tv" path="res://Resources/Items/6 - Drops/Essencia_Monstro.tres" id="3_x0kk7"]
+[ext_resource type="Resource" uid="uid://d0b4efvonmx8p" path="res://Resources/Items/2 - Equipamentos/Armas/Cajado/T1_Cajado.tres" id="4_12yud"]
+
+[resource]
+script = ExtResource("1_wk4s7")
+equipment_type = 6
+input_items = Array[ExtResource("1_o6n8g")]([ExtResource("2_3eijc"), ExtResource("3_x0kk7")])
+input_quantities = Array[int]([4, 4])
+result_item = ExtResource("4_12yud")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

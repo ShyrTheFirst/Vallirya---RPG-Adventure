@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://1twb6ex7aesh"]
+
+[ext_resource type="PackedScene" uid="uid://b8nbwxmhd6d3d" path="res://ASSETS/Armas/Machado/De Guerra/Machado_De_Guerra.fbx" id="1_s8gwn"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_ygcsj"]
+
+[resource]
+script = ExtResource("2_ygcsj")
+id = "Machado_Placadraco"
+name = "Machado Draconico"
+item_type = 0
+weapon_type = 3
+level = 5
+active_legendary = null
+description = "Machado feito a base de escamas e barras draconicas. A alma de um dragao pode ser sentida nessa arma."
+mesh_scene = ExtResource("1_s8gwn")
+sell_price = 200
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, -0.7, -0.5)
+is_stackable = false
+max_stack = 1
+bonus_attack = 15
+metadata/_custom_type_script = "uid://eaep86qi61ki"

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://uoy2ttkccdcg"]
 
 [ext_resource type="Script" uid="uid://prcjdjagt6wn" path="res://Scripts/Skills/tremor.gd" id="1_cf65d"]
-[ext_resource type="ArrayMesh" uid="uid://c7lx8ri0ggngj" path="res://Resources/MESH/mineral_bronze.res" id="2_kca2j"]
+[ext_resource type="ArrayMesh" uid="uid://dtjnoa11y838i" path="res://Resources/MESH/Minerios/Mineral_Celestial.res" id="2_e84vi"]
 [ext_resource type="AudioStream" uid="uid://dj2assx31yuyq" path="res://ASSETS/SFX/Skills/Rock Wall 1.ogg" id="3_e84vi"]
 
 [sub_resource type="Curve" id="Curve_0ybdg"]
@@ -86,6 +86,20 @@ rings = 6
 [sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
 radius = 3.0
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e84vi"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_color = Color(0.54004896, 0.33361515, 0.20906562, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_85v5j"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_color = Color(0.54004896, 0.33361515, 0.20906562, 1)
+
 [node name="Tremor" type="Node3D" unique_id=1651129598]
 script = ExtResource("1_cf65d")
 
@@ -95,7 +109,7 @@ amount = 40
 explosiveness = 0.95
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_d5nxi")
-draw_pass_1 = ExtResource("2_kca2j")
+draw_pass_1 = ExtResource("2_e84vi")
 
 [node name="DustParticles" type="GPUParticles3D" parent="." unique_id=2039225125]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.923059, 0)
@@ -122,28 +136,35 @@ shape = SubResource("SphereShape3D_g4v7s")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RockSpikes" unique_id=108625314]
 transform = Transform3D(-0.8230473, 3.469994, 199.99805, -151.94012, 862.2481, -0.87630546, -258.67645, -506.47433, -0.1216265, 0, 0.3, -3.184043)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_e84vi")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="RockSpikes" unique_id=224981726]
 transform = Transform3D(241.00883, 427.4069, 82.929344, -147.14209, 869.79974, 10.7415695, -101.31142, -246.52002, 181.67929, 2.9822977, 0.3, -1.5621805)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_85v5j")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="RockSpikes" unique_id=932637358]
 transform = Transform3D(-182.48425, 228.17319, 152.04364, 92.44107, 950.5531, -7.7496333, -219.44063, 210.68138, -129.70229, 2.5471718, 0.3, 1.7035522)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_85v5j")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="RockSpikes" unique_id=636138753]
 transform = Transform3D(282.00446, -223.5126, 51.541714, 80.747116, 950.0881, -31.551094, -62.87566, 217.65652, 190.65146, -2.2772744, 0.3, 1.7035522)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_85v5j")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="RockSpikes" unique_id=1266710083]
 transform = Transform3D(-256.19693, -340.05923, 78.755585, -112.4693, 926.98145, -2.504033, -108.23023, -158.31866, -183.82402, -2.825964, 0.3, -1.9148339)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_85v5j")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="RockSpikes" unique_id=1441660223]
 transform = Transform3D(-245.02069, 456.69275, 70.53351, 146.41519, 872.8152, 4.901494e-06, -92.34404, 172.11964, -187.14972, 1.1759479, 0.3, 0.40320587)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_85v5j")
 
 [node name="MeshInstance3D7" type="MeshInstance3D" parent="RockSpikes" unique_id=2091664618]
 transform = Transform3D(-251.15793, -478.87933, -52.83279, -148.95499, 868.02734, -2.524635e-06, 68.79048, 131.16183, -192.89555, -1.037941, 0.3, 0.28931975)
-mesh = ExtResource("2_kca2j")
+mesh = ExtResource("2_e84vi")
+surface_material_override/0 = SubResource("StandardMaterial3D_85v5j")

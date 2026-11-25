@@ -6,8 +6,11 @@
 script = ExtResource("1_0unko")
 quest_id = "main_story_6"
 title = "Patrulha: Bandidos"
-description = "Derrote 10 Bandidos da Estrada."
-target_id = "Bandido"
+description = "Derrote 10 Bandidos da Estrada no mapa proximo a cidade, atravesse o portal para encontrar os inimigos!"
+target_ids = Array[String](["Bandido da Estrada"])
 required_amount = 10
+start_npc_id = "npc_floresta"
+turn_in_npc_id = "npc_inicial"
 reward_xp = 350
+reward_gold_value_in_bronze = 450
 metadata/_custom_type_script = "uid://co3cscegp8qam"

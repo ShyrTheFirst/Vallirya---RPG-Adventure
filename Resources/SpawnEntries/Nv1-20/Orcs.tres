@@ -2,11 +2,24 @@
 
 [ext_resource type="PackedScene" uid="uid://cb0p5xxl464qf" path="res://Scenes/Monstros/Orc.tscn" id="1_k3mkr"]
 [ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/Monstros/SpawnEntry.gd" id="1_mmwpy"]
+[ext_resource type="Script" uid="uid://bjy3osgd6vcx4" path="res://Scripts/Monstros/MonsterDrop.gd" id="1_nksgs"]
 
 [resource]
 script = ExtResource("1_mmwpy")
 scene = ExtResource("1_k3mkr")
+monster_name = "Orc Guerreiro"
 count = 8
 min_level = 3
 max_level = 8
+speed = 2.4
+leash_radius = 10.0
+aggro_range = 8.0
+max_chase_distance = 14.0
+base_attack_range = 1.4
+effect_damage_percent = 0.0
+hp_factor = 1.4
+atk_factor = 1.0
+def_factor = 1.6
+attack_cooldown_base = 1.6
+respawn_time = 45.0
 metadata/_custom_type_script = "uid://cbe7834febh5o"

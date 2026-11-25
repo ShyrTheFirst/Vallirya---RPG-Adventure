@@ -93,6 +93,17 @@ func load_map_into_container(map_key: String, spawn_point_name: String = "SpawnP
 	if not container:
 		print("[LEVEL MANAGER] Erro: Nó 'LevelContainer' não encontrado na cena principal!")
 		return
+
+	var fade_rect: ColorRect = main_scene.find_child("Fade", true, false) as ColorRect
+	if fade_rect:
+		fade_rect.visible = true
+		if is_instance_valid(current_map_instance):
+			fade_rect.modulate.a = 0.0
+			var fade_out_tween = create_tween()
+			fade_out_tween.tween_property(fade_rect, "modulate:a", 1.0, 0.3)
+			await fade_out_tween.finished
+		else:
+			fade_rect.modulate.a = 1.0
 		
 	if is_instance_valid(current_map_instance):
 		container.remove_child(current_map_instance)
@@ -117,6 +128,12 @@ func load_map_into_container(map_key: String, spawn_point_name: String = "SpawnP
 	for horse in get_tree().get_nodes_in_group("PlayerHorse"):
 		if horse.has_method("on_map_changed"):
 			horse.on_map_changed(map_key)
+
+	if fade_rect:
+		var fade_in_tween = create_tween()
+		fade_in_tween.tween_property(fade_rect, "modulate:a", 0.0, 0.4)
+		await fade_in_tween.finished
+		fade_rect.visible = false
 
 func _teleport_player_to_spawn(main_scene: Node, spawn_name: String) -> void:
 	var player = main_scene.find_child("Player", true, false)

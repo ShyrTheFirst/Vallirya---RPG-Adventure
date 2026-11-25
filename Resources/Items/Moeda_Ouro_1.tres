@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://p6aik3vtbj2e"]
 
-[ext_resource type="PackedScene" uid="uid://dhegga3q6qsj8" path="res://Resources/MESH/Moeda_Ouro_1.tscn" id="1_cg6iq"]
+[ext_resource type="PackedScene" uid="uid://dhegga3q6qsj8" path="res://Resources/MESH/Moedas/Moeda_Ouro_1.tscn" id="1_cg6iq"]
 [ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_e5knx"]
 
 [resource]

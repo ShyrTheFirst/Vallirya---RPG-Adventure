@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://bykvbfnlet1xy"]
+
+[ext_resource type="Script" uid="uid://br5pjd3fo2ga0" path="res://Scripts/Skills/missil_magico.gd" id="1_13vr6"]
+[ext_resource type="Shader" uid="uid://cqcb52rydr70d" path="res://ASSETS/VFX/Shaders/Essence.gdshader" id="2_qudaj"]
+[ext_resource type="Shader" uid="uid://didhmt6nb70aw" path="res://ASSETS/VFX/Shaders/Refraction.gdshader" id="3_jaxb6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tt8dy"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_color = Color(0.7220274, 0.53611076, 1, 0.609)
+
+[sub_resource type="SphereMesh" id="SphereMesh_qudaj"]
+material = SubResource("StandardMaterial3D_tt8dy")
+radius = 0.1
+height = 0.2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_osaa1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_l605n"]
+width = 128
+height = 128
+noise = SubResource("FastNoiseLite_osaa1")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ihio6"]
+render_priority = 0
+shader = ExtResource("2_qudaj")
+shader_parameter/core_color = Color(0.49995556, 0, 0.8001019, 0.8)
+shader_parameter/rim_color = Color(1, 0.8, 1, 1)
+shader_parameter/rim_power = 2.5
+shader_parameter/transparency = 1.0
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_l605n")
+shader_parameter/noise_scale = 1.0
+shader_parameter/noise_speed = 0.2
+shader_parameter/distortion_strength = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_13vr6"]
+material = SubResource("StandardMaterial3D_tt8dy")
+radius = 0.12
+height = 0.24
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_76ga0"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1pix3"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_76ga0")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qudaj"]
+render_priority = 0
+shader = ExtResource("3_jaxb6")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1pix3")
+shader_parameter/refraction_strength = 0.04
+shader_parameter/noise_scale = 1.5
+shader_parameter/flow_speed = 0.6
+shader_parameter/chromatic_aberration = 0.01999999955297
+shader_parameter/tint_color = Color(0.7705051, 0.25962394, 0.9999998, 1)
+shader_parameter/tint_mix = 0.606000028785
+shader_parameter/rim_boost = 3.0
+shader_parameter/rim_power = 3.35600013566
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
+radius = 0.1
+
+[sub_resource type="Curve" id="Curve_qudaj"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_yf5fn"]
+curve = SubResource("Curve_qudaj")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_g4v7s"]
+emission_shape = 1
+emission_sphere_radius = 0.1
+spread = 10.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_curve = SubResource("CurveTexture_yf5fn")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_13vr6"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_color = Color(0.6029493, 0, 0.9607386, 0.753)
+
+[sub_resource type="SphereMesh" id="SphereMesh_jaxb6"]
+material = SubResource("StandardMaterial3D_13vr6")
+radius = 0.01
+height = 0.02
+
+[node name="Missil_Magico" type="Node3D" unique_id=1651129598]
+script = ExtResource("1_13vr6")
+
+[node name="Bola" type="MeshInstance3D" parent="." unique_id=656204001]
+mesh = SubResource("SphereMesh_qudaj")
+surface_material_override/0 = SubResource("ShaderMaterial_ihio6")
+
+[node name="Bola2" type="MeshInstance3D" parent="." unique_id=477129184]
+mesh = SubResource("SphereMesh_13vr6")
+surface_material_override/0 = SubResource("ShaderMaterial_qudaj")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=823351060]
+collision_layer = 16
+collision_mask = 5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1659315624]
+shape = SubResource("SphereShape3D_g4v7s")
+
+[node name="Sparkles" type="GPUParticles3D" parent="." unique_id=566609705]
+amount = 50
+lifetime = 0.5
+process_material = SubResource("ParticleProcessMaterial_g4v7s")
+draw_pass_1 = SubResource("SphereMesh_jaxb6")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=1519874873]
+light_color = Color(0.690366, 0.21952003, 0.99999994, 1)
+light_energy = 4.0
+omni_range = 2.0

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://dgvqq7f3it4xb"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_55my3"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_v26ia"]
+[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/1 - Barras/T1_Barra_Latao.tres" id="2_pwdw8"]
+[ext_resource type="Resource" uid="uid://cfa2p4mjg44tv" path="res://Resources/Items/6 - Drops/Essencia_Monstro.tres" id="3_kswsd"]
+[ext_resource type="Resource" uid="uid://bwdrm3mn7fjok" path="res://Resources/Items/2 - Equipamentos/Botas/T1_Bota.tres" id="4_uuekn"]
+
+[resource]
+script = ExtResource("1_v26ia")
+equipment_type = 2
+input_items = Array[ExtResource("1_55my3")]([ExtResource("2_pwdw8"), ExtResource("3_kswsd")])
+input_quantities = Array[int]([4, 4])
+result_item = ExtResource("4_uuekn")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

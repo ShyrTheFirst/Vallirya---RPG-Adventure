@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bk25bjl1il7e5"]
+
+[ext_resource type="Shader" uid="uid://cqcb52rydr70d" path="res://ASSETS/VFX/Shaders/Essence.gdshader" id="1_3gafk"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_0ofbd"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0ofbd"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1e2m2"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_0ofbd")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yqolw"]
+render_priority = 0
+shader = ExtResource("1_3gafk")
+shader_parameter/core_color = Color(0.6903563, 0, 0.23078316, 0.8)
+shader_parameter/rim_color = Color(1, 0.8256759, 0.849702, 1)
+shader_parameter/rim_power = 0.10000000149012
+shader_parameter/transparency = 0.5
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_1e2m2")
+shader_parameter/noise_scale = 1.0
+shader_parameter/noise_speed = 0.05
+shader_parameter/distortion_strength = 0.5
+
+[node name="Essencia" type="MeshInstance3D" unique_id=807526725]
+mesh = SubResource("SphereMesh_0ofbd")
+surface_material_override/0 = SubResource("ShaderMaterial_yqolw")

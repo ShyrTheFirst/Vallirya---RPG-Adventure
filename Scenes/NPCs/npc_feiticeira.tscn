@@ -7,8 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="2_emmhw"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="3_4bs04"]
 [ext_resource type="Resource" uid="uid://bfd24ymitv4ld" path="res://Resources/Quests/main_story_2.tres" id="3_fidp8"]
-[ext_resource type="Resource" uid="uid://dw7c32u240fcx" path="res://Resources/Items/Crafts/HP_poçao_pequena.tres" id="3_op4sq"]
-[ext_resource type="Resource" uid="uid://cn2dahrre3xf5" path="res://Resources/Items/Crafts/MP_poçao_pequena.tres" id="4_5vulm"]
+[ext_resource type="Resource" uid="uid://dw7c32u240fcx" path="res://Resources/Items/0 - Crafts/Pocoes/HP_pocao_pequena.tres" id="3_op4sq"]
+[ext_resource type="Resource" uid="uid://cn2dahrre3xf5" path="res://Resources/Items/0 - Crafts/Pocoes/MP_pocao_pequena.tres" id="4_5vulm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2kuio"]
 radius = 0.3408203
@@ -6261,7 +6261,7 @@ script = ExtResource("1_emmhw")
 managed_quests = Array[ExtResource("2_5vulm")]([ExtResource("3_fidp8")])
 station_recipes = Array[ExtResource("2_7qscw")]([ExtResource("3_op4sq"), ExtResource("4_5vulm")])
 npc_id = "feiticeira"
-npc_name = "Feiticeira Ana"
+npc_name = "Sra. Ana"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=332708498]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.068603516, 0)

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3 uid="uid://d23kf8hkw36ui"]
+
+[ext_resource type="Script" uid="uid://bjy3osgd6vcx4" path="res://Scripts/Monstros/MonsterDrop.gd" id="1_cr7d3"]
+[ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/Monstros/SpawnEntry.gd" id="2_n11ef"]
+
+[resource]
+script = ExtResource("2_n11ef")
+metadata/_custom_type_script = "uid://cbe7834febh5o"

@@ -3,7 +3,7 @@ extends Resource
 
 enum Rarity { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY }
 enum ItemType { WEAPON, ARMOR, HELM, BOOTS, CONSUMABLE, MISC, TOOL }
-enum WeaponType { NONE, SWORD, STAFF, AXE }
+enum WeaponType { NONE, SWORD, STAFF, AXE, SPEAR }
 
 @export var id: String = ""
 @export var name: String = ""
@@ -20,6 +20,8 @@ enum WeaponType { NONE, SWORD, STAFF, AXE }
 @export var inventory_rotation: Vector3 = Vector3(0, 0, 0) # Rotação em Graus
 @export var inventory_scale: Vector3 = Vector3(1, 1, 1)     # Escala do modelo no ícone
 @export var inventory_offset: Vector3 = Vector3(0, 0, 0)    # Deslocamento X, Y, Z
+@export var equipped_rotation: Vector3 = Vector3.ZERO       # Rotação extra (em graus) ao equipar na mão/personagem
+@export var equipped_offset: Vector3 = Vector3.ZERO         # Deslocamento X, Y, Z ao equipar na mão/personagem
 
 @export var is_stackable: bool = true
 @export var max_stack: int = 9999

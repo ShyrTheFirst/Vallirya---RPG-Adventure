@@ -2,11 +2,24 @@
 
 [ext_resource type="PackedScene" uid="uid://cc502i3f813an" path="res://Scenes/Monstros/golem.tscn" id="1_8p8if"]
 [ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/Monstros/SpawnEntry.gd" id="1_q455d"]
+[ext_resource type="Script" uid="uid://bjy3osgd6vcx4" path="res://Scripts/Monstros/MonsterDrop.gd" id="1_t3id1"]
 
 [resource]
 script = ExtResource("1_q455d")
 scene = ExtResource("1_8p8if")
+monster_name = "Golem Monstruoso"
 count = 1
 min_level = 20
 max_level = 25
+speed = 1.5
+leash_radius = 100.0
+aggro_range = 50.0
+max_chase_distance = 200.0
+base_attack_range = 10.0
+effect_damage_percent = 0.0
+hp_factor = 3.0
+atk_factor = 1.2
+def_factor = 1.5
+attack_cooldown_base = 1.5
+respawn_time = 120.0
 metadata/_custom_type_script = "uid://cbe7834febh5o"

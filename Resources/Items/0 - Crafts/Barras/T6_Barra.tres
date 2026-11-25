@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://c7jfd5gstqms3"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_ckeri"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_da3mf"]
+[ext_resource type="Resource" uid="uid://b67ay0hrf0ay4" path="res://Resources/Items/1 - Barras/T5_Barra_Placadraco.tres" id="2_82et4"]
+[ext_resource type="Resource" uid="uid://bueniuanx367f" path="res://Resources/Items/1 - Barras/T6_Minerio_Celestial.tres" id="3_3xilw"]
+[ext_resource type="Resource" uid="uid://dtlngmsue0o5q" path="res://Resources/Items/1 - Barras/T6_Barra_Celestial.tres" id="4_s1fpw"]
+
+[resource]
+script = ExtResource("1_da3mf")
+equipment_type = 7
+recipe_level = 6
+input_items = Array[ExtResource("1_ckeri")]([ExtResource("2_82et4"), ExtResource("3_3xilw")])
+input_quantities = Array[int]([1, 2])
+result_item = ExtResource("4_s1fpw")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

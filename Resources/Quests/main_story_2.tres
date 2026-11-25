@@ -13,5 +13,5 @@ required_amount = 3
 start_npc_id = "Valkor"
 turn_in_npc_id = "Valkor"
 reward_xp = 60
-reward_gold_value_in_bronze = 10
+reward_gold_value_in_bronze = 100
 metadata/_custom_type_script = "uid://co3cscegp8qam"

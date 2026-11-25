@@ -46,7 +46,7 @@ shader = ExtResource("4_ais02")
 shader_parameter/aura_color = Color(0.14117648, 0.4509804, 0, 1)
 shader_parameter/emission_intensity = 1.0000000475
 shader_parameter/wave_speed = 5.0
-shader_parameter/wave_height = 0.10000000475
+shader_parameter/wave_height = 0.02000000095
 
 [sub_resource type="Curve" id="Curve_ais02"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]

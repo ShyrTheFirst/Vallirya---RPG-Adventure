@@ -5,9 +5,28 @@
 [ext_resource type="Texture2D" uid="uid://csv0o1ac83s6s" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Basica_1.png" id="2_0pymb"]
 [ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_5och2"]
 [ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="3_dgfhy"]
-[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/Crafts/Espada_latao.tres" id="3_xt60p"]
+[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T1_Espada_Latao.tres" id="3_xt60p"]
+[ext_resource type="Resource" uid="uid://dgvqq7f3it4xb" path="res://Resources/Items/0 - Crafts/Botas/T1_Bota_Basica.tres" id="4_208vy"]
 [ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="4_uc7fs"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="5_0pymb"]
+[ext_resource type="Resource" uid="uid://dtpmgyll6tye8" path="res://Resources/Items/0 - Crafts/Elmos/T1_Elmo_Basica.tres" id="5_1vcya"]
+[ext_resource type="Resource" uid="uid://csvo7m38amd1t" path="res://Resources/Items/0 - Crafts/Armaduras/T1_Armadura_Basica.tres" id="6_dhbqy"]
+[ext_resource type="Resource" uid="uid://x3s6s85lj5lj" path="res://Resources/Items/0 - Crafts/Armas/Machados/T1_Machado_Latao.tres" id="7_dqpnv"]
+[ext_resource type="Resource" uid="uid://dc6f45wje2k78" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T1_Lanca_Pique_Latao.tres" id="8_x7350"]
+[ext_resource type="Resource" uid="uid://qo0aa4n3ollf" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T1_Cajado_Madeira.tres" id="9_ptsgl"]
+[ext_resource type="Resource" uid="uid://de7qog6xt771l" path="res://Resources/Items/0 - Crafts/Botas/T2_Bota_Simples.tres" id="10_yb2gg"]
+[ext_resource type="Resource" uid="uid://3c4si5beho7q" path="res://Resources/Items/0 - Crafts/Elmos/T2_Elmo_Simples.tres" id="11_3hmm0"]
+[ext_resource type="Resource" uid="uid://bcobyd66axd0s" path="res://Resources/Items/0 - Crafts/Armaduras/T2_Armadura_Simples.tres" id="12_i1x30"]
+[ext_resource type="Resource" uid="uid://by37714ctm8x4" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T2_Espada_Bronze.tres" id="13_0mcee"]
+[ext_resource type="Resource" uid="uid://dk3ykbawk56dt" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T2_Cajado_Adornado.tres" id="14_7vpqw"]
+[ext_resource type="Resource" uid="uid://c4w6jibe1blpr" path="res://Resources/Items/0 - Crafts/Armas/Machados/T2_Machado_Bronze.tres" id="15_hnjwq"]
+[ext_resource type="Resource" uid="uid://cvot8sxlacx1x" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T2_Lanca_Pique_Bronze.tres" id="16_ofnd4"]
+[ext_resource type="Resource" uid="uid://dp6gk82bjmcre" path="res://Resources/Items/0 - Crafts/Botas/T3_Bota_Resistente.tres" id="17_86to7"]
+[ext_resource type="Resource" uid="uid://dds7fxjuk82ls" path="res://Resources/Items/0 - Crafts/Elmos/T3_Elmo_Resistente.tres" id="18_18mfw"]
+[ext_resource type="Resource" uid="uid://c1damrmd5lqxg" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T3_Espada_Prata.tres" id="19_hdwdk"]
+[ext_resource type="Resource" uid="uid://bsr6f6nwlpw58" path="res://Resources/Items/0 - Crafts/Armas/Machados/T3_Machado_Prata.tres" id="20_b4rcs"]
+[ext_resource type="Resource" uid="uid://esnopx4c1vh4" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T3_Lanca_Azagaia_Prata.tres" id="21_7lpyb"]
+[ext_resource type="Resource" uid="uid://c2o07mcd5khia" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T3_Cajado_Joia_Cravada.tres" id="22_x81om"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g4v7s"]
 radius = 0.3
@@ -118,7 +137,7 @@ collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_dgfhy")
 station_name = "Bigorna"
-station_recipes = Array[ExtResource("2_5och2")]([ExtResource("3_xt60p")])
+station_recipes = Array[ExtResource("2_5och2")]([ExtResource("3_xt60p"), ExtResource("4_208vy"), ExtResource("5_1vcya"), ExtResource("6_dhbqy"), ExtResource("7_dqpnv"), ExtResource("8_x7350"), ExtResource("9_ptsgl"), ExtResource("10_yb2gg"), ExtResource("11_3hmm0"), ExtResource("12_i1x30"), ExtResource("13_0mcee"), ExtResource("14_7vpqw"), ExtResource("15_hnjwq"), ExtResource("16_ofnd4"), ExtResource("17_86to7"), ExtResource("18_18mfw"), ExtResource("19_hdwdk"), ExtResource("20_b4rcs"), ExtResource("21_7lpyb"), ExtResource("22_x81om")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1461790309]
 shape = SubResource("CapsuleShape3D_g4v7s")

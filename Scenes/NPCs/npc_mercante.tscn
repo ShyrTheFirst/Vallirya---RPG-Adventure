@@ -5,10 +5,10 @@
 [ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_27iax"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="2_ydtxc"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="3_0gqi4"]
-[ext_resource type="Resource" uid="uid://bjypok0lxtjrq" path="res://Resources/Items/PeleGrossa.tres" id="3_sqs7k"]
-[ext_resource type="Resource" uid="uid://csuqmcjb74qxg" path="res://Resources/Items/ErvaMedicinal.tres" id="4_oktw2"]
-[ext_resource type="Resource" uid="uid://blfaim5yty8ht" path="res://Resources/Items/Minerio_latao.tres" id="5_y3psd"]
-[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/Barra_Latao.tres" id="6_d7o8o"]
+[ext_resource type="Resource" uid="uid://bjypok0lxtjrq" path="res://Resources/Items/6 - Drops/Dente_Orc.tres" id="3_sqs7k"]
+[ext_resource type="Resource" uid="uid://csuqmcjb74qxg" path="res://Resources/Items/5 - BasePocoes/Planta_Veneno_Cacador.tres" id="4_oktw2"]
+[ext_resource type="Resource" uid="uid://blfaim5yty8ht" path="res://Resources/Items/1 - Barras/T1_Minerio_Latao.tres" id="5_y3psd"]
+[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/1 - Barras/T1_Barra_Latao.tres" id="6_d7o8o"]
 [ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="7_oktw2"]
 [ext_resource type="Resource" uid="uid://bfd24ymitv4ld" path="res://Resources/Quests/main_story_2.tres" id="8_y3psd"]
 
@@ -6260,6 +6260,7 @@ expand_margin_right = 8.0
 collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_ydtxc")
+merchant_name = "Silas Organ"
 merchant_stock = Array[ExtResource("2_27iax")]([ExtResource("3_sqs7k"), ExtResource("4_oktw2"), ExtResource("5_y3psd"), ExtResource("6_d7o8o")])
 managed_quests = Array[ExtResource("7_oktw2")]([ExtResource("8_y3psd")])
 npc_id = "comerciante"

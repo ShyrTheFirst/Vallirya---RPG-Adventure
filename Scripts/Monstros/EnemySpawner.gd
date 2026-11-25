@@ -41,10 +41,10 @@ func start_spawning(world: Node3D) -> void:
 				m_rarity = world.roll_monster_rarity()
 
 			# Instancia o monstro diretamente de forma local
-			_spawn_monster_instance(entry.scene, global_spawn_pos, m_level, m_rarity, world)
+			_spawn_monster_instance(entry, global_spawn_pos, m_level, m_rarity, world)
 
-func _spawn_monster_instance(monster_scene: PackedScene, spawn_pos: Vector3, m_level: int, m_rarity: String, world: Node3D) -> void:
-	var monster_instance = monster_scene.instantiate() as MonsterBase
+func _spawn_monster_instance(entry: SpawnEntry, spawn_pos: Vector3, m_level: int, m_rarity: String, world: Node3D) -> void:
+	var monster_instance = entry.scene.instantiate() as MonsterBase
 	if not monster_instance:
 		return
 
@@ -58,6 +58,9 @@ func _spawn_monster_instance(monster_scene: PackedScene, spawn_pos: Vector3, m_l
 	monster_instance.global_position = spawn_pos
 	monster_instance.spawn_origin = spawn_pos
 	monster_instance.origin_area = self
+
+	if monster_instance.has_method("apply_spawn_entry"):
+		monster_instance.apply_spawn_entry(entry)
 
 	if monster_instance.has_method("setup_stats"):
 		monster_instance.setup_stats(m_level, m_rarity)

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dbjhkh6ppuc7x"]
+
+[ext_resource type="PackedScene" uid="uid://cmt64j1fatude" path="res://ASSETS/Armas/Machado/Machado.fbx" id="1_p88fy"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_2owa7"]
+
+[resource]
+script = ExtResource("2_2owa7")
+id = "Machado_T1"
+name = "Machado de Lenhador Basico"
+item_type = 6
+active_legendary = 2
+description = "Machado simples para coletar madeira"
+mesh_scene = ExtResource("1_p88fy")
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, 0, -0.2)
+is_stackable = false
+max_stack = 1
+metadata/_custom_type_script = "uid://eaep86qi61ki"

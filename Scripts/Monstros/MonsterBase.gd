@@ -116,6 +116,45 @@ func update_display() -> void:
 			name_label.text = "[Nv. %d] %s" % [level, monster_name]
 			name_label.modulate = Color(1.0, 0.324, 0.259, 1.0)
 
+func apply_spawn_entry(entry: SpawnEntry) -> void:
+	if not entry:
+		return
+	if not entry.monster_name.is_empty():
+		monster_name = entry.monster_name
+	if not entry.drop_table.is_empty():
+		drop_table = entry.drop_table.duplicate()
+
+	if entry.speed >= 0.0:
+		speed = entry.speed
+		original_speed = speed
+	if entry.leash_radius >= 0.0:
+		leash_radius = entry.leash_radius
+	if entry.aggro_range >= 0.0:
+		aggro_range = entry.aggro_range
+	if entry.max_chase_distance >= 0.0:
+		max_chase_distance = entry.max_chase_distance
+	if entry.base_attack_range >= 0.0:
+		base_attack_range = entry.base_attack_range
+		if nav_agent:
+			nav_agent.target_desired_distance = base_attack_range
+	if not entry.attack_effect.is_empty():
+		attack_effect = entry.attack_effect
+	if entry.effect_damage_percent >= 0.0:
+		effect_damage_percent = entry.effect_damage_percent
+
+	if entry.hp_factor >= 0.0:
+		hp_factor = entry.hp_factor
+	if entry.atk_factor >= 0.0:
+		atk_factor = entry.atk_factor
+	if entry.def_factor >= 0.0:
+		def_factor = entry.def_factor
+	if entry.attack_cooldown_base >= 0.0:
+		attack_cooldown_base = entry.attack_cooldown_base
+	if entry.respawn_time >= 0.0:
+		respawn_time = entry.respawn_time
+
+	update_display()
+
 func setup_stats(new_level: int, new_rarity: String) -> void:
 	level = new_level
 	rarity = new_rarity
@@ -236,7 +275,7 @@ func update_ai_state(delta: float) -> void:
 				current_state = State.RETURN
 				return
 
-			var dist_to_target = global_position.distance_to(current_target_player.global_position)
+			var dist_to_target: float = _get_distance_to_target(current_target_player)
 			
 			if dist_to_target <= base_attack_range:
 				current_state = State.ATTACK
@@ -266,7 +305,7 @@ func update_ai_state(delta: float) -> void:
 				var look_dir = (current_target_player.global_position - global_position).normalized()
 				rotation.y = lerp_angle(rotation.y, atan2(-look_dir.x, -look_dir.z), delta * 12.0)
 
-				var dist = global_position.distance_to(current_target_player.global_position)
+				var dist: float = _get_distance_to_target(current_target_player)
 				if dist > base_attack_range + 0.3:
 					current_state = State.CHASE
 				elif attack_cooldown <= 0.0:
@@ -338,15 +377,28 @@ func execute_attack(target: CharacterBody3D, range_dist: float) -> void:
 func apply_rarity_effects() -> void:
 	pass
 
+func _get_distance_to_target(target: CharacterBody3D) -> float:
+	var dist_player: float = global_position.distance_to(target.global_position)
+	if "is_mounted" in target and target.is_mounted and "mounted_horse" in target and is_instance_valid(target.mounted_horse):
+		var dist_horse: float = global_position.distance_to(target.mounted_horse.global_position)
+		return minf(dist_player, dist_horse)
+	return dist_player
+
 func perform_cleave_attack(range_dist: float) -> void:
 	var forward_dir = -global_transform.basis.z.normalized()
 	for p in get_tree().get_nodes_in_group("Player"):
 		if is_instance_valid(p) and not p.is_dead:
-			var diff = p.global_position - global_position
+			var is_on_horse: bool = "is_mounted" in p and p.is_mounted and "mounted_horse" in p and is_instance_valid(p.mounted_horse)
+			var target_node: Node3D = p.mounted_horse if is_on_horse else p
+			var diff = target_node.global_position - global_position
 			diff.y = 0.0
-			if diff.length() <= range_dist + 0.4:
+			var extra_reach: float = 0.6 if is_on_horse else 0.4
+			if diff.length() <= range_dist + extra_reach:
 				if forward_dir.dot(diff.normalized()) >= 0.2:
-					p.take_damage(attack_damage)
+					if is_on_horse and target_node.has_method("take_damage"):
+						target_node.take_damage(attack_damage)
+					else:
+						p.take_damage(attack_damage)
 
 func reset_combat_state() -> void:
 	if hp < max_hp and not is_dead:

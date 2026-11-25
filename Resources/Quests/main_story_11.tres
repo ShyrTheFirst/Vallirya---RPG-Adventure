@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://dfmr4pb6m54lk"]
 
-[ext_resource type="Resource" uid="uid://bjypok0lxtjrq" path="res://Resources/Items/PeleGrossa.tres" id="1_373o4"]
+[ext_resource type="Resource" uid="uid://bjypok0lxtjrq" path="res://Resources/Items/6 - Drops/Dente_Orc.tres" id="1_373o4"]
 [ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_ue8we"]
 
 [resource]

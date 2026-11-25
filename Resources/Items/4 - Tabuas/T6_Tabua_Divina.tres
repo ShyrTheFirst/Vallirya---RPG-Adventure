@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://csdaoujwyqtaq"]
+
+[ext_resource type="PackedScene" uid="uid://d3b7630e4kvxy" path="res://Resources/MESH/Tabuas/T6_Tabua_Divina.tscn" id="1_xju5k"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_kagd8"]
+
+[resource]
+script = ExtResource("2_kagd8")
+id = "Tabua_T6"
+name = "Tabua Divina"
+rarity = 4
+level = 100
+active_legendary = 2
+description = "Uma tabua refinada a partir de madeiras divinas. Usada na fabricaçao"
+mesh_scene = ExtResource("1_xju5k")
+sell_price = 7163
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

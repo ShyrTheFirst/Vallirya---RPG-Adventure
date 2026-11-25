@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bjypok0lxtjrq"]
+
+[ext_resource type="PackedScene" uid="uid://ch8vosk1humvk" path="res://Resources/MESH/Drops/Dente_Orc.tscn" id="1_4v5u4"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_05ehv"]
+
+[resource]
+script = ExtResource("1_05ehv")
+id = "Dente_Orc"
+name = "Dente de Orc"
+rarity = 1
+level = 15
+active_legendary = null
+description = "Um dente de Orc obtido apos uma derrota brutal."
+mesh_scene = ExtResource("1_4v5u4")
+sell_price = 50
+metadata/_custom_type_script = "uid://eaep86qi61ki"

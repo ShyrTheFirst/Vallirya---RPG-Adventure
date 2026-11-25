@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://bhfaq44e1acef"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_mwq0t"]
+[ext_resource type="Resource" uid="uid://ckgb0kogkxe3b" path="res://Resources/Items/4 - Tabuas/T4_Tabua_Real.tres" id="2_mwq0t"]
+[ext_resource type="Resource" uid="uid://by2guqioh87vx" path="res://Resources/Items/4 - Tabuas/T3_Tabua_Adornada.tres" id="2_wcrp1"]
+[ext_resource type="Resource" uid="uid://58fupmqq24v6" path="res://Resources/Items/4 - Tabuas/T4_Madeira_Realeza.tres" id="3_esqjm"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="3_f5uos"]
+
+[resource]
+script = ExtResource("3_f5uos")
+equipment_type = 8
+recipe_level = 4
+input_items = Array[ExtResource("1_mwq0t")]([ExtResource("2_wcrp1"), ExtResource("3_esqjm")])
+input_quantities = Array[int]([1, 2])
+result_item = ExtResource("2_mwq0t")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

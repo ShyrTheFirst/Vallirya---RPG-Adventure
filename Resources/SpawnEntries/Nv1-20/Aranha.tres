@@ -1,11 +1,25 @@
 [gd_resource type="Resource" script_class="SpawnEntry" format=3 uid="uid://rnpfejbu7ai7"]
 
 [ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/Monstros/SpawnEntry.gd" id="1_genay"]
+[ext_resource type="Script" uid="uid://bjy3osgd6vcx4" path="res://Scripts/Monstros/MonsterDrop.gd" id="1_j6k5v"]
 [ext_resource type="PackedScene" uid="uid://dfxluh22i38xf" path="res://Scenes/Monstros/Aranha.tscn" id="1_wauas"]
 
 [resource]
 script = ExtResource("1_genay")
 scene = ExtResource("1_wauas")
+monster_name = "Aranha"
 min_level = 15
 max_level = 20
+speed = 3.2
+leash_radius = 10.0
+aggro_range = 8.0
+max_chase_distance = 14.0
+base_attack_range = 5.1
+attack_effect = "\"envenenamento\""
+effect_damage_percent = 0.8
+hp_factor = 0.9
+atk_factor = 1.35
+def_factor = 0.8
+attack_cooldown_base = 1.8
+respawn_time = 45.0
 metadata/_custom_type_script = "uid://cbe7834febh5o"

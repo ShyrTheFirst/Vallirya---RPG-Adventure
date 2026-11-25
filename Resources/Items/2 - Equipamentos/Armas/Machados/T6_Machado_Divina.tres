@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://txp5r7d5b4bs"]
+
+[ext_resource type="PackedScene" uid="uid://b8nbwxmhd6d3d" path="res://ASSETS/Armas/Machado/De Guerra/Machado_De_Guerra.fbx" id="1_ooljn"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_3ftir"]
+
+[resource]
+script = ExtResource("2_3ftir")
+id = "Machado_Divino"
+name = "Machado Divino"
+item_type = 0
+weapon_type = 3
+level = 6
+active_legendary = null
+description = "Machado feito com itens raros e pronto para derrotar divindades."
+mesh_scene = ExtResource("1_ooljn")
+sell_price = 200
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, -0.7, -0.5)
+is_stackable = false
+max_stack = 1
+bonus_attack = 15
+metadata/_custom_type_script = "uid://eaep86qi61ki"

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bwm52cjpmbufg"]
+
+[ext_resource type="PackedScene" uid="uid://vqdoath6xpba" path="res://Resources/MESH/Drops/Armadura_Orc.tscn" id="1_1pqfl"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_vdbh6"]
+
+[resource]
+script = ExtResource("1_vdbh6")
+id = "Armadura_Orc"
+name = "Armadura de Orc"
+rarity = 1
+level = 15
+active_legendary = 2
+description = "Uma armadura de Orc parcialmente destruida apos uma luta brutal."
+mesh_scene = ExtResource("1_1pqfl")
+sell_price = 50
+metadata/_custom_type_script = "uid://eaep86qi61ki"

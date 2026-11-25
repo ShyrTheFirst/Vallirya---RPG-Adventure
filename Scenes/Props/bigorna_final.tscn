@@ -1,10 +1,19 @@
 [gd_scene format=4 uid="uid://dehgpge8ax5pe"]
 
 [ext_resource type="Texture2D" uid="uid://dmui74gs63hr2" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_0.png" id="1_esaqb"]
+[ext_resource type="Script" uid="uid://cveebpu5mk63t" path="res://Scripts/Props/CraftingStation.gd" id="1_wo1eq"]
 [ext_resource type="Texture2D" uid="uid://bjrkosvs6p75w" path="res://ASSETS/Pacote Modular Vallirya - Objetos/TroncoMadeira_1.png" id="2_3ckaf"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_h5tv7"]
+[ext_resource type="Resource" uid="uid://w7mn5fh1ib73" path="res://Resources/Items/0 - Crafts/Botas/T6_Bota_Divina.tres" id="3_on5c5"]
 [ext_resource type="Texture2D" uid="uid://btclkca1qptqn" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Final_0.png" id="3_wo1eq"]
 [ext_resource type="Texture2D" uid="uid://dwvl2ctkueipy" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Bigorna_Final_1.png" id="4_namfi"]
+[ext_resource type="Resource" uid="uid://t1xk24o1g5k4" path="res://Resources/Items/0 - Crafts/Elmos/T6_Elmo_Divina.tres" id="4_ppbue"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="5_3ckaf"]
+[ext_resource type="Resource" uid="uid://wgihlc7xtvt4" path="res://Resources/Items/0 - Crafts/Armaduras/T6_Armadura_Divina.tres" id="5_tncyd"]
+[ext_resource type="Resource" uid="uid://d3cdsuc063ynr" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T6_Cajado_Divino.tres" id="6_7smo4"]
+[ext_resource type="Resource" uid="uid://bdk5le1wcnsd" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T6_Espada_Larga_Divina.tres" id="7_nmkrq"]
+[ext_resource type="Resource" uid="uid://c7cl12kgc0ibc" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T6_Lanca_Alabarda_Divina.tres" id="8_5khuj"]
+[ext_resource type="Resource" uid="uid://d3g3dqb5es1as" path="res://Resources/Items/0 - Crafts/Armas/Machados/T6_Machado_Guerra_Divino.tres" id="9_1ksoo"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g4v7s"]
 radius = 0.3
@@ -116,6 +125,9 @@ viewport_path = NodePath("InteractionPrompt/SubViewport")
 [node name="Bigorna_Final" type="StaticBody3D" unique_id=36560846]
 collision_layer = 2
 collision_mask = 9
+script = ExtResource("1_wo1eq")
+station_name = "Bigorna Divina"
+station_recipes = Array[ExtResource("2_h5tv7")]([ExtResource("3_on5c5"), ExtResource("4_ppbue"), ExtResource("5_tncyd"), ExtResource("6_7smo4"), ExtResource("7_nmkrq"), ExtResource("8_5khuj"), ExtResource("9_1ksoo")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1461790309]
 shape = SubResource("CapsuleShape3D_g4v7s")

@@ -1,5 +1,28 @@
 extends Node
 
+# ==============================================================================
+# TUTORIAL RÁPIDO DE TRADUÇÃO (LanguageManager + res://languages.json)
+# ==============================================================================
+# 1. ADICIONANDO NOVOS TEXTOS NO ARQUIVO (res://languages.json):
+#    Dentro de cada bloco de idioma ("pt-br", "en-us", "es-es"), adicione na
+#    seção "ui" (ou na seção correspondente) no formato JSON:
+#      "id_traducao": "Texto traduzido aqui",
+#    (Atenção: não coloque vírgula no último item de cada bloco!)
+#
+# 2. USANDO A TRADUÇÃO NOS SCRIPTS (.gd):
+#    Chame LanguageManager.tr_key("id_traducao", "Texto padrão em PT-BR"):
+#      btn.text = LanguageManager.tr_key("btn_criar", "CRIAR")
+#
+# 3. COLOCANDO VARIÁVEIS / TRADUÇÕES DENTRO DE UMA STRING (Formatação com %):
+#    Para textos com decoração ou valores dinâmicos, use %s (texto) ou %d (inteiro):
+#      var titulo = LanguageManager.tr_key("equipamentos_titulo", "EQUIPAMENTOS")
+#      eq_title.text = "--- %s ---" % titulo
+#    Ou direto em uma linha:
+#      eq_title.text = "--- %s ---" % LanguageManager.tr_key("equipamentos_titulo", "EQUIPAMENTOS")
+#    Com mais de um valor, passe um Array:
+#      lbl.text = "%s: %d" % [LanguageManager.tr_key("nivel", "Nível"), level]
+# ==============================================================================
+
 signal language_changed(new_lang: String)
 
 const LANGUAGES_FILE_PATH: String = "res://languages.json"

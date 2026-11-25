@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cwauw6d5qa763"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_2lfeg"]
+[ext_resource type="PackedScene" uid="uid://d33v3o520xl7e" path="res://Resources/MESH/Minerios/mineral_bronze.tscn" id="1_g63qj"]
+
+[resource]
+script = ExtResource("1_2lfeg")
+id = "minerio_bronze"
+name = "Minerio de Bronze"
+level = 2
+active_legendary = 2
+description = "Minerio de bronze adquirido da mineraçao."
+mesh_scene = ExtResource("1_g63qj")
+inventory_rotation = Vector3(45, 30, 45)
+inventory_scale = Vector3(5, 5, 5)
+inventory_offset = Vector3(-1, 0.2, -0.3)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

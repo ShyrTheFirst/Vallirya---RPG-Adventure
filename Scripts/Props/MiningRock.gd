@@ -1,48 +1,51 @@
 class_name MiningRock
 extends GatherableProp
 
-@export_category("Configuração de Mineração da Pedra")
-@export var mineral_mappings: Array[Dictionary] = [
-	# Exemplo de preenchimento no Inspetor:
-	# {"node_path": NodePath("Minerais/Mineral_Bronze"), "item_data": preload("res://Resources/Items/Moeda_Bronze.tres")}
+const T1_MINERIO_LATAO: ItemData = preload("uid://blfaim5yty8ht")
+const T2_MINERIO_BRONZE: ItemData = preload("uid://cwauw6d5qa763")
+const T3_MINERIO_PRATA: ItemData = preload("uid://duiwvns1nqfy7")
+const T4_MINERIO_OURO: ItemData = preload("uid://cdn1wjptk6sm3")
+const T5_MINERIO_PLACADRACO: ItemData = preload("uid://dnhdvds0yrptq")
+const T6_MINERIO_CELESTIAL: ItemData = preload("uid://bueniuanx367f")
+
+const MINERAL_TIERS: Array[Dictionary] = [
+	{"node_name": "Mineral_Latao", "item": T1_MINERIO_LATAO},
+	{"node_name": "Mineral_Bronze", "item": T2_MINERIO_BRONZE},
+	{"node_name": "Mineral_Prata", "item": T3_MINERIO_PRATA},
+	{"node_name": "Mineral_Ouro", "item": T4_MINERIO_OURO},
+	{"node_name": "Mineral_Placadraco", "item": T5_MINERIO_PLACADRACO},
+	{"node_name": "Mineral_Celestial", "item": T6_MINERIO_CELESTIAL},
 ]
 
-# Variável que o PropSpawner pode definir ao instanciar se quiser forçar um minério específico
+# Variável que o PropSpawner define ao instanciar (0=Latão, 1=Bronze, 2=Prata, 3=Ouro, 4=Placadraco, 5=Celestial)
 var forced_mineral_index: int = -1
 
 func _ready() -> void:
-	super._ready() # Executa o _ready() do GatherableProp (área de interação, prompt 'E', etc.)
-	
-	setup_random_or_forced_mineral()
+	gathering_animation = "Armature|Minerar"
+	if required_tool == "auto":
+		required_tool = "pickaxe"
+	super._ready()
+	setup_mineral()
 
-func setup_random_or_forced_mineral() -> void:
-	if mineral_mappings.is_empty():
+func setup_mineral() -> void:
+	var minerais_root: Node3D = get_node_or_null("Minerais") as Node3D
+	if not minerais_root:
 		return
 
-	# 1. Esconde todos os minerais filhos da pedra primeiro
-	for mapping in mineral_mappings:
-		var node_path = mapping.get("node_path", NodePath())
-		if not node_path.is_empty():
-			var node = get_node_or_null(node_path)
-			if node and node is Node3D:
-				node.visible = false
+	# 1. Esconde todos os nós Node3D dentro de Minerais
+	for child in minerais_root.get_children():
+		if child is Node3D:
+			child.visible = false
 
-	# 2. Escolhe qual índice usar (por sorteio aleatório ou forçado pelo spawner)
-	var chosen_index = forced_mineral_index
-	if chosen_index < 0 or chosen_index >= mineral_mappings.size():
-		chosen_index = randi() % mineral_mappings.size()
+	# 2. Escolhe o índice (forçado pelo PropSpawner ou aleatório entre os disponíveis)
+	var chosen_index: int = forced_mineral_index
+	if chosen_index < 0 or chosen_index >= MINERAL_TIERS.size():
+		chosen_index = randi() % MINERAL_TIERS.size()
 
-	# 3. Pega o mapeamento escolhido
-	var selected_mapping = mineral_mappings[chosen_index]
-	var target_path = selected_mapping.get("node_path", NodePath())
-	var assigned_item = selected_mapping.get("item_data", null) as ItemData
+	var tier_data: Dictionary = MINERAL_TIERS[chosen_index]
+	var target_node: Node3D = minerais_root.get_node_or_null(tier_data["node_name"]) as Node3D
 
-	# 4. Ativa apenas o modelo 3D do minério sorteado
-	if not target_path.is_empty():
-		var active_node = get_node_or_null(target_path)
-		if active_node and active_node is Node3D:
-			active_node.visible = true
-			
-	# 5. Define automaticamente o ItemData que o player vai receber ao minerar
-	if assigned_item:
-		item_to_give = assigned_item
+	# 3. Torna visível apenas o mineral escolhido e define o ItemData correspondente
+	if target_node:
+		target_node.visible = true
+	item_to_give = tier_data["item"]

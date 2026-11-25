@@ -50,7 +50,10 @@ func spawn_single_prop() -> void:
 	for attempt in range(max_spawn_attempts):
 		var candidate = get_random_point_in_area()
 		if snap_to_ground:
-			candidate = get_ground_position(candidate)
+			var ground_hit: Dictionary = _get_ground_hit(candidate)
+			if not ground_hit["valid"]:
+				continue
+			candidate = ground_hit["position"]
 
 		var too_close: bool = false
 		for existing_pos in spawned_positions:
@@ -130,6 +133,10 @@ func get_random_point_in_area() -> Vector3:
 	return shape_node.global_transform * local_pos
 
 func get_ground_position(pos: Vector3) -> Vector3:
+	var hit := _get_ground_hit(pos)
+	return hit["position"] if hit["valid"] else pos
+
+func _get_ground_hit(pos: Vector3) -> Dictionary:
 	var space_state = get_world_3d().direct_space_state
 	var ray_origin = pos + Vector3(0, 50.0, 0)
 	var ray_target = pos - Vector3(0, 50.0, 0)
@@ -142,9 +149,24 @@ func get_ground_position(pos: Vector3) -> Vector3:
 	var result = space_state.intersect_ray(query)
 
 	if result and result.has("position"):
-		return result["position"]
+		var collider: Object = result.get("collider", null)
+		if _is_prop_collider(collider):
+			return {"valid": false, "position": pos}
+		return {"valid": true, "position": result["position"]}
 	
-	return pos
+	return {"valid": false, "position": pos}
+
+func _is_prop_collider(collider: Object) -> bool:
+	if not collider or not (collider is Node):
+		return false
+	var node: Node = collider as Node
+	while node:
+		if node is MiningRock or "spawner_reference" in node:
+			return true
+		if node.is_in_group("Props") or node.is_in_group("Trees") or node.is_in_group("Rocks") or node.is_in_group("Harvestable"):
+			return true
+		node = node.get_parent()
+	return false
 
 func _bake_navigation_mesh() -> void:
 	await get_tree().create_timer(0.5).timeout

@@ -6,7 +6,7 @@
 script = ExtResource("1_eypwy")
 quest_id = "main_story_1"
 title = "Boas-Vindas a Kalythra"
-description = "Conheça a guilda e registre-se com o Mestre."
+description = "Conheça a guilda e registre-se com o Mestre Valkor na porta do Castelo da Guilda de Kalythra."
 quest_type = 2
 target_ids = Array[String](["Valkor"])
 required_amount = 1

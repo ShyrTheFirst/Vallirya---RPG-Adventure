@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://crhcg6ttrou3r"]
+
+[ext_resource type="PackedScene" uid="uid://1x4ivjl2c6is" path="res://Resources/MESH/Madeiras/T2_Madeira_Resistente.tscn" id="1_b6rpj"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_758t5"]
+
+[resource]
+script = ExtResource("2_758t5")
+id = "Madeira_T2"
+name = "Tronco de Madeira Resistente"
+rarity = 1
+level = 10
+active_legendary = 2
+description = "Um tronco de madeira resistente usado para criar tabuas"
+mesh_scene = ExtResource("1_b6rpj")
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

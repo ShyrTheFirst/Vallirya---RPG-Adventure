@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://8mq8t27v3kyr"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_m04v8"]
+
+[resource]
+script = ExtResource("1_m04v8")
+id = "Elmo_T2"
+name = "Elmo de Bronze"
+item_type = 2
+level = 2
+active_legendary = 2
+description = "Um elmo de metal, para proteger aventureiros mais experientes."
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, 0, -0.2)
+is_stackable = false
+max_stack = 1
+metadata/_custom_type_script = "uid://eaep86qi61ki"

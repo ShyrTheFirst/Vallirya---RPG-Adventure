@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bwi756v8jkjnq" path="res://Scenes/Props/pedra_1_base.tscn" id="11_qjck4"]
 [ext_resource type="PackedScene" uid="uid://bmdgilgn7pdw6" path="res://Scenes/Props/pedra_2_base.tscn" id="12_1hnie"]
 [ext_resource type="PackedScene" uid="uid://bb6nxqhdma34j" path="res://Scenes/Props/pedra_3_base.tscn" id="13_6t7rf"]
+[ext_resource type="PackedScene" uid="uid://bo4albhfrdlim" path="res://Scenes/Props/pedra_1_minerais.tscn" id="14_6t7rf"]
 [ext_resource type="PackedScene" uid="uid://d3oy1spsbki6q" path="res://Scenes/Props/grama_basica.tscn" id="14_p63a1"]
 [ext_resource type="PackedScene" uid="uid://d3d11ececr7ln" path="res://Scenes/Props/arbusto.tscn" id="15_6e4af"]
 [ext_resource type="PackedScene" uid="uid://bk65r40ntolc1" path="res://Scenes/Props/arvore_c.tscn" id="16_m3v18"]
@@ -30,25 +31,53 @@
 [ext_resource type="PackedScene" uid="uid://dbi1b5myivpu8" path="res://Scenes/Props/casa_normal_ardosia.tscn" id="27_b7lu7"]
 [ext_resource type="PackedScene" uid="uid://fn76k3ifu4r5" path="res://Scenes/Props/bau_simples.tscn" id="28_inwaf"]
 [ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="29_7idvi"]
-[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/Barra_Latao.tres" id="30_oyjrs"]
-[ext_resource type="Resource" uid="uid://bjypok0lxtjrq" path="res://Resources/Items/PeleGrossa.tres" id="31_o5i4u"]
+[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/1 - Barras/T1_Barra_Latao.tres" id="30_oyjrs"]
 [ext_resource type="PackedScene" uid="uid://x1tg1b5gfeuc" path="res://Scenes/Props/bigorna_basica.tscn" id="32_b1d4d"]
 [ext_resource type="PackedScene" uid="uid://58yfc58ogy4d" path="res://Scenes/Props/poste_luz.tscn" id="33_138jh"]
+[ext_resource type="Resource" uid="uid://blfaim5yty8ht" path="res://Resources/Items/1 - Barras/T1_Minerio_Latao.tres" id="33_ifusy"]
 [ext_resource type="PackedScene" uid="uid://dxuvjxn7i6cmt" path="res://Scenes/NPCs/npc_valkor.tscn" id="34_jicov"]
+[ext_resource type="Resource" uid="uid://c1ydt6gaega5h" path="res://Resources/Items/4 - Tabuas/T1_Madeira_Simples.tres" id="34_ogi3f"]
+[ext_resource type="Resource" uid="uid://lhnqrcy0skxj" path="res://Resources/Items/4 - Tabuas/T1_Tabua_Simples.tres" id="35_7t4ha"]
 [ext_resource type="PackedScene" uid="uid://bxho00ukqf8fb" path="res://Scenes/NPCs/npc_ferreiro.tscn" id="35_k2w4y"]
 [ext_resource type="PackedScene" uid="uid://bh4iuecklo1g7" path="res://Scenes/NPCs/npc_feiticeira.tscn" id="36_154hc"]
 [ext_resource type="AudioStream" uid="uid://dvqq5awj6glom" path="res://ASSETS/SFX/Forest Day.wav" id="36_b2a5u"]
 [ext_resource type="PackedScene" uid="uid://v1ogh1rb7r50" path="res://Scenes/Props/mesa_pentagrama.tscn" id="37_2tlrs"]
 [ext_resource type="PackedScene" uid="uid://8qr4p3cc7y88" path="res://Scenes/Props/portal_circular.tscn" id="37_dy84j"]
-[ext_resource type="PackedScene" uid="uid://cwkt3nyr2x74m" path="res://Resources/MESH/Pocao_Mana_Grande.tscn" id="38_qjck4"]
+[ext_resource type="Resource" uid="uid://djt7wj71a5hn5" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T1_Espada_Latao.tres" id="38_lr88i"]
 [ext_resource type="PackedScene" uid="uid://cyw1atx3buphv" path="res://Scenes/VFX/clouds.tscn" id="38_scunc"]
-[ext_resource type="PackedScene" uid="uid://bydifaq2cbuqm" path="res://Resources/MESH/Pocao_Vida_Grande.tscn" id="39_1hnie"]
 [ext_resource type="Script" uid="uid://u3f4n3lpl33r" path="res://Scripts/Fallzone.gd" id="39_lr88i"]
-[ext_resource type="PackedScene" uid="uid://raatwtxrebui" path="res://Resources/MESH/Pocao_Vida_Media.tscn" id="40_6t7rf"]
-[ext_resource type="PackedScene" uid="uid://17mj1c0d586i" path="res://Resources/MESH/Pocao_Vida_Pequena.tscn" id="41_p63a1"]
-[ext_resource type="PackedScene" uid="uid://c4qulvnuvp1ie" path="res://Resources/MESH/Pocao_Mana_Pequena.tscn" id="42_6e4af"]
-[ext_resource type="PackedScene" uid="uid://cp3mxlnhhrva3" path="res://Resources/MESH/Pocao_Mana_Media.tscn" id="43_m3v18"]
+[ext_resource type="Resource" uid="uid://dgvqq7f3it4xb" path="res://Resources/Items/0 - Crafts/Botas/T1_Bota_Basica.tres" id="39_o3nup"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="39_upesu"]
+[ext_resource type="Resource" uid="uid://cfy4cxupp1meh" path="res://Resources/Items/0 - Crafts/Barras/T1_Barra.tres" id="40_ifusy"]
+[ext_resource type="Resource" uid="uid://dtpmgyll6tye8" path="res://Resources/Items/0 - Crafts/Elmos/T1_Elmo_Basica.tres" id="40_qwe64"]
+[ext_resource type="Resource" uid="uid://csvo7m38amd1t" path="res://Resources/Items/0 - Crafts/Armaduras/T1_Armadura_Basica.tres" id="41_e36k8"]
+[ext_resource type="Resource" uid="uid://dr6lgqk7t6mxg" path="res://Resources/Items/0 - Crafts/Barras/T2_Barra.tres" id="41_ogi3f"]
+[ext_resource type="Resource" uid="uid://bl3y0bnqd8wxx" path="res://Resources/Items/0 - Crafts/Barras/T3_Barra.tres" id="42_7t4ha"]
+[ext_resource type="Resource" uid="uid://x3s6s85lj5lj" path="res://Resources/Items/0 - Crafts/Armas/Machados/T1_Machado_Latao.tres" id="42_y725p"]
+[ext_resource type="Resource" uid="uid://dc6f45wje2k78" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T1_Lanca_Pique_Latao.tres" id="43_q5f7q"]
 [ext_resource type="PackedScene" uid="uid://dwuosmdv4tpls" path="res://Scenes/NPCs/npc_mercante.tscn" id="44_2tlrs"]
+[ext_resource type="Resource" uid="uid://de7qog6xt771l" path="res://Resources/Items/0 - Crafts/Botas/T2_Bota_Simples.tres" id="44_ji0n1"]
+[ext_resource type="PackedScene" uid="uid://h3ucojabud85" path="res://Scenes/Props/forja.tscn" id="45_m3v18"]
+[ext_resource type="Resource" uid="uid://3c4si5beho7q" path="res://Resources/Items/0 - Crafts/Elmos/T2_Elmo_Simples.tres" id="45_vqdyo"]
+[ext_resource type="PackedScene" uid="uid://cpy26vc18o024" path="res://Scenes/NPCs/npc_floresta.tscn" id="46_1hnie"]
+[ext_resource type="Resource" uid="uid://bcobyd66axd0s" path="res://Resources/Items/0 - Crafts/Armaduras/T2_Armadura_Simples.tres" id="46_mokha"]
+[ext_resource type="Resource" uid="uid://by37714ctm8x4" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T2_Espada_Bronze.tres" id="47_wq6kk"]
+[ext_resource type="Resource" uid="uid://c4w6jibe1blpr" path="res://Resources/Items/0 - Crafts/Armas/Machados/T2_Machado_Bronze.tres" id="48_fgl14"]
+[ext_resource type="Resource" uid="uid://cvot8sxlacx1x" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T2_Lanca_Pique_Bronze.tres" id="49_lil2d"]
+[ext_resource type="Resource" uid="uid://dp6gk82bjmcre" path="res://Resources/Items/0 - Crafts/Botas/T3_Bota_Resistente.tres" id="50_bdvpj"]
+[ext_resource type="PackedScene" uid="uid://dk8e685nb8ew7" path="res://Scenes/Props/MesaDeCriacao.tscn" id="50_ifusy"]
+[ext_resource type="Resource" uid="uid://bqncvgykkqvbb" path="res://Resources/Items/0 - Crafts/Tabuas/Tabua_T1.tres" id="51_b7lu7"]
+[ext_resource type="Resource" uid="uid://dds7fxjuk82ls" path="res://Resources/Items/0 - Crafts/Elmos/T3_Elmo_Resistente.tres" id="51_qv1nb"]
+[ext_resource type="Resource" uid="uid://c1damrmd5lqxg" path="res://Resources/Items/0 - Crafts/Armas/Espadas/T3_Espada_Prata.tres" id="52_5qyy8"]
+[ext_resource type="Resource" uid="uid://lu5btofifdmh" path="res://Resources/Items/0 - Crafts/Tabuas/Tabua_T2.tres" id="52_inwaf"]
+[ext_resource type="Resource" uid="uid://jv6i2p661mee" path="res://Resources/Items/0 - Crafts/Tabuas/Tabua_T3.tres" id="53_7idvi"]
+[ext_resource type="Resource" uid="uid://bsr6f6nwlpw58" path="res://Resources/Items/0 - Crafts/Armas/Machados/T3_Machado_Prata.tres" id="53_8fqnk"]
+[ext_resource type="Resource" uid="uid://esnopx4c1vh4" path="res://Resources/Items/0 - Crafts/Armas/Lancas/T3_Lanca_Azagaia_Prata.tres" id="54_o0o0e"]
+[ext_resource type="Resource" uid="uid://qo0aa4n3ollf" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T1_Cajado_Madeira.tres" id="54_oyjrs"]
+[ext_resource type="Resource" uid="uid://dk3ykbawk56dt" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T2_Cajado_Adornado.tres" id="55_o5i4u"]
+[ext_resource type="Resource" uid="uid://c2o07mcd5khia" path="res://Resources/Items/0 - Crafts/Armas/Cajados/T3_Cajado_Joia_Cravada.tres" id="56_b1d4d"]
+[ext_resource type="Resource" uid="uid://c1ag76btnrnk6" path="res://Resources/Items/3 - Pocoes/HP_Pequeno.tres" id="72_o3nup"]
+[ext_resource type="Resource" uid="uid://n055wuem1lnl" path="res://Resources/Items/3 - Pocoes/Mana_Pequena.tres" id="73_qwe64"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqsmw"]
 resource_name = "M_Ilha01_A"
@@ -231,6 +260,10 @@ radius = 18.609863
 height = 1.1728516
 radius = 19.532227
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1hnie"]
+height = 1.1728516
+radius = 8.754883
+
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_h0n6w"]
 height = 1.1728516
 radius = 73.53027
@@ -378,6 +411,23 @@ shape = SubResource("CylinderShape3D_we6k1")
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="PropSpawnAreas/Pedras_Basicas" unique_id=584098522]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82.385635, 0.5131836, 35.73962)
 shape = SubResource("CylinderShape3D_44qgb")
+
+[node name="Minerais Latao" type="Area3D" parent="PropSpawnAreas" unique_id=900199425]
+script = ExtResource("8_q1ngq")
+prop_scenes = Array[PackedScene]([ExtResource("14_6t7rf")])
+forced_mineral_index = 0
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="PropSpawnAreas/Minerais Latao" unique_id=2091232012]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -103.31757, 0, -30.68358)
+shape = SubResource("CylinderShape3D_1hnie")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="PropSpawnAreas/Minerais Latao" unique_id=434948030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.120476, 0, -30.68358)
+shape = SubResource("CylinderShape3D_1hnie")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="PropSpawnAreas/Minerais Latao" unique_id=412674737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -89.814354, 0, 27.583462)
+shape = SubResource("CylinderShape3D_1hnie")
 
 [node name="Gramas" type="Area3D" parent="PropSpawnAreas" unique_id=1329846457]
 script = ExtResource("8_q1ngq")
@@ -568,13 +618,14 @@ shape = SubResource("BoxShape3D_h0n6w")
 [node name="PropsContainer" type="Node3D" parent="." unique_id=1441444937]
 
 [node name="Armazem" parent="PropsContainer" unique_id=1429822899 instance=ExtResource("24_qjck4")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -106.06044, 22.210323, -1.7922716)
+transform = Transform3D(-0.8660253, 0, -0.50000006, 0, 1, 0, 0.50000006, 0, -0.8660253, -104.97654, 22.210323, 2.3935266)
 
 [node name="QuadroAvisos" parent="PropsContainer" unique_id=36560846 instance=ExtResource("24_wd258")]
 transform = Transform3D(-0.88844645, 0, 0.45898032, 0, 1, 0, -0.45898032, 0, -0.88844645, -104.920074, 22.210325, -4.078043)
+npc_id = "npc_inicial"
 
 [node name="Castelo_Ardosia" parent="PropsContainer" unique_id=1742118571 instance=ExtResource("25_tcl1q")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -117.1746, 22.027372, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -117.1746, 22.027372, -1.3087997)
 
 [node name="Casa_Sobrado_Ardosia" parent="PropsContainer" unique_id=702350749 instance=ExtResource("26_oij3w")]
 transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49999997, -40.330235, 0, 21.927746)
@@ -594,13 +645,15 @@ transform = Transform3D(-0.96592563, 0, -0.2588189, 0, 1, 0, 0.2588189, 0, -0.96
 [node name="Casa_Normal_Ardosia4" parent="PropsContainer" unique_id=2027770235 instance=ExtResource("27_b7lu7")]
 transform = Transform3D(1.0430813e-07, 0, 0.99999976, 0, 1, 0, -0.99999976, 0, 1.0430813e-07, -54.64316, 0, 17.9715)
 
-[node name="Bau_Simples" parent="PropsContainer" unique_id=188952271 instance=ExtResource("28_inwaf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.41184, -3.8146973e-06, 11.292596)
-chest_items = Array[ExtResource("29_7idvi")]([ExtResource("30_oyjrs"), ExtResource("31_o5i4u")])
-chest_quantities = Array[int]([2, 4])
+[node name="Bau_Simples2" parent="PropsContainer" unique_id=1111759910 instance=ExtResource("28_inwaf")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -49.68246, -3.8146973e-06, 10.385087)
+chest_id = "first_chest"
+chest_items = Array[ExtResource("29_7idvi")]([ExtResource("33_ifusy")])
+chest_quantities = Array[int]([8])
 
 [node name="Bigorna_Basica" parent="PropsContainer" unique_id=1695242169 instance=ExtResource("32_b1d4d")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.159325, 0.7546889, 10.5486965)
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -56.3749, 0.7546889, 11.339644)
+station_recipes = Array[ExtResource("39_upesu")]([ExtResource("38_lr88i"), ExtResource("39_o3nup"), ExtResource("40_qwe64"), ExtResource("41_e36k8"), ExtResource("42_y725p"), ExtResource("43_q5f7q"), ExtResource("44_ji0n1"), ExtResource("45_vqdyo"), ExtResource("46_mokha"), ExtResource("47_wq6kk"), ExtResource("48_fgl14"), ExtResource("49_lil2d"), ExtResource("50_bdvpj"), ExtResource("51_qv1nb"), ExtResource("52_5qyy8"), ExtResource("53_8fqnk"), ExtResource("54_o0o0e")])
 
 [node name="PosteLuz" parent="PropsContainer" unique_id=405027687 instance=ExtResource("33_138jh")]
 transform = Transform3D(0.7071067, 0, -0.7071068, 0, 1, 0, 0.7071068, 0, 0.7071067, -104.39256, 22.079605, 4.3934135)
@@ -614,49 +667,35 @@ transform = Transform3D(-0.92476314, 0, -0.38054323, 0, 1, 0, 0.38054323, 0, -0.
 [node name="PosteLuz4" parent="PropsContainer" unique_id=152844277 instance=ExtResource("33_138jh")]
 transform = Transform3D(0.8566636, 0, -0.5158756, 0, 1, 0, 0.5158756, 0, 0.8566636, -104.39256, 22.079605, 14.029678)
 
+[node name="Forja" parent="PropsContainer" unique_id=18494805 instance=ExtResource("45_m3v18")]
+transform = Transform3D(-1.4901161e-08, 0, 0.9999999, 0, 1, 0, -0.9999999, 0, -1.4901161e-08, -58.994812, -1.9073486e-06, 12.940434)
+station_recipes = Array[ExtResource("39_upesu")]([ExtResource("40_ifusy"), ExtResource("41_ogi3f"), ExtResource("42_7t4ha")])
+
 [node name="MesaPentagrama" parent="PropsContainer" unique_id=713702045 instance=ExtResource("37_2tlrs")]
-transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -47.982346, 0.027977273, -8.15484)
+transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -47.30896, 0.027977273, -8.752108)
 
-[node name="GreatPotionBottleBLUE" parent="PropsContainer" unique_id=1433567312 instance=ExtResource("38_qjck4")]
-transform = Transform3D(5, 0, 0, 0, -2.1855695e-07, 5, 0, -5, -2.1855695e-07, -48.22528, 0.65176004, -8.030657)
-
-[node name="Sphere" parent="PropsContainer" unique_id=96914386 instance=ExtResource("39_1hnie")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -47.602417, 0.6517603, -8.388991)
-
-[node name="Sphere2" parent="PropsContainer" unique_id=1876849583 instance=ExtResource("39_1hnie")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -47.5293, 0.6517603, -7.6574464)
-
-[node name="Sphere3" parent="PropsContainer" unique_id=462871524 instance=ExtResource("40_6t7rf")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -47.780853, 0.6371902, -7.760993)
-
-[node name="Sphere4" parent="PropsContainer" unique_id=715121861 instance=ExtResource("41_p63a1")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -47.43755, 0.63719034, -8.146156)
-
-[node name="Sphere5" parent="PropsContainer" unique_id=280122829 instance=ExtResource("42_6e4af")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -48.04212, 0.63719034, -8.3275385)
-
-[node name="Sphere6" parent="PropsContainer" unique_id=1617478839 instance=ExtResource("43_m3v18")]
-transform = Transform3D(5, 0, 0, 0, -2.1855695e-07, 5, 0, -5, -2.1855695e-07, -48.413918, 0.63594216, -8.1657915)
-
-[node name="Sphere7" parent="PropsContainer" unique_id=2006255031 instance=ExtResource("40_6t7rf")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -47.497902, 0.6371902, -7.9689326)
-
-[node name="Armazem2" parent="PropsContainer" unique_id=281427576 instance=ExtResource("24_qjck4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.35557, -3.8146973e-06, 6.0336637)
+[node name="MesaCriacao" parent="PropsContainer" unique_id=631328931 instance=ExtResource("50_ifusy")]
+transform = Transform3D(0.25881907, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, 0.25881907, -35.888805, 0.021094203, 16.94097)
+station_recipes = Array[ExtResource("39_upesu")]([ExtResource("51_b7lu7"), ExtResource("52_inwaf"), ExtResource("53_7idvi"), ExtResource("54_oyjrs"), ExtResource("55_o5i4u"), ExtResource("56_b1d4d")])
 
 [node name="NPCContainer" type="Node3D" parent="." unique_id=663891675]
 
 [node name="NPCValkor" parent="NPCContainer" unique_id=224469840 instance=ExtResource("34_jicov")]
-transform = Transform3D(-0.98874235, 0, 0.14962871, 0, 1, 0, -0.14962871, 0, -0.98874235, -99.9165, 23.113882, -15.299026)
+transform = Transform3D(-0.0732938, 0, -0.9973105, 0, 1, 0, 0.9973105, 0, -0.0732938, -101.136696, 23.113882, 0.67568696)
 
 [node name="NpcFerreiro" parent="NPCContainer" unique_id=1785246802 instance=ExtResource("35_k2w4y")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.612606, 0.96045816, 11.824004)
+transform = Transform3D(0.9814735, 0, 0.19159783, 0, 1, 0, -0.19159783, 0, 0.9814735, -53.55738, 0.96045816, 12.254739)
 
 [node name="NpcFeiticeira" parent="NPCContainer" unique_id=985495540 instance=ExtResource("36_154hc")]
-transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, -49.651398, 0.9212029, -7.7626076)
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, -49.555355, 0.9212029, -6.898538)
 
 [node name="NpcMercante" parent="NPCContainer" unique_id=1619026890 instance=ExtResource("44_2tlrs")]
-transform = Transform3D(-0.50000006, 0, 0.8660254, 0, 1, 0, -0.8660254, 0, -0.50000006, -37.20959, 0.9212023, -11.178671)
+transform = Transform3D(-0.50000006, 0, 0.8660254, 0, 1, 0, -0.8660254, 0, -0.50000006, -37.351498, 0.9212023, -10.90637)
+merchant_stock = Array[ExtResource("29_7idvi")]([ExtResource("33_ifusy"), ExtResource("30_oyjrs"), ExtResource("35_7t4ha"), ExtResource("34_ogi3f"), ExtResource("72_o3nup"), ExtResource("73_qwe64")])
+npc_name = "Sr. Litos"
+
+[node name="NPCFloresta" parent="NPCContainer" unique_id=1952896556 instance=ExtResource("46_1hnie")]
+transform = Transform3D(-0.25881904, 0, 0.9659258, 0, 1, 0, -0.9659258, 0, -0.25881904, 49.659412, 0.9211904, -54.578606)
 
 [node name="MonstersContainer" type="Node3D" parent="." unique_id=582457962]
 

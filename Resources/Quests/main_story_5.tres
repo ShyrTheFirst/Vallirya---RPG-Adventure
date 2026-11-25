@@ -6,9 +6,10 @@
 script = ExtResource("1_6cv5x")
 quest_id = "main_story_5"
 title = "O Desabafo do Veterano"
-description = "Derrote 50 Orcs Lutadores e encontre o veterano."
-target_id = "Orc Lutador"
+description = "Derrote 50 Goblins Errantes para liberar o caminho pelo Portal."
+target_ids = Array[String](["Goblin Errante"])
 required_amount = 50
 turn_in_npc_id = "npc_floresta"
 reward_xp = 2450
+reward_gold_value_in_bronze = 300
 metadata/_custom_type_script = "uid://co3cscegp8qam"

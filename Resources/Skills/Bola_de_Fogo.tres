@@ -17,7 +17,6 @@ color_ramp = SubResource("Gradient_y4386")
 
 [resource]
 script = ExtResource("1_y4386")
-requires_staff = false
 icon = SubResource("NoiseTexture2D_y4386")
 spell_scene = ExtResource("2_n48h1")
 damage_per_level = 20

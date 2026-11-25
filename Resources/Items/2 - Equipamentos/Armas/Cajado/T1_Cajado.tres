@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d0b4efvonmx8p"]
+
+[ext_resource type="PackedScene" uid="uid://djybk140w62qe" path="res://ASSETS/Armas/Cajado/Cajado.fbx" id="1_q4rnu"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_npda6"]
+
+[resource]
+script = ExtResource("2_npda6")
+id = "Cajado_T1"
+name = "Cajado de Madeira"
+item_type = 0
+weapon_type = 2
+active_legendary = null
+description = "Um cajado simples de madeira."
+mesh_scene = ExtResource("1_q4rnu")
+sell_price = 200
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, -0.8, -0.5)
+equipped_rotation = Vector3(180, 0, 180)
+is_stackable = false
+max_stack = 1
+bonus_attack = 15
+metadata/_custom_type_script = "uid://eaep86qi61ki"

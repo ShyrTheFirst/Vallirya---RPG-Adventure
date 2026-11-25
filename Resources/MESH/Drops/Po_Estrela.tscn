@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cfm6ottqv4rdg"]
+
+[ext_resource type="Shader" uid="uid://fjs4cin3x0fr" path="res://ASSETS/VFX/Shaders/Star.gdshader" id="1_j26ov"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_mxvww"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h3fm2"]
+render_priority = 0
+shader = ExtResource("1_j26ov")
+shader_parameter/star_color = Color(1, 0.9, 0.5, 1)
+shader_parameter/brightness = 6.0
+shader_parameter/twinkle_speed = 3.0000001425
+shader_parameter/star_sharpness = 10.0
+
+[node name="Torso2" type="MeshInstance3D" unique_id=1933680608]
+mesh = SubResource("QuadMesh_mxvww")
+surface_material_override/0 = SubResource("ShaderMaterial_h3fm2")

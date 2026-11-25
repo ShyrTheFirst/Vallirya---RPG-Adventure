@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://lhnqrcy0skxj"]
+
+[ext_resource type="PackedScene" uid="uid://d0dqo8c63kn3o" path="res://Resources/MESH/Tabuas/T1_Tabua_Simples.tscn" id="1_casya"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_5cjys"]
+
+[resource]
+script = ExtResource("2_5cjys")
+id = "Tabua_T1"
+name = "Tabua Simples"
+active_legendary = 2
+description = "Uma tabua refinada a partir de madeiras simples. Usada na fabricaçao"
+mesh_scene = ExtResource("1_casya")
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://be7mvx13l2e6p"]
+
+[ext_resource type="PackedScene" uid="uid://cue33fyytg0sx" path="res://Resources/MESH/Drops/Mao_Golem.tscn" id="1_7om14"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_m6n6c"]
+
+[resource]
+script = ExtResource("1_m6n6c")
+id = "Mao_Golem"
+name = "Mao de Golem"
+rarity = 1
+level = 20
+active_legendary = 2
+description = "Uma mao de um Golem, simbolo da derrota dessa monstruosidade."
+mesh_scene = ExtResource("1_7om14")
+sell_price = 200
+inventory_rotation = Vector3(45, 30, 45)
+inventory_scale = Vector3(10, 10, 10)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c585oumf822t5"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_2x6fk"]
+[ext_resource type="PackedScene" uid="uid://decd0j4su71xb" path="res://Resources/MESH/Drops/Pedaco_Golem.tscn" id="1_wq466"]
+
+[resource]
+script = ExtResource("1_2x6fk")
+id = "Parte_Golem"
+name = "Pedaço de Golem"
+rarity = 1
+level = 20
+active_legendary = 2
+description = "Um pedaço de um golem, simbolo da vitoria contra essa monstruosidade"
+mesh_scene = ExtResource("1_wq466")
+sell_price = 200
+inventory_rotation = Vector3(45, 45, 0)
+inventory_scale = Vector3(10, 10, 10)
+inventory_offset = Vector3(0, 0.5, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

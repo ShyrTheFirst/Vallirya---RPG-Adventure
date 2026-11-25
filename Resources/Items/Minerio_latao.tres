@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://blfaim5yty8ht"]
-
-[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_ractf"]
-
-[resource]
-script = ExtResource("1_ractf")
-active_legendary = null
-metadata/_custom_type_script = "uid://eaep86qi61ki"

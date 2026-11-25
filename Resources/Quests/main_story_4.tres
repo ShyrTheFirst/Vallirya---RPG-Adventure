@@ -6,8 +6,9 @@
 script = ExtResource("1_flfdc")
 quest_id = "main_story_4"
 title = "Teias na Estrada"
-description = "Elimine 25 Aranhas da Bruma"
-target_id = "Aranha da Bruma"
+description = "Elimine 25 Aranhas que estao dando medo nos aldeoes."
+target_ids = Array[String](["Aranha"])
 required_amount = 25
+turn_in_npc_id = "npc_inicial"
 reward_xp = 1150
 metadata/_custom_type_script = "uid://co3cscegp8qam"

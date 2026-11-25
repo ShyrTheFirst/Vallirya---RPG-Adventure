@@ -6,8 +6,9 @@
 script = ExtResource("1_gatth")
 quest_id = "main_story_3"
 title = "Praga Verde"
-description = "Derrote 10 Goblins Errantes"
-target_id = "Goblin Errante"
+description = "Derrote 10 Orcs Guerreiros que estao causando temor nos aldeoes."
+target_ids = Array[String](["Orc Guerreiro"])
 required_amount = 10
+turn_in_npc_id = "npc_inicial"
 reward_xp = 320
 metadata/_custom_type_script = "uid://co3cscegp8qam"

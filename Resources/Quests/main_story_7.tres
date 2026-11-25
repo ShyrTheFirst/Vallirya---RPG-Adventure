@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://nekkuq6opgq"]
 
 [ext_resource type="Script" uid="uid://co3cscegp8qam" path="res://Scripts/Quests/QuestData.gd" id="1_6u36q"]
-[ext_resource type="Resource" uid="uid://csuqmcjb74qxg" path="res://Resources/Items/ErvaMedicinal.tres" id="1_ckv8k"]
+[ext_resource type="Resource" uid="uid://csuqmcjb74qxg" path="res://Resources/Items/5 - BasePocoes/Planta_Veneno_Cacador.tres" id="1_ckv8k"]
 
 [resource]
 script = ExtResource("1_6u36q")
@@ -9,7 +9,7 @@ quest_id = "main_story_7"
 title = "Ervas Medicinais"
 description = "Colete ervas para o estoque."
 quest_type = 1
-target_id = "res://Resources/Items/ErvaMedicinal.tres"
+target_ids = Array[String](["ErvaMedicinal"])
 required_amount = 10
 item_required_to_turn_in = ExtResource("1_ckv8k")
 metadata/_custom_type_script = "uid://co3cscegp8qam"

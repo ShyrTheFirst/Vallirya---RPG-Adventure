@@ -214,7 +214,7 @@ func create_station_ui() -> void:
 
 	var list_vbox = VBoxContainer.new()
 	list_vbox.name = "RecipeList"
-	list_vbox.add_theme_constant_override("separation", 10)
+	list_vbox.add_theme_constant_override("separation", 20)
 	scroll.add_child(list_vbox)
 
 	for recipe in station_recipes:
@@ -223,10 +223,20 @@ func create_station_ui() -> void:
 			
 		var recipe_panel = PanelContainer.new()
 		recipe_panel.custom_minimum_size = Vector2(590, 110)
+
+		var can_craft: bool = _can_craft_recipe(recipe)
+		var card_style = StyleBoxFlat.new()
+		card_style.bg_color = Color(0.1, 0.1, 0.12, 0.85)
+		card_style.set_border_width_all(2)
+		card_style.set_corner_radius_all(6)
+		card_style.set_content_margin_all(10)
+		card_style.border_color = Color(0.2, 0.85, 0.3, 1.0) if can_craft else Color(0.9, 0.25, 0.25, 1.0)
+		recipe_panel.add_theme_stylebox_override("panel", card_style)
+
 		list_vbox.add_child(recipe_panel)
 
 		var recipe_hbox = HBoxContainer.new()
-		recipe_hbox.add_theme_constant_override("separation", 15)
+		recipe_hbox.add_theme_constant_override("separation", 20)
 		recipe_panel.add_child(recipe_hbox)
 
 		var item_col_vbox = VBoxContainer.new()
@@ -250,26 +260,20 @@ func create_station_ui() -> void:
 
 		var requirements_vbox = VBoxContainer.new()
 		requirements_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		requirements_vbox.add_theme_constant_override("separation", 6)
+		requirements_vbox.add_theme_constant_override("separation", 8)
 		requirements_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 		recipe_hbox.add_child(requirements_vbox)
 
 		var tier_lbl = Label.new()
-		tier_lbl.text = "Categoria: %s (Nv. %d)" % [recipe.equipment_type.capitalize(), recipe.recipe_level]
+		tier_lbl.text = "Categoria: %s (Nv. %d)" % [CraftData.get_equipment_type_label(recipe.equipment_type), recipe.recipe_level]
 		tier_lbl.add_theme_font_size_override("font_size", 13)
 		requirements_vbox.add_child(tier_lbl)
 
-		if recipe.input_item_1:
-			var req_1_lbl = Label.new()
-			req_1_lbl.text = "• %d %s" % [recipe.input_quantity_1, recipe.input_item_1.name]
-			req_1_lbl.add_theme_font_size_override("font_size", 14)
-			requirements_vbox.add_child(req_1_lbl)
-
-		if recipe.input_item_2 and recipe.input_quantity_2 > 0:
-			var req_2_lbl = Label.new()
-			req_2_lbl.text = "• %d %s" % [recipe.input_quantity_2, recipe.input_item_2.name]
-			req_2_lbl.add_theme_font_size_override("font_size", 14)
-			requirements_vbox.add_child(req_2_lbl)
+		for ing in recipe.get_ingredients():
+			var req_lbl = Label.new()
+			req_lbl.text = "• %d %s" % [ing["quantity"], ing["item"].name]
+			req_lbl.add_theme_font_size_override("font_size", 14)
+			requirements_vbox.add_child(req_lbl)
 
 		var btn_container = VBoxContainer.new()
 		btn_container.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -291,6 +295,36 @@ func create_station_ui() -> void:
 	)
 	vbox.add_child(close_btn)
 
+func _can_craft_recipe(recipe: CraftData) -> bool:
+	if not active_player or not "inventory_items" in active_player:
+		return false
+	var crafting_manager = get_node_or_null("/root/CraftManager")
+	if not crafting_manager:
+		return false
+	var eq_type_key: String = CraftData.get_equipment_type_key(recipe.equipment_type)
+	if not crafting_manager.can_craft_item(eq_type_key, recipe.recipe_level):
+		return false
+	for ing in recipe.get_ingredients():
+		var target_item: ItemData = ing["item"]
+		var req_qty: int = ing["quantity"]
+		var total: int = 0
+		for slot in active_player.inventory_items:
+			if slot != null and slot is Dictionary:
+				var item_in_slot: ItemData = slot.get("item", null)
+				if item_in_slot and item_in_slot.id == target_item.id:
+					total += int(slot.get("amount", 1))
+		if "equipped_items" in active_player:
+			for eq_item in active_player.equipped_items.values():
+				if eq_item is ItemData and eq_item.id == target_item.id:
+					total += 1
+		if "equipped_tools" in active_player:
+			for tool_item in active_player.equipped_tools.values():
+				if tool_item is ItemData and tool_item.id == target_item.id:
+					total += 1
+		if total < req_qty:
+			return false
+	return true
+
 func try_execute_craft(recipe: CraftData) -> void:
 	if not active_player or not "inventory_items" in active_player:
 		return
@@ -299,9 +333,10 @@ func try_execute_craft(recipe: CraftData) -> void:
 	if not crafting_manager:
 		return
 		
-	if not crafting_manager.can_craft_item(recipe.equipment_type, recipe.recipe_level):
+	var eq_type_key: String = CraftData.get_equipment_type_key(recipe.equipment_type)
+	if not crafting_manager.can_craft_item(eq_type_key, recipe.recipe_level):
 		if active_player.has_method("send_message_HUD"):
-			active_player.send_message_HUD("Bloqueado! Conclua 10 crafts do nível anterior.", Color.RED)
+			active_player.send_message_HUD("Bloqueado! Suba sua maestria para o nível %d." % recipe.recipe_level, Color.RED)
 		return
 
 	var count_player_item = func(target_item: ItemData) -> int:
@@ -314,12 +349,14 @@ func try_execute_craft(recipe: CraftData) -> void:
 					total += int(slot.get("amount", 1))
 		return total
 
-	var has_item_1 = count_player_item.call(recipe.input_item_1) >= recipe.input_quantity_1
-	var has_item_2 = true
-	if recipe.input_item_2 and recipe.input_quantity_2 > 0:
-		has_item_2 = count_player_item.call(recipe.input_item_2) >= recipe.input_quantity_2
+	var ingredients: Array[Dictionary] = recipe.get_ingredients()
+	var has_all_ingredients: bool = true
+	for ing in ingredients:
+		if count_player_item.call(ing["item"]) < ing["quantity"]:
+			has_all_ingredients = false
+			break
 
-	if has_item_1 and has_item_2:
+	if has_all_ingredients:
 		var remove_player_item = func(target_item: ItemData, qty_to_remove: int) -> void:
 			if not target_item or qty_to_remove <= 0: return
 			var remaining = qty_to_remove
@@ -339,11 +376,10 @@ func try_execute_craft(recipe: CraftData) -> void:
 			if active_player.has_method("update_inventory_display"):
 				active_player.update_inventory_display()
 
-		query_remove_item(recipe.input_item_1, recipe.input_quantity_1, remove_player_item)
-		if recipe.input_item_2 and recipe.input_quantity_2 > 0:
-			query_remove_item(recipe.input_item_2, recipe.input_quantity_2, remove_player_item)
+		for ing in ingredients:
+			query_remove_item(ing["item"], ing["quantity"], remove_player_item)
 
-		var produced_item = crafting_manager.execute_station_craft(recipe.equipment_type, recipe.recipe_level, recipe.result_item)
+		var produced_item = crafting_manager.execute_station_craft(eq_type_key, recipe.recipe_level, recipe.result_item)
 		
 		if produced_item and active_player.has_method("add_item_to_inventory"):
 			active_player.add_item_to_inventory(produced_item, recipe.result_quantity)
@@ -355,6 +391,7 @@ func try_execute_craft(recipe: CraftData) -> void:
 					produced_item.Rarity.EPIC: rarity_color = Color.PURPLE
 					produced_item.Rarity.LEGENDARY: rarity_color = Color.GOLD
 				active_player.send_message_HUD("Criado: %s!" % produced_item.name, rarity_color)
+			create_station_ui()
 	else:
 		if active_player.has_method("send_message_HUD"):
 			active_player.send_message_HUD("Materiais Insuficientes!", Color.RED)

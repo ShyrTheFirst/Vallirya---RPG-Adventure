@@ -65,6 +65,13 @@ func refresh_board_ui() -> void:
 				grid_container.add_child(card)
 				card.setup_quest_card(bounty, false, self)
 
+func _on_shuffle_pressed() -> void:
+	QuestManager.shuffle_village_bounties()
+	if current_tab != "village":
+		switch_tab("village")
+	else:
+		refresh_board_ui()
+
 func _on_btn_close_pressed() -> void:
 	var player = get_tree().get_first_node_in_group("Player")
 	if player:

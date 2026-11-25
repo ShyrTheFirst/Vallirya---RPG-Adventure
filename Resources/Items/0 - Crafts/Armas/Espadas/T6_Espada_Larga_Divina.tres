@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://bdk5le1wcnsd"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_70f5x"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_s0i42"]
+[ext_resource type="Resource" uid="uid://bem6to372g55o" path="res://Resources/Items/2 - Equipamentos/Armas/Espadas/T5_Espada_Placadraco.tres" id="2_clrr8"]
+[ext_resource type="Resource" uid="uid://dtlngmsue0o5q" path="res://Resources/Items/1 - Barras/T6_Barra_Celestial.tres" id="3_bbuo5"]
+[ext_resource type="Resource" uid="uid://dv8f84aig5xhi" path="res://Resources/Items/6 - Drops/Essencia_Eterea.tres" id="4_olepe"]
+[ext_resource type="Resource" uid="uid://d1bl5xm445ee4" path="res://Resources/Items/2 - Equipamentos/Armas/Espadas/T6_Espada_Divina.tres" id="5_3elsb"]
+
+[resource]
+script = ExtResource("1_s0i42")
+equipment_type = 3
+recipe_level = 6
+input_items = Array[ExtResource("1_70f5x")]([ExtResource("2_clrr8"), ExtResource("3_bbuo5"), ExtResource("4_olepe")])
+input_quantities = Array[int]([1, 4, 6])
+result_item = ExtResource("5_3elsb")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

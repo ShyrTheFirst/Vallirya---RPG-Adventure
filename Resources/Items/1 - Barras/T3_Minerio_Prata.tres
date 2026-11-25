@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://duiwvns1nqfy7"]
+
+[ext_resource type="PackedScene" uid="uid://b8krv4v2bftn2" path="res://Resources/MESH/Minerios/mineral_prata.tscn" id="1_3w55i"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_bjb54"]
+
+[resource]
+script = ExtResource("1_bjb54")
+id = "minerio_prata"
+name = "Minerio de Prata"
+level = 3
+active_legendary = 2
+description = "Minerio de prata adquirido da mineraçao."
+mesh_scene = ExtResource("1_3w55i")
+sell_price = 100
+inventory_rotation = Vector3(45, 30, 45)
+inventory_scale = Vector3(5, 5, 5)
+inventory_offset = Vector3(-1, 0.2, -0.3)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

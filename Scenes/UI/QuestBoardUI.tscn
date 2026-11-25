@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://cgmmaab6m4o5d" path="res://Scripts/Quests/QuestBoardUI.gd" id="2_jeytu"]
 
 [node name="QuestBoardUI" type="PanelContainer" unique_id=1374102058]
-custom_minimum_size = Vector2(750, 900)
+custom_minimum_size = Vector2(750, 1000)
 custom_maximum_size = Vector2(750, -1)
 anchors_preset = 8
 anchor_left = 0.5
@@ -53,8 +53,13 @@ theme_override_constants/h_separation = 50
 theme_override_constants/v_separation = 50
 columns = 3
 
+[node name="Shuffle" type="Button" parent="VBoxContainer" unique_id=200889265]
+layout_mode = 2
+text = "Novas Missoes"
+
 [node name="BtnClose" type="Button" parent="VBoxContainer" unique_id=1943409820]
 layout_mode = 2
 text = "  Fechar Mural  "
 
+[connection signal="pressed" from="VBoxContainer/Shuffle" to="." method="_on_shuffle_pressed"]
 [connection signal="pressed" from="VBoxContainer/BtnClose" to="." method="_on_btn_close_pressed"]

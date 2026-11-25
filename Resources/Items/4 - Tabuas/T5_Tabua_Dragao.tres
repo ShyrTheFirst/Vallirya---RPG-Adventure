@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cqjigmhvy3voy"]
+
+[ext_resource type="PackedScene" uid="uid://8vosyb1go7t6" path="res://Resources/MESH/Tabuas/T5_Tabua_Draconica.tscn" id="1_uorw1"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_y0kcq"]
+
+[resource]
+script = ExtResource("2_y0kcq")
+id = "Tabua_T5"
+name = "Tabua Draconica"
+rarity = 4
+level = 75
+active_legendary = 2
+description = "Uma tabua refinada a partir de madeiras draconicas. Usada na fabricaçao"
+mesh_scene = ExtResource("1_uorw1")
+sell_price = 338
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

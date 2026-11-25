@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://6ol1j0mqjpxo"]
+
+[ext_resource type="ArrayMesh" uid="uid://bt4vc0kfxg1f4" path="res://Resources/MESH/Minerios/Mineral_Ouro.res" id="1_cbv3l"]
+
+[node name="MineralOuro" type="MeshInstance3D" unique_id=1762820476]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = ExtResource("1_cbv3l")

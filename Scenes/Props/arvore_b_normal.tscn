@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ccgsvwee537je" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_B_Normal_0.png" id="1_c82mb"]
 [ext_resource type="Script" uid="uid://cm422nunom8g7" path="res://Scripts/Props/GatherableProp.gd" id="1_k5b8a"]
-[ext_resource type="Resource" uid="uid://c1ydt6gaega5h" path="res://Resources/Items/Madeira.tres" id="2_4varh"]
+[ext_resource type="Resource" uid="uid://c1ydt6gaega5h" path="res://Resources/Items/4 - Tabuas/T1_Madeira_Simples.tres" id="2_4varh"]
 [ext_resource type="Texture2D" uid="uid://bqsoyf5kw3umj" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Arvore_B_Normal_1.png" id="2_k5b8a"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="4_ewakq"]
 

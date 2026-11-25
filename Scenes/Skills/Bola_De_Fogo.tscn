@@ -56,7 +56,7 @@ height = 0.4
 [sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
 radius = 3.0
 
-[node name="BolaDeFogo" type="Node3D" unique_id=1651129598]
+[node name="Bola_de_Fogo" type="Node3D" unique_id=1651129598]
 script = ExtResource("1_ktjqo")
 
 [node name="Bola" type="MeshInstance3D" parent="." unique_id=656204001]

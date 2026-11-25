@@ -1,0 +1,47 @@
+shader_type spatial;
+render_mode blend_add, cull_disabled, depth_draw_opaque, unshaded;
+
+// Configurações Principais
+uniform vec4 core_color : source_color = vec4(0.5, 0.0, 0.8, 0.8); // Cor base (Roxo)
+uniform vec4 rim_color : source_color = vec4(1.0, 0.8, 1.0, 1.0);   // Cor da borda (Branco/Rosa)
+uniform float rim_power : hint_range(0.1, 8.0) = 2.5;              // Espessura/Intensidade da borda
+uniform float transparency : hint_range(0.0, 1.0) = 0.5;           // Transparência geral do núcleo
+
+// Configurações de Cintilação (Baseadas em Volume, sem costura)
+uniform sampler2D noise_texture : hint_default_black;            // Textura de ruído (necessária)
+uniform float noise_scale = 1.0;                                  // Escala do ruído no volume
+uniform float noise_speed = 0.2;
+uniform float distortion_strength : hint_range(0.0, 0.5) = 0.05;   // Quanto o ruído distorce a borda
+
+void fragment() {
+	// 1. Cálculo do Efeito Fresnel (Brilho na Borda)
+	float fresnel = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), rim_power);
+	
+	// 2. Geração de Coordenadas Volumétricas (CORREÇÃO AQUI)
+	// Em vez de usar UV, usamos o vetor NORMAL da esfera.
+	// Como a esfera é convexa, a normal vai de -1 a 1 em todas as direções,
+	// garantindo uma transição suave em 360 graus sem emendas.
+	// Usamos o z-component da normal para criar um scroll 3D sutil (como cubemap)
+	vec3 noise_pos = NORMAL * noise_scale + (TIME * noise_speed);
+	
+	// Fazemos um "tri-planar" básico projetando o ruído nas 3 direções
+	// (Isso é mais estável que apenas NORMAL.xy)
+	float n_x = texture(noise_texture, noise_pos.yz).r;
+	float n_y = texture(noise_texture, noise_pos.xz).r;
+	float n_z = texture(noise_texture, noise_pos.xy).r;
+	
+	// Média dos ruídos para preencher o volume
+	float noise_val = (n_x + n_y + n_z) / 3.0;
+	
+	// 3. Aplicação da Distorção (Opcional, mas reativo)
+	float distorted_fresnel = pow(1.0 - clamp(dot(NORMAL + (vec3(noise_val) * distortion_strength), VIEW), 0.0, 1.0), rim_power);
+
+	// 4. Combinação das Cores
+	vec3 core = core_color.rgb;
+	vec3 rim = mix(rim_color.rgb, vec3(1.0), noise_val) * distorted_fresnel;
+	
+	ALBEDO = core + rim;
+	
+	// 5. Definição do Alpha (Transparência)
+	ALPHA = transparency * (core_color.a + (distorted_fresnel * 2.0)) * noise_val;
+}

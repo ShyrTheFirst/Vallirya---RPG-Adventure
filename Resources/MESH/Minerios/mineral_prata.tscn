@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b8krv4v2bftn2"]
+
+[ext_resource type="ArrayMesh" uid="uid://l3xskommlbjd" path="res://Resources/MESH/Minerios/Mineral_Prata.res" id="1_ap8yk"]
+
+[node name="MineralPrata" type="MeshInstance3D" unique_id=787469204]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = ExtResource("1_ap8yk")

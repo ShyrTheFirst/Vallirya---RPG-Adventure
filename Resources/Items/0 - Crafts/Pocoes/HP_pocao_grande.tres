@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://wqpgclffg4nn"]
+
+[ext_resource type="Resource" uid="uid://csuqmcjb74qxg" path="res://Resources/Items/5 - BasePocoes/Planta_Veneno_Cacador.tres" id="1_cyr56"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_g4hwc"]
+[ext_resource type="Resource" uid="uid://dysj0flmc4vaa" path="res://Resources/Items/5 - BasePocoes/Galho_Seco.tres" id="2_sm3x3"]
+[ext_resource type="Resource" uid="uid://27x1wo7n7np" path="res://Resources/Items/3 - Pocoes/HP_Grande.tres" id="3_g4hwc"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="3_l5q84"]
+
+[resource]
+script = ExtResource("3_l5q84")
+equipment_type = 9
+input_items = Array[ExtResource("1_g4hwc")]([ExtResource("2_sm3x3"), ExtResource("1_cyr56")])
+input_quantities = Array[int]([4, 8])
+result_item = ExtResource("3_g4hwc")
+result_quantity = 10
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://fwkgofpgk2dy"]
+
+[ext_resource type="ArrayMesh" uid="uid://dfsn01yt0hq7w" path="res://Resources/MESH/Minerios/Mineral_Placadraco.res" id="1_rwscn"]
+
+[node name="MineralPlacadraco" type="MeshInstance3D" unique_id=325571689]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = ExtResource("1_rwscn")

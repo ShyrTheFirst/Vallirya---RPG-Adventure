@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b0dk5550yp40o"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_nnwtg"]
+
+[resource]
+script = ExtResource("1_nnwtg")
+id = "Elmo_T6"
+name = "Elmo Divino"
+item_type = 2
+level = 6
+active_legendary = 2
+description = "Elmo das divindades, deixe todos cegos com sua propria luz, ate nos dias mais escuros!"
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, 0, -0.2)
+is_stackable = false
+max_stack = 1
+metadata/_custom_type_script = "uid://eaep86qi61ki"

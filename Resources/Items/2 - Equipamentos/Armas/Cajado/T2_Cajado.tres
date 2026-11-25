@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bcngldfpcsd5e"]
+
+[ext_resource type="PackedScene" uid="uid://djybk140w62qe" path="res://ASSETS/Armas/Cajado/Cajado.fbx" id="1_p5mua"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_rdvtu"]
+
+[resource]
+script = ExtResource("1_rdvtu")
+id = "Cajado_T2"
+name = "Cajado Resistente"
+item_type = 0
+weapon_type = 2
+level = 2
+active_legendary = null
+description = "Um cajado adornado pronto para magias mais fortes."
+mesh_scene = ExtResource("1_p5mua")
+sell_price = 200
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, -0.8, -0.5)
+is_stackable = false
+max_stack = 1
+bonus_attack = 15
+metadata/_custom_type_script = "uid://eaep86qi61ki"

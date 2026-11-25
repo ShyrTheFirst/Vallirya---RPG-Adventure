@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://x3s6s85lj5lj"]
+
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_0eqx3"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_dc1e5"]
+[ext_resource type="Resource" uid="uid://blkjgbl1yo2ob" path="res://Resources/Items/2 - Equipamentos/Armas/Machados/T1_Machado_Latao.tres" id="2_t6dfq"]
+[ext_resource type="Resource" uid="uid://c2fainkiwkca4" path="res://Resources/Items/1 - Barras/T1_Barra_Latao.tres" id="2_xmra4"]
+[ext_resource type="Resource" uid="uid://cfa2p4mjg44tv" path="res://Resources/Items/6 - Drops/Essencia_Monstro.tres" id="3_15qbi"]
+
+[resource]
+script = ExtResource("1_0eqx3")
+equipment_type = 5
+input_items = Array[ExtResource("1_dc1e5")]([ExtResource("2_xmra4"), ExtResource("3_15qbi")])
+input_quantities = Array[int]([4, 4])
+result_item = ExtResource("2_t6dfq")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

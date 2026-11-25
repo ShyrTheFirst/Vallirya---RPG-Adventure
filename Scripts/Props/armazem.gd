@@ -3,7 +3,7 @@ extends NpcBase
 
 @export_category("Configuração do Armazém")
 @export var warehouse_name: String = "Armazém Central"
-@export var warehouse_capacity: int = 64 # Capacidade generosa para guardar recursos e moedas
+@export var warehouse_capacity: int = 128 # Capacidade generosa para guardar recursos e moedas
 
 var warehouse_window: Control = null
 var active_player: CharacterBody3D = null

@@ -4,6 +4,7 @@ extends CharacterBody3D
 @export var interact_distance: float = 3.0
 @export var saddle_offset: Vector3 = Vector3(0.0, 1.1, 0.0)
 @export var horse_gravity: float = 24.0
+@export var jump_velocity: float = 4.8
 
 var is_occupied: bool = false
 var rider: CharacterBody3D = null
@@ -45,8 +46,6 @@ func on_map_changed(_map_key: String) -> void:
 func _apply_horse_gravity(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= horse_gravity * delta
-		# Impede que colisões com objetos pequenos lancem o cavalo para cima
-		velocity.y = minf(velocity.y, 0.0)
 	else:
 		velocity.y = -0.1
 
@@ -54,13 +53,14 @@ func _physics_process(delta: float) -> void:
 	if is_occupied and is_instance_valid(rider):
 		if interaction_prompt:
 			interaction_prompt.visible = false
-		_apply_horse_gravity(delta)
+		if Input.is_action_just_pressed("Pular") and is_on_floor():
+			velocity.y = jump_velocity
+		else:
+			_apply_horse_gravity(delta)
 		velocity.x = rider.velocity.x
 		velocity.z = rider.velocity.z
 		rotation.y = rider.rotation.y
 		move_and_slide()
-		if not is_on_floor() and velocity.y > 0.0:
-			velocity.y = 0.0
 
 		if "player_place" in self and is_instance_valid(self.player_place):
 			rider.global_position = self.player_place.global_position

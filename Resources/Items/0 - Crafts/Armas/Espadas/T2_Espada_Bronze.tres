@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CraftData" format=3 uid="uid://by37714ctm8x4"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_gfc2m"]
+[ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="1_kp2bp"]
+[ext_resource type="Resource" uid="uid://bjintplg23o2t" path="res://Resources/Items/2 - Equipamentos/Armas/Espadas/T1_Espada_Latao.tres" id="2_n31fm"]
+[ext_resource type="Resource" uid="uid://5bswh4n461rt" path="res://Resources/Items/1 - Barras/T2_Barra_Bronze.tres" id="3_xhkff"]
+[ext_resource type="Resource" uid="uid://cfa2p4mjg44tv" path="res://Resources/Items/6 - Drops/Essencia_Monstro.tres" id="4_1q1vl"]
+[ext_resource type="Resource" uid="uid://bhg2dfsmrf77g" path="res://Resources/Items/2 - Equipamentos/Armas/Espadas/T2_Espada_Bronze.tres" id="5_48qui"]
+
+[resource]
+script = ExtResource("1_kp2bp")
+equipment_type = 3
+recipe_level = 2
+input_items = Array[ExtResource("1_gfc2m")]([ExtResource("2_n31fm"), ExtResource("3_xhkff"), ExtResource("4_1q1vl")])
+input_quantities = Array[int]([1, 4, 4])
+result_item = ExtResource("5_48qui")
+metadata/_custom_type_script = "uid://b308ysrsgvy6j"

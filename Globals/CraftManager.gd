@@ -9,51 +9,48 @@ var equipment_progress: Dictionary = {
 	"armadura": {},
 	"elmo": {},
 	"bota": {},
-	"arma": {},
-	"cajado": {}
+	"espada": {},
+	"lanca": {},
+	"machado": {},
+	"cajado": {},
+	"barras": {},
+	"tabuas": {}
 }
 
-# Quantidade de itens necessários no nível X para desbloquear o nível X+1 (Definido em 10)
-const CRAFTS_REQUIRED_FOR_NEXT_TIER: int = 10
-
-# Curva de XP para os níveis de Especialista (Maestria)
-# Cada rank de especialista exige mais crafts para subir, tornando a especialização valiosa no end-game
-const BASE_MASTERY_EXP_REQUIRED: int = 20
+# Quantidade de itens do tier atual necessários para subir de nível de maestria (5 itens = 100% XP)
+const CRAFTS_REQUIRED_FOR_NEXT_TIER: int = 5
+const XP_PER_LEVEL: float = 100.0
+const MAX_MASTERY_LEVEL: int = 50
 
 func _ready() -> void:
 	initialize_progress_tables()
 
 func initialize_progress_tables() -> void:
 	for type in equipment_progress.keys():
+		if not equipment_progress[type].has("mastery_level"):
+			equipment_progress[type]["mastery_level"] = 1
+		if not equipment_progress[type].has("mastery_xp"):
+			equipment_progress[type]["mastery_xp"] = 0.0
 		for lvl in range(1, 11): # Níveis de 1 a 10
 			if not equipment_progress[type].has(lvl):
 				equipment_progress[type][lvl] = {
-					"total_crafted": 0, # Conta para desbloquear o próximo nível
-					"mastery_exp": 0    # Conta para os bônus de especialista (sorte de lendário)
+					"total_crafted": 0
 				}
 
 # --- VALIDAÇÃO DE DESBLOQUEIO DE NÍVEL (GATING) ---
 func can_craft_item(equipment_type: String, target_level: int) -> bool:
-	# Nível 1 é sempre livre
-	if target_level <= 1:
+	if equipment_type == "outros" or target_level <= 1:
 		return true
-		
-	var prev_level = target_level - 1
-	if not equipment_progress.has(equipment_type) or not equipment_progress[equipment_type].has(prev_level):
+	if not equipment_progress.has(equipment_type):
 		return false
-		
-	# Verifica se o jogador já fabricou pelo menos 10 itens do nível anterior daquele mesmo tipo
-	var crafted_count = equipment_progress[equipment_type][prev_level]["total_crafted"]
-	return crafted_count >= CRAFTS_REQUIRED_FOR_NEXT_TIER
+	var current_mastery_level: int = int(equipment_progress[equipment_type].get("mastery_level", 1))
+	return target_level <= current_mastery_level
 
 # --- CÁLCULO DE ESPECIALISTA (SORTE NO SACO DE PROBABILIDADES) ---
 func get_custom_probability_bag(equipment_type: String, tier_level: int) -> Array[String]:
-	var mastery_exp = 0
-	if equipment_progress.has(equipment_type) and equipment_progress[equipment_type].has(tier_level):
-		mastery_exp = equipment_progress[equipment_type][tier_level]["mastery_exp"]
-		
-	# Calcula o rank de especialista com base na curva de XP
-	var mastery_rank = int(mastery_exp / BASE_MASTERY_EXP_REQUIRED)
+	var mastery_rank: int = 0
+	if equipment_progress.has(equipment_type):
+		mastery_rank = max(0, int(equipment_progress[equipment_type].get("mastery_level", 1)) - 1)
 	
 	var bag: Array[String] = []
 	var lendario_count = 1
@@ -81,21 +78,33 @@ func draw_rarity_with_specialization(equipment_type: String, tier_level: int) ->
 
 # --- REGISTRO DE PROGRESSO APÓS O CRAFT ---
 func register_successful_craft(equipment_type: String, tier_level: int, player: CharacterBody3D = null) -> void:
-	if not equipment_progress.has(equipment_type) or not equipment_progress[equipment_type].has(tier_level):
+	if not equipment_progress.has(equipment_type):
 		return
-		
-	var current_total = equipment_progress[equipment_type][tier_level]["total_crafted"]
-	
-	if current_total < CRAFTS_REQUIRED_FOR_NEXT_TIER:
+
+	if equipment_progress[equipment_type].has(tier_level):
 		equipment_progress[equipment_type][tier_level]["total_crafted"] += 1
-		# Se acabou de completar os 10 crafts, toca o som de aviso!
-		if equipment_progress[equipment_type][tier_level]["total_crafted"] == CRAFTS_REQUIRED_FOR_NEXT_TIER:
-			if player:
-				play_level_up_sound(player)
-				if player.has_method("send_message_HUD"):
-					player.send_message_HUD("¡Novo Nível de Craft Desbloqueado!", Color.GOLD)
-					
-	equipment_progress[equipment_type][tier_level]["mastery_exp"] += 1
+
+	var current_level: int = int(equipment_progress[equipment_type].get("mastery_level", 1))
+	if current_level >= MAX_MASTERY_LEVEL:
+		return
+
+	# Tier atual: 5 crafts = 100% (20.0 XP por craft).
+	# Tiers anteriores: 25% de eficiência por nível de diferença (ex: T1 no Nv2 dá 5.0 XP, 5 crafts = 25%).
+	var base_xp: float = XP_PER_LEVEL / float(CRAFTS_REQUIRED_FOR_NEXT_TIER)
+	var level_diff: int = max(0, current_level - tier_level)
+	var gained_xp: float = base_xp * pow(0.25, level_diff)
+
+	var current_xp: float = float(equipment_progress[equipment_type].get("mastery_xp", 0.0)) + gained_xp
+	while current_xp >= XP_PER_LEVEL and current_level < MAX_MASTERY_LEVEL:
+		current_xp -= XP_PER_LEVEL
+		current_level += 1
+		if player:
+			play_level_up_sound(player)
+			if player.has_method("send_message_HUD"):
+				player.send_message_HUD("¡Novo Nível de Craft Desbloqueado!", Color.GOLD)
+
+	equipment_progress[equipment_type]["mastery_level"] = current_level
+	equipment_progress[equipment_type]["mastery_xp"] = current_xp
 # --- EXECUÇÃO PRINCIPAL DO CRAFT ---
 func execute_station_craft(equipment_type: String, recipe_tier: int, base_item: ItemData) -> ItemData:
 	# 1. Valida se o player já liberou esse nível para esse tipo de equipamento
@@ -111,6 +120,7 @@ func execute_station_craft(equipment_type: String, recipe_tier: int, base_item: 
 	crafted_item.level = recipe_tier # Ajustado de 'item_level' para 'level'
 	if base_item.resource_path != "":
 		crafted_item.resource_path = base_item.resource_path
+		crafted_item.set_meta("source_path", base_item.resource_path)
 	
 	# Converte a string da raridade para o Enum correspondente do seu ItemData
 	match selected_rarity:
@@ -126,6 +136,19 @@ func execute_station_craft(equipment_type: String, recipe_tier: int, base_item: 
 	register_successful_craft(equipment_type, recipe_tier)
 	
 	return crafted_item
+
+## Calcula a quantidade final do craft, aplicando +1% de chance por nível de maestria
+## a partir do nível 6 para produzir uma barra ou tábua adicional.
+func roll_bonus_craft_quantity(equipment_type: String, _base_item: ItemData, base_quantity: int) -> int:
+	if equipment_type != "barras" and equipment_type != "tabuas":
+		return base_quantity
+	var mastery_level: int = int(equipment_progress.get(equipment_type, {}).get("mastery_level", 1))
+	if mastery_level < 6:
+		return base_quantity
+	var bonus_chance: float = float(mastery_level - 5) * 0.01
+	if randf() < bonus_chance:
+		return base_quantity + 1
+	return base_quantity
 
 # --- TABELA DE MULTIPLICADORES DE ATRIBUTOS (Mantida) ---
 func apply_rarity_and_level_multipliers(item: ItemData, level: int, rarity: String) -> void:
@@ -184,16 +207,19 @@ func get_save_data() -> Dictionary:
 
 func load_saved_data(saved_data: Dictionary) -> void:
 	if saved_data.has("equipment_progress") and typeof(saved_data["equipment_progress"]) == TYPE_DICTIONARY:
-		# Reconstrói os dados salvos garantindo a tipagem correta
 		var saved_dict = saved_data["equipment_progress"]
 		for type in saved_dict.keys():
 			if equipment_progress.has(type):
 				var levels_dict = saved_dict[type]
+				if levels_dict.has("mastery_level"):
+					equipment_progress[type]["mastery_level"] = int(levels_dict["mastery_level"])
+				if levels_dict.has("mastery_xp"):
+					equipment_progress[type]["mastery_xp"] = float(levels_dict["mastery_xp"])
 				for lvl_key in levels_dict.keys():
-					var lvl_int = int(lvl_key)
-					if equipment_progress[type].has(lvl_int):
-						equipment_progress[type][lvl_int]["total_crafted"] = int(levels_dict[lvl_key].get("total_crafted", 0))
-						equipment_progress[type][lvl_int]["mastery_exp"] = int(levels_dict[lvl_key].get("mastery_exp", 0))
+					if str(lvl_key).is_valid_int():
+						var lvl_int = int(lvl_key)
+						if equipment_progress[type].has(lvl_int):
+							equipment_progress[type][lvl_int]["total_crafted"] = int(levels_dict[lvl_key].get("total_crafted", 0))
 		print("[CRAFTING] Progresso e especializações de equipamentos carregados com sucesso!")
 
 # Sinal ou função para tocar o som de conquista de nível/desbloqueio

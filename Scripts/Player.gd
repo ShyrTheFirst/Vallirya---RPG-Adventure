@@ -67,12 +67,20 @@ var ui_mastery_panel: PanelContainer = null
 var ui_mastery_list_container: VBoxContainer = null
 
 # --- EQUIPAMENTOS ATIVOS ---
+const DEFAULT_PICKAXE: ItemData = preload("res://Resources/Items/2 - Equipamentos/Ferramentas/T1_Picareta.tres")
+const DEFAULT_AXE: ItemData = preload("res://Resources/Items/2 - Equipamentos/Ferramentas/T1_MachadoLenhador.tres")
+
 var equipped_items: Dictionary = {
 	"helm": null,
 	"armor": null,
 	"boots": null,
 	"weapon": null
 }
+var equipped_tools: Dictionary = {
+	"pickaxe": DEFAULT_PICKAXE,
+	"axe": DEFAULT_AXE
+}
+var tool_slot_nodes: Dictionary = {}
 var current_weapon_mesh_path: String = ""
 
 # --- INVENTÁRIO (32 SLOTS) ---
@@ -216,6 +224,10 @@ func _init() -> void:
 
 func _ready() -> void:
 	add_to_group("Player")
+	floor_snap_length = 0.5
+	floor_stop_on_slope = true
+	floor_block_on_wall = true
+	floor_max_angle = deg_to_rad(45.0)
 	setup_local_hud()
 	warehouse_items.resize(WAREHOUSE_CAPACITY)
 
@@ -249,6 +261,9 @@ func _ready() -> void:
 
 	if camera:
 		camera.current = true
+
+	if LevelManager and "is_new_game" in LevelManager and LevelManager.is_new_game:
+		call_deferred("toggle_quest_window")
 		camera.make_current()
 
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -281,6 +296,7 @@ func recalculate_derived_stats() -> void:
 	evasion = min(35.0, 5.0 + (stat_agi * 0.4))
 	max_hp = 100 + (stat_vit * 10) + eq_hp
 	max_mana = 100 + (stat_int * 10) + eq_mana
+	update_hud_display()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dead:
@@ -365,22 +381,45 @@ func try_perform_local_attack() -> void:
 	combo_reset_timer = combo_window_time
 
 	var anim_name = ""
+	var is_staff_attack: bool = false
 	match current_weapon.weapon_type:
 		ItemData.WeaponType.SWORD:
 			anim_name = "Armature|Ataque %d" % combo_step
 			combo_step = 1 if combo_step >= 5 else combo_step + 1
 		ItemData.WeaponType.STAFF:
-			anim_name = "Armature|Cajado 1"
+			# TODO: [ANIMACAO_ARMA] Substituir "Armature|Nadando" pela animação de ataque do Cajado
+			anim_name = "Armature|Nadando"
 			combo_step = 1
-		ItemData.WeaponType.AXE:
-			anim_name = "Armature|Machado %d" % combo_step
-			combo_step = 1 if combo_step >= 3 else combo_step + 1
+			is_staff_attack = true
+		ItemData.WeaponType.AXE, ItemData.WeaponType.SPEAR:
+			# TODO: [ANIMACAO_ARMA] Substituir pelas animações de ataque de 2 mãos (Machado / Lança)
+			anim_name = "Armature|Ataque %d" % combo_step
+			combo_step = 1 if combo_step >= 5 else combo_step + 1
 		_:
 			anim_name = "Armature|Ataque %d" % combo_step
 			combo_step = 1 if combo_step >= 5 else combo_step + 1
 
 	play_attack_visuals(anim_name)
-	perform_melee_hit()
+	if is_staff_attack:
+		spawn_staff_magic_missile()
+	else:
+		perform_melee_hit()
+
+func spawn_staff_magic_missile() -> void:
+	var missile_scene = preload("res://Scenes/Skills/missil_magico.tscn")
+	if not missile_scene:
+		return
+	var missile = missile_scene.instantiate()
+	get_parent().add_child(missile)
+	var forward_dir = -global_transform.basis.z.normalized()
+	missile.global_position = global_position + Vector3(0, 0.0, 0) + forward_dir * 0.8
+	missile.look_at(missile.global_position + forward_dir, Vector3.UP)
+	if "direction" in missile:
+		missile.direction = forward_dir
+	if "damage" in missile:
+		missile.damage = magic_damage
+	if "caster" in missile:
+		missile.caster = self
 
 func perform_melee_hit() -> void:
 	var forward_dir = -global_transform.basis.z.normalized()
@@ -450,7 +489,7 @@ func _physics_process(delta: float) -> void:
 		if not is_on_floor():
 			velocity.y -= 9.8 * delta
 		elif not wants_jump:
-			velocity.y = 0.0
+			velocity.y = -0.1
 
 	var local_dir = Vector3(move_vec.x, 0, move_vec.y).normalized()
 	var world_dir = global_transform.basis * local_dir
@@ -467,6 +506,9 @@ func _physics_process(delta: float) -> void:
 			player_status_tick = 1.0
 			hp = max(0, hp - player_status_damage)
 			show_damage_effect(player_status_damage, hp)
+			if hp <= 0:
+				_handle_player_death()
+				return
 		if player_status_timer <= 0.0:
 			remove_player_status()
 
@@ -477,6 +519,8 @@ func update_client_visuals(delta: float) -> void:
 	var move_vec = Input.get_vector("Esquerda", "Direita", "Frente", "Costas")
 	var is_moving: bool = move_vec.length() > 0.1 and is_on_floor()
 
+	# TODO: [ANIMACAO_ARMA] Quando adicionar animações de Idle/Walk/Run para 2 mãos (Machado/Lança) e Cajado na AnimationTree,
+	# mapeie target_state aqui conforme equipped_items.get("weapon") (ex: "state_0_2h", "state_1_staff", etc.)
 	var target_state: String = "state_1"
 	if is_moving:
 		if is_running:
@@ -610,25 +654,30 @@ func take_damage(amount: int) -> void:
 	trigger_combat_state()
 
 	if hp <= 0:
-		is_dead = true
-		set_physics_process(false)
-		velocity = Vector3.ZERO
-		combo_step = 1
-		rpc_player_death()
+		_handle_player_death()
 
-		get_tree().create_timer(3.0).timeout.connect(func():
-			var world = get_tree().current_scene
-			var spawn_pos = Vector3(0, 1, 0)
-			if world and world.has_method("get_player_spawn_position"):
-				spawn_pos = world.get_player_spawn_position()
+func _handle_player_death() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	set_physics_process(false)
+	velocity = Vector3.ZERO
+	combo_step = 1
+	rpc_player_death()
 
-			hp = max_hp
-			mana = max_mana
-			is_dead = false
-			global_position = spawn_pos
-			set_physics_process(true)
-			rpc_player_respawn(spawn_pos, max_hp, max_mana)
-		)
+	get_tree().create_timer(3.0).timeout.connect(func():
+		var world = get_tree().current_scene
+		var spawn_pos = Vector3(0, 1, 0)
+		if world and world.has_method("get_player_spawn_position"):
+			spawn_pos = world.get_player_spawn_position()
+
+		hp = max_hp
+		mana = max_mana
+		is_dead = false
+		global_position = spawn_pos
+		set_physics_process(true)
+		rpc_player_respawn(spawn_pos, max_hp, max_mana)
+	)
 
 func rpc_play_levelup_effect() -> void:
 	if levelup_audio and levelup_audio.stream:
@@ -658,6 +707,7 @@ func play_beam_animation() -> void:
 
 func rpc_player_death() -> void:
 	is_dead = true
+	remove_player_status()
 	visible = false
 	collision_shape.set_deferred("disabled", true)
 
@@ -875,7 +925,7 @@ func setup_local_hud() -> void:
 	scroll.add_child(ui_inv_grid)
 
 	var btn_sort_inv = Button.new()
-	btn_sort_inv.text = "🔄 Reorganizar Itens"
+	btn_sort_inv.text = "🔄"
 	btn_sort_inv.custom_minimum_size = Vector2(0, 28)
 	btn_sort_inv.focus_mode = Control.FOCUS_NONE
 	btn_sort_inv.pressed.connect(sort_and_compact_inventory)
@@ -944,6 +994,53 @@ func setup_local_hud() -> void:
 		slot_vbox.add_child(slot_btn)
 		eq_grid.add_child(slot_vbox)
 
+	var tools_title = Label.new()
+	tools_title.text = "--- FERRAMENTAS EQUIPADAS ---"
+	tools_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	eq_box.add_child(tools_title)
+
+	var tools_center = CenterContainer.new()
+	tools_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	eq_box.add_child(tools_center)
+
+	var tools_grid = GridContainer.new()
+	tools_grid.columns = 2
+	tools_grid.add_theme_constant_override("h_separation", 12)
+	tools_center.add_child(tools_grid)
+
+	var tools_data = [
+		{"name": "Picareta", "key": "pickaxe"},
+		{"name": "Machado", "key": "axe"}
+	]
+
+	for t_info in tools_data:
+		var slot_vbox = VBoxContainer.new()
+		var slot_lbl = Label.new()
+		slot_lbl.text = t_info["name"]
+		slot_lbl.add_theme_font_size_override("font_size", 10)
+		slot_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		slot_vbox.add_child(slot_lbl)
+
+		var slot_btn = Button.new()
+		slot_btn.custom_minimum_size = Vector2(60, 60)
+		slot_btn.focus_mode = Control.FOCUS_NONE
+		slot_btn.clip_contents = true
+
+		var t_style = StyleBoxFlat.new()
+		t_style.bg_color = Color(0.15, 0.15, 0.18, 0.9)
+		t_style.set_corner_radius_all(4)
+		t_style.set_border_width_all(1)
+		t_style.border_color = Color(0.5, 0.4, 0.2)
+		slot_btn.add_theme_stylebox_override("normal", t_style)
+
+		var t_key: String = t_info["key"]
+		tool_slot_nodes[t_key] = slot_btn
+		slot_btn.pressed.connect(func(): _on_tool_slot_clicked(t_key))
+
+		slot_vbox.add_child(slot_btn)
+		tools_grid.add_child(slot_vbox)
+		update_tool_slot_visual(t_key, equipped_tools.get(t_key, null))
+
 	ui_quest_tracker = PanelContainer.new()
 	ui_quest_tracker.custom_minimum_size = Vector2(240, 90)
 	ui_quest_tracker.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -959,7 +1056,7 @@ func setup_local_hud() -> void:
 	ui_quest_tracker.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	ui_quest_tracker.offset_right = -25
 	ui_quest_tracker.offset_left = -345
-	ui_quest_tracker.offset_top = 670
+	ui_quest_tracker.offset_top = 770
 
 	var tracker_main_vbox = VBoxContainer.new()
 	tracker_main_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1348,6 +1445,27 @@ func equip_item_from_inventory(item: ItemData, slot_idx: int) -> void:
 		return
 
 	var target_slot_key = ""
+	var tool_slot_key: String = ""
+	var item_id_lower: String = item.id.to_lower()
+	if item.item_type == ItemData.ItemType.TOOL or "picareta" in item_id_lower:
+		if "machado" in item_id_lower:
+			tool_slot_key = "axe"
+		else:
+			tool_slot_key = "pickaxe"
+	elif "machado" in item_id_lower and item_id_lower.contains("coleta"):
+		tool_slot_key = "axe"
+
+	if tool_slot_key != "":
+		var old_tool: ItemData = equipped_tools.get(tool_slot_key, null)
+		if old_tool:
+			inventory_items[slot_idx] = {"item": old_tool, "amount": 1}
+		else:
+			inventory_items[slot_idx] = null
+		equipped_tools[tool_slot_key] = item
+		update_tool_slot_visual(tool_slot_key, item)
+		update_inventory_display()
+		return
+
 	match item.item_type:
 		ItemData.ItemType.WEAPON: target_slot_key = "weapon"
 		ItemData.ItemType.ARMOR: target_slot_key = "armor"
@@ -1370,7 +1488,7 @@ func equip_item_from_inventory(item: ItemData, slot_idx: int) -> void:
 
 	if target_slot_key == "weapon":
 		current_weapon_mesh_path = item.mesh_scene.resource_path if item.mesh_scene else ""
-		update_hand_visual(item.mesh_scene)
+		update_hand_visual(item.mesh_scene, Vector3(0.01, 0.01, 0.01), false, item.equipped_rotation, item.equipped_offset)
 
 	update_equipment_slot_visual(target_slot_key, item)
 	recalculate_derived_stats() # Recalcula considerando todos os itens em 'equipped_items'
@@ -1459,6 +1577,64 @@ func update_equipment_slot_visual(slot_key: String, item_data: ItemData) -> void
 		var icon_3d = create_item_3d_viewport(item_data.mesh_scene, item_data)
 		slot_btn.add_child(icon_3d)
 
+	var rarity_color: Color = Color.TRANSPARENT
+	if item_data:
+		match item_data.rarity:
+			ItemData.Rarity.UNCOMMON: rarity_color = Color(0.2, 0.8, 0.2)
+			ItemData.Rarity.RARE: rarity_color = Color(0.2, 0.5, 1.0)
+			ItemData.Rarity.EPIC: rarity_color = Color(0.6, 0.2, 0.8)
+			ItemData.Rarity.LEGENDARY: rarity_color = Color(1.0, 0.6, 0.1)
+
+	if rarity_color != Color.TRANSPARENT:
+		var slot_style := StyleBoxFlat.new()
+		slot_style.bg_color = Color(0.12, 0.12, 0.14, 0.8)
+		slot_style.set_border_width_all(2)
+		slot_style.set_corner_radius_all(4)
+		slot_style.border_color = rarity_color
+		slot_btn.add_theme_stylebox_override("normal", slot_style)
+	else:
+		slot_btn.remove_theme_stylebox_override("normal")
+
+func _on_tool_slot_clicked(_slot_key: String) -> void:
+	# Ferramentas equipadas não podem ser desequipadas, apenas substituídas por outra do mesmo tipo.
+	send_message_HUD("Ferramentas só podem ser substituídas, não desequipadas.", Color(1.0, 0.85, 0.3))
+
+func update_tool_slot_visual(slot_key: String, item_data: ItemData) -> void:
+	if tool_slot_nodes.is_empty() or not tool_slot_nodes.has(slot_key):
+		await get_tree().process_frame
+
+	if not tool_slot_nodes.has(slot_key):
+		return
+
+	var slot_btn: Control = tool_slot_nodes[slot_key]
+	if not is_instance_valid(slot_btn):
+		return
+
+	for child in slot_btn.get_children():
+		child.queue_free()
+
+	if item_data and item_data.mesh_scene:
+		var icon_3d = create_item_3d_viewport(item_data.mesh_scene, item_data)
+		slot_btn.add_child(icon_3d)
+
+	var rarity_color: Color = Color.TRANSPARENT
+	if item_data:
+		match item_data.rarity:
+			ItemData.Rarity.UNCOMMON: rarity_color = Color(0.2, 0.8, 0.2)
+			ItemData.Rarity.RARE: rarity_color = Color(0.2, 0.5, 1.0)
+			ItemData.Rarity.EPIC: rarity_color = Color(0.6, 0.2, 0.8)
+			ItemData.Rarity.LEGENDARY: rarity_color = Color(1.0, 0.6, 0.1)
+
+	if rarity_color != Color.TRANSPARENT:
+		var slot_style := StyleBoxFlat.new()
+		slot_style.bg_color = Color(0.12, 0.12, 0.14, 0.8)
+		slot_style.set_border_width_all(2)
+		slot_style.set_corner_radius_all(4)
+		slot_style.border_color = rarity_color
+		slot_btn.add_theme_stylebox_override("normal", slot_style)
+	else:
+		slot_btn.remove_theme_stylebox_override("normal")
+
 func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 	var slot_data = inventory_items[slot_idx]
 	if slot_data == null:
@@ -1470,6 +1646,7 @@ func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 
 	if not item_tooltip_panel:
 		item_tooltip_panel = PanelContainer.new()
+		item_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var t_style = StyleBoxFlat.new()
 		t_style.bg_color = Color(0.1, 0.1, 0.12, 0.95)
 		t_style.set_corner_radius_all(4)
@@ -1482,6 +1659,7 @@ func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 		child.queue_free()
 
 	var vbox = VBoxContainer.new()
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_theme_constant_override("separation", 4)
 	item_tooltip_panel.add_child(vbox)
 
@@ -1512,12 +1690,20 @@ func _show_item_tooltip(slot_idx: int, slot_node: Control) -> void:
 	rarity_lbl.modulate = rarity_color
 	rarity_lbl.add_theme_font_size_override("font_size", 11)
 	vbox.add_child(rarity_lbl)
+
+	var level_lbl = Label.new()
+	level_lbl.text = "Nível: %d" % item.level
+	level_lbl.modulate = Color(0.85, 0.85, 0.85)
+	level_lbl.add_theme_font_size_override("font_size", 11)
+	vbox.add_child(level_lbl)
 	# -----------------------------------------------
 
 	var desc = Label.new()
 	desc.text = item.description
 	desc.add_theme_font_size_override("font_size", 11)
 	desc.modulate = Color(0.8, 0.8, 0.8)
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc.custom_minimum_size = Vector2(220, 0)
 	vbox.add_child(desc)
 
 	if item.bonus_attack > 0:
@@ -1638,8 +1824,7 @@ func update_hud_display() -> void:
 	var final_mana = (80 + (player_level * 10) + (stat_int * 15)) + bonus_mana
 	lbl_mana_status.text = "Mana: %d / %d" % [mana, final_mana]
 
-	var final_def = (4 + int(stat_vit * 0.8)) + bonus_defense
-	lbl_def_status.text = "Defesa: %d" % final_def
+	lbl_def_status.text = "Defesa: %d" % defense
 
 	lbl_atk_status.text = "Ataque Físico: %d" % attack_damage
 	lbl_matk_status.text = "Ataque Mágico: %d" % magic_damage
@@ -1652,7 +1837,7 @@ func update_hud_display() -> void:
 	ui_btn_vit.disabled = not can_spend
 	ui_btn_int.disabled = not can_spend
 
-func update_hand_visual(mesh_scene: PackedScene, custom_scale: Vector3 = Vector3(0.01, 0.01, 0.01), keep_scene_transform: bool = false) -> void:
+func update_hand_visual(mesh_scene: PackedScene, custom_scale: Vector3 = Vector3(0.01, 0.01, 0.01), keep_scene_transform: bool = false, custom_rotation: Vector3 = Vector3.ZERO, custom_offset: Vector3 = Vector3.ZERO) -> void:
 	if not right_hand_bone:
 		return
 
@@ -1665,8 +1850,8 @@ func update_hand_visual(mesh_scene: PackedScene, custom_scale: Vector3 = Vector3
 		
 		item_instance.scale = custom_scale
 		if not keep_scene_transform:
-			item_instance.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
-			item_instance.position = Vector3.ZERO
+			item_instance.rotation_degrees = Vector3(-90.0, 0.0, 0.0) + custom_rotation
+			item_instance.position = custom_offset
 
 func discard_item(slot_idx: int) -> void:
 	if slot_idx < 0 or slot_idx >= INVENTORY_CAPACITY or inventory_items[slot_idx] == null:
@@ -1949,7 +2134,7 @@ func load_player_save(username: String) -> void:
 		if item:
 			update_equipment_slot_visual(slot_key, item)
 			if slot_key == "weapon" and item.mesh_scene:
-				update_hand_visual(item.mesh_scene)
+				update_hand_visual(item.mesh_scene, Vector3(0.01, 0.01, 0.01), false, item.equipped_rotation, item.equipped_offset)
 		else:
 			update_equipment_slot_visual(slot_key, null)
 
@@ -1970,6 +2155,8 @@ func save_player_account() -> void:
 		if slot != null and slot is Dictionary and slot.get("item") is ItemData:
 			var item_data: ItemData = slot["item"]
 			var path = item_data.resource_path
+			if path == "" and item_data.has_meta("source_path"):
+				path = str(item_data.get_meta("source_path"))
 			if path == "" and "id" in item_data and item_data.id != "":
 				path = "res://Resources/Items/%s.tres" % item_data.id
 				
@@ -1992,6 +2179,8 @@ func save_player_account() -> void:
 		var eq_item = equipped_items[slot_key]
 		if eq_item is ItemData:
 			var path = eq_item.resource_path
+			if path == "" and eq_item.has_meta("source_path"):
+				path = str(eq_item.get_meta("source_path"))
 			if path == "" and "id" in eq_item and eq_item.id != "":
 				path = "res://Resources/Items/%s.tres" % eq_item.id
 				
@@ -2012,6 +2201,8 @@ func save_player_account() -> void:
 		if slot != null and slot is Dictionary and slot.get("item") is ItemData:
 			var item_data: ItemData = slot["item"]
 			var path = item_data.resource_path
+			if path == "" and item_data.has_meta("source_path"):
+				path = str(item_data.get_meta("source_path"))
 			if path == "" and "id" in item_data and item_data.id != "":
 				path = "res://Resources/Items/%s.tres" % item_data.id
 				
@@ -2250,7 +2441,7 @@ func play_drink_animation(potion_item: ItemData) -> void:
 	get_tree().create_timer(1.2).timeout.connect(func():
 		var active_weapon: ItemData = equipped_items.get("weapon", null)
 		if active_weapon and active_weapon.mesh_scene:
-			update_hand_visual(active_weapon.mesh_scene)
+			update_hand_visual(active_weapon.mesh_scene, Vector3(0.01, 0.01, 0.01), false, active_weapon.equipped_rotation, active_weapon.equipped_offset)
 		else:
 			update_hand_visual(null)
 	)
@@ -2315,37 +2506,47 @@ func populate_mastery_ui() -> void:
 		return
 
 	var progress_data = craft_manager.equipment_progress as Dictionary
+	var max_mastery: int = craft_manager.MAX_MASTERY_LEVEL
+	var mastery_names: Dictionary = {
+		"armadura": "Armaduras",
+		"elmo": "Elmos",
+		"bota": "Botas",
+		"espada": "Espadas",
+		"lanca": "Lanças",
+		"machado": "Machados",
+		"cajado": "Cajados",
+		"barras": "Barras",
+		"tabuas": "Tábuas"
+	}
 
 	for eq_type in progress_data.keys():
 		var type_box = VBoxContainer.new()
 		type_box.add_theme_constant_override("separation", 4)
-		
-		var type_title = Label.new()
-		type_title.text = "🛠️ Categoria: %s" % eq_type.capitalize()
-		type_title.add_theme_font_size_override("font_size", 13)
-		type_title.modulate = Color(0.4, 0.9, 1.0)
-		type_box.add_child(type_title)
 
 		var levels_dict = progress_data[eq_type] as Dictionary
-		for lvl in range(1, 11):
-			if levels_dict.has(lvl):
-				var info = levels_dict[lvl]
-				var crafted = int(info.get("total_crafted", 0))
-				var mastery = int(info.get("mastery_exp", 0))
-				
-				var row_lbl = Label.new()
-				var status_text = ""
-				
-				if crafted >= 10:
-					status_text = "Nível %d: [CONCLUÍDO] (Especialista XP: %d)" % [lvl, mastery]
-					row_lbl.modulate = Color(0.3, 1.0, 0.4)
-				else:
-					status_text = "Nível %d: %d / 10 crafts" % [lvl, crafted]
-					row_lbl.modulate = Color(0.9, 0.9, 0.9)
-					
-				row_lbl.text = "   • " + status_text
-				row_lbl.add_theme_font_size_override("font_size", 11)
-				type_box.add_child(row_lbl)
+		var m_level: int = int(levels_dict.get("mastery_level", 1))
+		var display_name: String = mastery_names.get(eq_type, eq_type.capitalize())
+
+		var m_lbl = Label.new()
+		m_lbl.text = "Maestria em Criação de %s : %d/%d" % [display_name, m_level, max_mastery]
+		m_lbl.add_theme_font_size_override("font_size", 13)
+		m_lbl.modulate = Color(1.0, 0.85, 0.3)
+		type_box.add_child(m_lbl)
+
+		var bonus_lbl = Label.new()
+		if eq_type == "barras" or eq_type == "tabuas":
+			if m_level >= 6:
+				bonus_lbl.text = "   Bônus: %d%% de chance de +1 unidade extra ao criar" % (m_level - 5)
+				bonus_lbl.modulate = Color(0.3, 1.0, 0.4)
+			else:
+				bonus_lbl.text = "   Bônus: +1%% de chance de unidade extra por nível a partir do Nv. 6"
+				bonus_lbl.modulate = Color(0.8, 0.8, 0.8)
+		else:
+			var mastery_rank: int = max(0, m_level - 1)
+			bonus_lbl.text = "   Bônus: +%d cartas Lendárias e +%d Épicas no sorteio de raridade" % [mastery_rank, mastery_rank * 2]
+			bonus_lbl.modulate = Color(0.4, 0.9, 1.0) if mastery_rank > 0 else Color(0.8, 0.8, 0.8)
+		bonus_lbl.add_theme_font_size_override("font_size", 11)
+		type_box.add_child(bonus_lbl)
 
 		var sep = HSeparator.new()
 		ui_mastery_list_container.add_child(type_box)
@@ -2388,7 +2589,7 @@ func gathering(item_data: ItemData, anim_name: String, tool_type: String = "auto
 
 		var active_weapon: ItemData = equipped_items.get("weapon", null)
 		if active_weapon and active_weapon.mesh_scene:
-			update_hand_visual(active_weapon.mesh_scene)
+			update_hand_visual(active_weapon.mesh_scene, Vector3(0.01, 0.01, 0.01), false, active_weapon.equipped_rotation, active_weapon.equipped_offset)
 		else:
 			update_hand_visual(null)
 
@@ -2441,6 +2642,9 @@ func remove_player_status() -> void:
 		"envenenamento":
 			venom_effect.emitting = false
 	active_player_status = ""
+	player_status_timer = 0.0
+	player_status_tick = 0.0
+	player_status_damage = 0
 
 func apply_natural_regeneration() -> void:
 	if is_dead:
@@ -2614,10 +2818,8 @@ func toggle_achievements_window() -> void:
 	if not ui_achievements_panel:
 		ui_achievements_panel = PanelContainer.new()
 		ui_achievements_panel.custom_minimum_size = Vector2(440, 380)
-		_apply_standard_window_style(ui_achievements_panel)
-		var theme_res := load("res://Assets/VFX/Themes/ValliryaTheme_Final.tres") as Theme
-		if theme_res:
-			ui_achievements_panel.theme = theme_res
+		if custom_theme:
+			ui_achievements_panel.theme = custom_theme
 		_add_close_button_to_window(ui_achievements_panel, toggle_achievements_window)
 		var margin = MarginContainer.new()
 		margin.add_theme_constant_override("margin_left", 16)

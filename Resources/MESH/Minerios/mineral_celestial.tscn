@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://ca8ibe05xcpj2"]
+
+[ext_resource type="ArrayMesh" uid="uid://dtjnoa11y838i" path="res://Resources/MESH/Minerios/Mineral_Celestial.res" id="1_shis1"]
+
+[node name="MineralCelestial" type="MeshInstance3D" unique_id=2026104017]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = ExtResource("1_shis1")

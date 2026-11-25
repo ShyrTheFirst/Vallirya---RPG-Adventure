@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3ba3f00tsom2"]
+
+[ext_resource type="PackedScene" uid="uid://crohbnk0np1xf" path="res://Resources/MESH/Madeiras/T3_Madeira_Adornada.tscn" id="1_7kc76"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_dvg3y"]
+
+[resource]
+script = ExtResource("2_dvg3y")
+id = "Madeira_T3"
+name = "Tronco de Madeira Adornada"
+rarity = 2
+level = 25
+active_legendary = 2
+description = "Um tronco de madeira  adornada usado para criar tabuas"
+mesh_scene = ExtResource("1_7kc76")
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

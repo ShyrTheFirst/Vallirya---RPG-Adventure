@@ -4,9 +4,13 @@
 [ext_resource type="Script" uid="uid://cveebpu5mk63t" path="res://Scripts/Props/CraftingStation.gd" id="1_bpbt5"]
 [ext_resource type="Script" uid="uid://b308ysrsgvy6j" path="res://Scripts/Props/CraftData.gd" id="2_nsoou"]
 [ext_resource type="Texture2D" uid="uid://dnxs24cxbfolw" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_1.png" id="2_qinf4"]
-[ext_resource type="Resource" uid="uid://dw7c32u240fcx" path="res://Resources/Items/Crafts/HP_poçao_pequena.tres" id="3_nry71"]
+[ext_resource type="Resource" uid="uid://dw7c32u240fcx" path="res://Resources/Items/0 - Crafts/Pocoes/HP_pocao_pequena.tres" id="3_nry71"]
 [ext_resource type="Texture2D" uid="uid://gyb2tyn1u4se" path="res://ASSETS/Pacote Modular Vallirya - Objetos/MesaPentagrama_2.png" id="3_t8a3s"]
-[ext_resource type="Resource" uid="uid://cn2dahrre3xf5" path="res://Resources/Items/Crafts/MP_poçao_pequena.tres" id="4_eaxnq"]
+[ext_resource type="Resource" uid="uid://cn2dahrre3xf5" path="res://Resources/Items/0 - Crafts/Pocoes/MP_pocao_pequena.tres" id="4_eaxnq"]
+[ext_resource type="Resource" uid="uid://cj1ovmq2q5pkc" path="res://Resources/Items/0 - Crafts/Pocoes/HP_pocao_media.tres" id="4_p2k8l"]
+[ext_resource type="Resource" uid="uid://wqpgclffg4nn" path="res://Resources/Items/0 - Crafts/Pocoes/HP_pocao_grande.tres" id="5_m78xi"]
+[ext_resource type="Resource" uid="uid://cblohr616dkx5" path="res://Resources/Items/0 - Crafts/Pocoes/MP_pocao_media.tres" id="7_cb5tg"]
+[ext_resource type="Resource" uid="uid://g6agr40qb543" path="res://Resources/Items/0 - Crafts/Pocoes/MP_pocao_grande.tres" id="8_dkqtm"]
 [ext_resource type="Theme" uid="uid://dfdm4gkiik7q" path="res://ASSETS/VFX/Themes/ValliryaTheme_Final.tres" id="8_nsoou"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nted5"]
@@ -113,7 +117,7 @@ collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_bpbt5")
 station_name = "Mesa de Alquimia"
-station_recipes = Array[ExtResource("2_nsoou")]([ExtResource("3_nry71"), ExtResource("4_eaxnq")])
+station_recipes = Array[ExtResource("2_nsoou")]([ExtResource("3_nry71"), ExtResource("4_p2k8l"), ExtResource("5_m78xi"), ExtResource("4_eaxnq"), ExtResource("7_cb5tg"), ExtResource("8_dkqtm")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=153938188]
 transform = Transform3D(100, 0, 0, 0, -1.1920929e-05, 99.99999, 0, -99.99999, -1.1920929e-05, 0.0036829617, 0.2728995, -0.008969972)

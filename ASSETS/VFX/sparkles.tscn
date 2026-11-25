@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://b77ux5ooni873"]
+
+[sub_resource type="Curve" id="Curve_see3s"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_bepy2"]
+curve = SubResource("Curve_see3s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2b8f7"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 0.5
+initial_velocity_max = 1.5
+gravity = Vector3(0, 0.5, 0)
+scale_min = 0.049999997
+scale_max = 0.19999999
+scale_curve = SubResource("CurveTexture_bepy2")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xsmv2"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_g67g1"]
+material = SubResource("StandardMaterial3D_xsmv2")
+radius = 0.1
+height = 0.2
+
+[node name="Sparkles" type="GPUParticles3D" unique_id=678676926]
+amount = 20
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_2b8f7")
+draw_pass_1 = SubResource("SphereMesh_g67g1")

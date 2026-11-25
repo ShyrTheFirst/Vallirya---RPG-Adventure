@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://b26h7wysmpccr"]
+
+[ext_resource type="PackedScene" uid="uid://b8nbwxmhd6d3d" path="res://ASSETS/Armas/Machado/De Guerra/Machado_De_Guerra.fbx" id="1_v5rha"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_c5f84"]
+
+[resource]
+script = ExtResource("2_c5f84")
+id = "Machado_Prata"
+name = "Machado de Prata"
+item_type = 0
+weapon_type = 3
+level = 3
+active_legendary = null
+description = "Machado de prata, melhorado para aventureiros avançados."
+mesh_scene = ExtResource("1_v5rha")
+sell_price = 200
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, -0.7, -0.5)
+is_stackable = false
+max_stack = 1
+bonus_attack = 15
+metadata/_custom_type_script = "uid://eaep86qi61ki"

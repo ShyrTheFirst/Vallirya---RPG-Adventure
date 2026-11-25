@@ -1,12 +1,25 @@
 [gd_resource type="Resource" script_class="SpawnEntry" format=3 uid="uid://p1ekm7elu0e5"]
 
+[ext_resource type="Script" uid="uid://bjy3osgd6vcx4" path="res://Scripts/Monstros/MonsterDrop.gd" id="1_ktt4x"]
 [ext_resource type="Script" uid="uid://cbe7834febh5o" path="res://Scripts/Monstros/SpawnEntry.gd" id="1_wm4n3"]
 [ext_resource type="PackedScene" uid="uid://ckm8twdxrbpx7" path="res://Scenes/Monstros/goblin.tscn" id="1_xxgie"]
 
 [resource]
 script = ExtResource("1_wm4n3")
 scene = ExtResource("1_xxgie")
+monster_name = "Goblin Errante"
 count = 12
 min_level = 9
 max_level = 15
+speed = 4.2
+leash_radius = 10.0
+aggro_range = 8.0
+max_chase_distance = 14.0
+base_attack_range = 1.2
+effect_damage_percent = 0.0
+hp_factor = 0.7
+atk_factor = 0.75
+def_factor = 0.4
+attack_cooldown_base = 0.8
+respawn_time = 30.0
 metadata/_custom_type_script = "uid://cbe7834febh5o"

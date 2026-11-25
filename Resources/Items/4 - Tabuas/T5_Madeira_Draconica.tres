@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://duhwa0fkqkjwh"]
+
+[ext_resource type="PackedScene" uid="uid://dtjpcqk3j3im6" path="res://Resources/MESH/Madeiras/T5_Madeira_Draconica.tscn" id="1_3docv"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_bly55"]
+
+[resource]
+script = ExtResource("2_bly55")
+id = "Madeira_T5"
+name = "Tronco de Madeira Draconica"
+rarity = 4
+level = 75
+active_legendary = 2
+description = "Um tronco de madeira draconica usado para criar tabuas"
+mesh_scene = ExtResource("1_3docv")
+inventory_rotation = Vector3(0, 30, 30)
+inventory_scale = Vector3(80, 80, 80)
+inventory_offset = Vector3(0, 0.5, -0.4)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

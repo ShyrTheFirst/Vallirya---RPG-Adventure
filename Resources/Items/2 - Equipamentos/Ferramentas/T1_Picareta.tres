@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dqjry64whur88"]
+
+[ext_resource type="PackedScene" uid="uid://clr01nqfrmcf7" path="res://ASSETS/Armas/Picareta/Picareta.fbx" id="1_t46jt"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="2_hk2hg"]
+
+[resource]
+script = ExtResource("2_hk2hg")
+id = "Picareta_T1"
+name = "Picareta de Minerador Basica"
+item_type = 6
+active_legendary = 2
+description = "Picareta simples para coletar minerios"
+mesh_scene = ExtResource("1_t46jt")
+inventory_rotation = Vector3(30, 30, 0)
+inventory_offset = Vector3(0, 0, -0.2)
+is_stackable = false
+max_stack = 1
+metadata/_custom_type_script = "uid://eaep86qi61ki"

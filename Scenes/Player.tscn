@@ -1,10 +1,10 @@
 [gd_scene format=4 uid="uid://bohw58o3vxrms"]
 
 [ext_resource type="Script" uid="uid://cploomubupvwa" path="res://Scripts/Player.gd" id="1_rpqav"]
-[ext_resource type="PackedScene" uid="uid://cx0l2rhj6c85k" path="res://Resources/MESH/machado.tscn" id="2_i2e8t"]
+[ext_resource type="PackedScene" uid="uid://cx0l2rhj6c85k" path="res://Resources/MESH/Ferramenta/machado.tscn" id="2_i2e8t"]
 [ext_resource type="AudioStream" uid="uid://bgnfv1lnte4r1" path="res://ASSETS/SFX/Sword Impact Hit 1.wav" id="2_kyqiw"]
 [ext_resource type="AudioStream" uid="uid://espjqmh8sqhk" path="res://ASSETS/SFX/Sword Attack 1.wav" id="3_gntrk"]
-[ext_resource type="PackedScene" uid="uid://72jbd52xwt1y" path="res://Resources/MESH/picareta.tscn" id="3_qidb7"]
+[ext_resource type="PackedScene" uid="uid://72jbd52xwt1y" path="res://Resources/MESH/Ferramenta/picareta.tscn" id="3_qidb7"]
 [ext_resource type="Texture2D" uid="uid://qa4nca0e2m3q" path="res://ASSETS/Personagem/Personagem (IK)_0.png" id="4_1iu4k"]
 [ext_resource type="Texture2D" uid="uid://djpaka1qd5ng4" path="res://ASSETS/Personagem/Personagem (IK)_1.png" id="5_m0x7a"]
 [ext_resource type="PackedScene" uid="uid://bjpxop65hwmx5" path="res://Scenes/NPCs/cavalo.tscn" id="6_qidb7"]

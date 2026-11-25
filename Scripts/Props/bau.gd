@@ -8,7 +8,7 @@ extends StaticBody3D
 
 @export_category("Interação")
 @export var interact_action: String = "Interagir"
-@export var prompt_text: String = "[E] Abrir Baú"
+@export var prompt_text: String = "'E'"
 
 @onready var interaction_area: Area3D = $InteractionArea
 @onready var interaction_prompt: Sprite3D = $InteractionPrompt

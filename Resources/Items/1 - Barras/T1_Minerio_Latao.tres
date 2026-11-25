@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://blfaim5yty8ht"]
+
+[ext_resource type="PackedScene" uid="uid://w8ap2qu1x82" path="res://ASSETS/Pacote Modular Vallirya - Objetos/Mineral_Latao.fbx" id="1_0i054"]
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_ractf"]
+
+[resource]
+script = ExtResource("1_ractf")
+id = "minerio_latao"
+name = "Minerio de Latao"
+active_legendary = 2
+description = "Minerio de latao adquirido da mineraçao."
+mesh_scene = ExtResource("1_0i054")
+sell_price = 1
+inventory_rotation = Vector3(45, 30, 45)
+inventory_scale = Vector3(5, 5, 5)
+inventory_offset = Vector3(-1, 0.2, -0.3)
+metadata/_custom_type_script = "uid://eaep86qi61ki"

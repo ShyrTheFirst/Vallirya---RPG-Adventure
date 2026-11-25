@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dv8f84aig5xhi"]
+
+[ext_resource type="Script" uid="uid://eaep86qi61ki" path="res://Scripts/Props/ItemData.gd" id="1_feawu"]
+[ext_resource type="PackedScene" uid="uid://dgp051gax0tsg" path="res://Resources/MESH/Drops/Essencia_Eterea.tscn" id="1_si5du"]
+
+[resource]
+script = ExtResource("1_feawu")
+id = "Essencia_Eterea"
+name = "Essencia Eterea"
+rarity = 4
+level = 99
+active_legendary = 2
+description = "Essencia de seres etereos, capturada ao acaso pelos mais fortes e destemidos aventureiros."
+mesh_scene = ExtResource("1_si5du")
+sell_price = 10000
+inventory_offset = Vector3(0, 0.4, 0)
+metadata/_custom_type_script = "uid://eaep86qi61ki"
